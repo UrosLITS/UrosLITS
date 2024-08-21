@@ -1,10 +1,8 @@
-import 'dart:math';
-
 import 'package:book/styles/app_colors.dart';
 import 'package:book/styles/app_styles.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -63,7 +61,7 @@ class _LoginPageState extends State<LoginPage> {
           ),
           automaticallyImplyLeading: false,
           title: Text(
-            "Login",
+            AppLocalizations.of(context)!.login,
             textAlign: TextAlign.center,
             style: AppTextStyles.titleLogin(),
           ),
@@ -92,14 +90,14 @@ class _LoginPageState extends State<LoginPage> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                "Welcome",
+                AppLocalizations.of(context)!.welcome,
                 style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
               ),
               SizedBox(
                 height: 10,
               ),
               Text(
-                "Login to continue",
+                AppLocalizations.of(context)!.login_to_continue,
                 style: TextStyle(fontSize: 20),
               ),
               SizedBox(
@@ -127,10 +125,10 @@ class _LoginPageState extends State<LoginPage> {
                           backgroundColor: AppColors.brown.withOpacity(0.8),
                         ),
                         onPressed: () {
-                          login();
+                          onLoginPressed();
                         },
                         child: Text(
-                          "Log in",
+                          AppLocalizations.of(context)!.login_btn,
                           style: TextStyle(
                               fontWeight: FontWeight.bold, color: Colors.black),
                         ),
@@ -145,13 +143,15 @@ class _LoginPageState extends State<LoginPage> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text("New user?"),
+                  Text(
+                    AppLocalizations.of(context)!.new_user,
+                  ),
                   TextButton(
                     onPressed: () {
                       //ovde ide pushNamed ka Registraciji
                     },
                     child: Text(
-                      "Sign up here",
+                      AppLocalizations.of(context)!.sign_up,
                       style: TextStyle(color: AppColors.red),
                     ),
                   ),
@@ -186,7 +186,7 @@ class _LoginPageState extends State<LoginPage> {
               ),
               alignLabelWithHint: true,
               labelStyle: TextStyle(color: Colors.black),
-              labelText: "Email",
+              labelText: AppLocalizations.of(context)!.email,
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(10),
                 borderSide: BorderSide(
@@ -200,7 +200,7 @@ class _LoginPageState extends State<LoginPage> {
                 email = value;
                 return null;
               } else {
-                return "Empty email";
+                return AppLocalizations.of(context)!.empty_email;
               }
             },
           ),
@@ -221,7 +221,7 @@ class _LoginPageState extends State<LoginPage> {
               ),
               alignLabelWithHint: true,
               labelStyle: TextStyle(color: Colors.black),
-              labelText: "Password",
+              labelText: AppLocalizations.of(context)!.password,
               suffixIcon: IconButton(
                 icon: Icon(
                   passwordVisible ? Icons.visibility : Icons.visibility_off,
@@ -248,7 +248,7 @@ class _LoginPageState extends State<LoginPage> {
                 password = value;
                 return null;
               } else {
-                return "Empty password";
+                return AppLocalizations.of(context)!.empty_password;
               }
             },
           )
@@ -257,7 +257,9 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
-  void login() async {
-    if (_formKey.currentState!.validate()) {}
+  void onLoginPressed() async {
+    if (_formKey.currentState!.validate()) {
+      //login bloc funkcija
+    }
   }
 }

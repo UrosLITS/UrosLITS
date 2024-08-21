@@ -8,30 +8,15 @@ class FirebaseAuthManager {
 
   static final FirebaseAuth auth = FirebaseAuth.instance;
 
-  static Future<String?> login(String email, String password) async {
-    String? errorMessage;
-
-    try {
-      await auth
-          .signInWithEmailAndPassword(email: email, password: password)
-          .timeout(Duration(seconds: 3), onTimeout: () {
-        throw Exception("Cant reach server");
-      });
-    } on FirebaseAuthException catch (e) {
-      if (e.code == "user-not-found") {
-        errorMessage = "User  is  not found";
-      } else if (e.code == "wrong-password") {
-        errorMessage = "Incorrect password";
-      } else {
-        return errorMessage = e.message;
-      }
-    }
-    return errorMessage;
+  static Future<void> login(String email, String password) async {
+    await auth
+        .signInWithEmailAndPassword(email: email, password: password)
+        .timeout(Duration(seconds: 3), onTimeout: () {
+      throw Exception("Cant reach server");
+    });
   }
 
   static Future<String?> checkUserLogin() async {
-    await auth.currentUser?.uid;
-
     if (auth.currentUser?.uid != null) {
       return auth.currentUser!.uid;
     } else {
@@ -53,8 +38,8 @@ class FirebaseAuthManager {
       });
 
       if (snapshotRef.data() != null) {
-        AppUser users = AppUser.fromJson(snapshotRef.data()!);
-        return users;
+        AppUser user = AppUser.fromJson(snapshotRef.data()!);
+        return user;
       } else {
         return null;
       }
@@ -77,8 +62,8 @@ class FirebaseAuthManager {
       if (checkUser != null) {
         uID = checkUser.uid;
       }
-      final userREF = db.collection("users").doc(uID);
-      await userREF.set(user.toJson()).timeout(Duration(seconds: 3),
+      final userRef = db.collection("users").doc(uID);
+      await userRef.set(user.toJson()).timeout(Duration(seconds: 3),
           onTimeout: () {
         throw Exception("Cant reach server");
       });
