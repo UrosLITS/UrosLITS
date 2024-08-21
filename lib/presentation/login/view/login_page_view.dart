@@ -259,7 +259,7 @@ class _LoginPageState extends State<LoginPage> {
 
   void onLoginPressed() async {
     if (_formKey.currentState!.validate()) {
-      //login bloc funkcija
+      //login bloc function yet to be created
     }
   }
 }

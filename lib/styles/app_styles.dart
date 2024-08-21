@@ -7,9 +7,10 @@ class AppTextStyles {
   static const Color textColorWhite = AppColors.textColorWhite;
   static const double defaultOpacity = 1;
 
-  static TextStyle title(
-      {Color color = AppColors.textColorBlack,
-      double opacity = defaultOpacity}) {
+  static TextStyle title({
+    Color color = AppColors.textColorBlack,
+    double opacity = defaultOpacity,
+  }) {
     return TextStyle(
         color: color.withOpacity(opacity),
         fontSize: 20,

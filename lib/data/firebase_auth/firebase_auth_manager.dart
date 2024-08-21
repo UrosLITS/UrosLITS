@@ -38,7 +38,7 @@ class FirebaseAuthManager {
       });
 
       if (snapshotRef.data() != null) {
-        AppUser user = AppUser.fromJson(snapshotRef.data()!);
+        final user = AppUser.fromJson(snapshotRef.data()!);
         return user;
       } else {
         return null;
@@ -47,31 +47,23 @@ class FirebaseAuthManager {
     return null;
   }
 
-  static Future<String?> registration(AppUser user) async {
+  static Future<void> registration(AppUser user) async {
     String? uID;
-    String? errorMessage;
 
-    try {
-      await auth
-          .createUserWithEmailAndPassword(
-              email: user.email, password: user.password)
-          .timeout(Duration(seconds: 3), onTimeout: () {
-        throw Exception("Cant reach server");
-      });
-      final User? checkUser = auth.currentUser;
-      if (checkUser != null) {
-        uID = checkUser.uid;
-      }
-      final userRef = db.collection("users").doc(uID);
-      await userRef.set(user.toJson()).timeout(Duration(seconds: 3),
-          onTimeout: () {
-        throw Exception("Cant reach server");
-      });
-    } on FirebaseAuthException catch (e) {
-      if (e.message != null) {
-        errorMessage = e.message;
-      }
+    await auth
+        .createUserWithEmailAndPassword(
+            email: user.email, password: user.password)
+        .timeout(Duration(seconds: 3), onTimeout: () {
+      throw Exception("Cant reach server");
+    });
+    final User? checkUser = auth.currentUser;
+    if (checkUser != null) {
+      uID = checkUser.uid;
     }
-    return errorMessage;
+    final userRef = db.collection("users").doc(uID);
+    await userRef.set(user.toJson()).timeout(Duration(seconds: 3),
+        onTimeout: () {
+      throw Exception("Cant reach server");
+    });
   }
 }
