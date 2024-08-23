@@ -1,4 +1,5 @@
 import 'package:book/app_routes/app_routes.dart';
+import 'package:book/custom_text_form.dart';
 import 'package:book/presentation/common/book_app_bar.dart';
 import 'package:book/styles/app_colors.dart';
 import 'package:flutter/cupertino.dart';
@@ -131,28 +132,7 @@ class _LoginPageState extends State<LoginPage> {
           SizedBox(
             height: 10,
           ),
-          TextFormField(
-            maxLines: 1,
-            enableInteractiveSelection: true,
-            keyboardType: TextInputType.emailAddress,
-            maxLength: 30,
-            decoration: InputDecoration(
-              counterText: "",
-              focusedBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(10),
-                borderSide: BorderSide(color: Colors.black, width: 1),
-              ),
-              alignLabelWithHint: true,
-              labelStyle: TextStyle(color: Colors.black),
-              labelText: AppLocalizations.of(context)!.email,
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(10),
-                borderSide: BorderSide(
-                  color: Colors.grey,
-                  width: 1,
-                ),
-              ),
-            ),
+          CustomTextForm(
             validator: (value) {
               if (value!.isNotEmpty) {
                 email = value;
@@ -161,46 +141,15 @@ class _LoginPageState extends State<LoginPage> {
                 return AppLocalizations.of(context)!.empty_email;
               }
             },
+            labelText: AppLocalizations.of(context)!.email,
+            isNonPasswordField: true,
+            keyboardType: TextInputType.text,
+            maxLenght: 30,
           ),
           SizedBox(
             height: 30,
           ),
-          TextFormField(
-            maxLines: 1,
-            obscureText: !passwordVisible,
-            enableInteractiveSelection: true,
-            keyboardType: TextInputType.text,
-            maxLength: 16,
-            decoration: InputDecoration(
-              counterText: "",
-              focusedBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(10),
-                borderSide: BorderSide(color: Colors.black, width: 1),
-              ),
-              alignLabelWithHint: true,
-              labelStyle: TextStyle(color: Colors.black),
-              labelText: AppLocalizations.of(context)!.password,
-              suffixIcon: IconButton(
-                icon: Icon(
-                  passwordVisible ? Icons.visibility : Icons.visibility_off,
-                  color: Colors.black,
-                ),
-                onPressed: () {
-                  setState(
-                    () {
-                      passwordVisible = !passwordVisible;
-                    },
-                  );
-                },
-              ),
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(10),
-                borderSide: BorderSide(
-                  color: Colors.grey,
-                  width: 1,
-                ),
-              ),
-            ),
+          CustomTextForm(
             validator: (value) {
               if (value!.isNotEmpty) {
                 password = value;
@@ -209,6 +158,10 @@ class _LoginPageState extends State<LoginPage> {
                 return AppLocalizations.of(context)!.empty_password;
               }
             },
+            labelText: AppLocalizations.of(context)!.password,
+            keyboardType: TextInputType.text,
+            isNonPasswordField: false,
+            maxLenght: 16,
           )
         ],
       ),

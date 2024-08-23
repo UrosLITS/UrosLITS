@@ -16,7 +16,8 @@ class ValidationUtils {
     }
   }
 
-  static String? passwordValidator(BuildContext context, String? value) {
+  static String? passwordValidator(
+      BuildContext context, String? value, int maxPasswordLenght) {
     if (value == null || value.isEmpty) {
       return AppLocalizations.of(context)?.empty_password;
     } else if (!value.contains(RegExp(r'[A-Z]'))) {
@@ -28,7 +29,7 @@ class ValidationUtils {
     } else if (!value.contains(RegExp(r'[!@#\$%^&*()<>?/|}{~:]'))) {
       return AppLocalizations.of(context)?.missing_special_char;
     }
-    if (value.length < 8) {
+    if (value.length < maxPasswordLenght) {
       return AppLocalizations.of(context)?.not_long_enough_pass;
     } else {
       return null;

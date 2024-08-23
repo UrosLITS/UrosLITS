@@ -19,7 +19,7 @@ class AppBarLogReg extends StatelessWidget implements PreferredSizeWidget {
         borderRadius: BorderRadius.only(bottomLeft: Radius.circular(60)),
       ),
       bottom: PreferredSize(
-        preferredSize: Size.fromHeight(150),
+        preferredSize: preferredSize,
         child: Container(
           width: double.infinity,
           height: 120,
@@ -32,8 +32,10 @@ class AppBarLogReg extends StatelessWidget implements PreferredSizeWidget {
           child: Padding(
               padding: const EdgeInsets.only(bottom: 20.0),
               child: Container(
-                decoration:
-                    BoxDecoration(shape: BoxShape.circle, color: Colors.white),
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: Colors.white,
+                ),
                 child: Icon(
                   Icons.person,
                   size: 50,
@@ -56,5 +58,5 @@ class AppBarLogReg extends StatelessWidget implements PreferredSizeWidget {
   }
 
   @override
-  Size get preferredSize => Size.fromHeight(200); // Return the desired height
+  Size get preferredSize => Size.fromHeight(200);
 }
