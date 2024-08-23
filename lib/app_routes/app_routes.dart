@@ -4,18 +4,18 @@ import 'package:book/presentation/register/view/register_page_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 
-const String HomeRoute = '/';
-const String LoginRoute = '/Login';
-const String RegisterRoute = '/Register';
+const String homeRoute = '/';
+const String loginRoute = '/Login';
+const String registerRoute = '/Register';
 
 class AppRoutes {
   static Route<dynamic>? onGenerateRoutes(RouteSettings setting) {
     switch (setting.name) {
-      case HomeRoute:
+      case homeRoute:
         return _materialRoute(const HomePageView());
-      case LoginRoute:
+      case loginRoute:
         return _materialRoute(const LoginPage());
-      case RegisterRoute:
+      case registerRoute:
         return _materialRoute(const RegisterPageView());
     }
   }

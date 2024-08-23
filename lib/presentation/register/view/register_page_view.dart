@@ -1,7 +1,5 @@
-import 'package:book/models/app_user.dart';
-import 'package:book/presentation/app_bar_login_register/widget/app_bar_log_reg.dart';
+import 'package:book/presentation/common/book_app_bar.dart';
 import 'package:book/styles/app_colors.dart';
-import 'package:book/styles/app_styles.dart';
 import 'package:book/validation/validation.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -26,16 +24,11 @@ class _RegisterPageView extends State<RegisterPageView> {
 
   @override
   Widget build(BuildContext context) {
-    final welcomeText = AppLocalizations.of(context)!.welcome;
-    final registerText = AppLocalizations.of(context)!.register;
-    final signInText = AppLocalizations.of(context)!.sign_in;
     return WillPopScope(
       onWillPop: () => onBackPressed(context),
       child: Scaffold(
           appBar: AppBarLogReg(
-            welcomeText: welcomeText,
-            registerText: registerText,
-            signInText: signInText,
+            titleText: AppLocalizations.of(context)!.register,
           ),
           body: SingleChildScrollView(
             keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
@@ -130,7 +123,6 @@ class _RegisterPageView extends State<RegisterPageView> {
               if (value == null || value.isEmpty) {
                 return AppLocalizations.of(context)!.empty_name;
               }
-              name = value;
               return null;
             }),
         SizedBox(
@@ -163,7 +155,6 @@ class _RegisterPageView extends State<RegisterPageView> {
               if (value == null || value.isEmpty) {
                 return AppLocalizations.of(context)!.empty_last_name;
               }
-              lastName = value;
               return null;
             }),
         SizedBox(
@@ -193,7 +184,6 @@ class _RegisterPageView extends State<RegisterPageView> {
               email = value;
             },
             validator: (value) {
-              email = value;
               final isValid = ValidationUtils.validateEmailAddress(value!);
               if (value.isNotEmpty && isValid == true) {
                 return null;
@@ -242,8 +232,6 @@ class _RegisterPageView extends State<RegisterPageView> {
               password = value;
             },
             validator: (value) {
-              password = value;
-
               final isValid = ValidationUtils.passwordValidator(context, value);
 
               if (value!.isNotEmpty && isValid == null) {
@@ -293,7 +281,6 @@ class _RegisterPageView extends State<RegisterPageView> {
               confirmPassword = value;
             },
             validator: (value) {
-              confirmPassword = value;
               if (value!.isNotEmpty && value == password) {
                 return null;
               } else if (value.isNotEmpty && confirmPassword != password) {

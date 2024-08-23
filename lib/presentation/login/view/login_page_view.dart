@@ -1,4 +1,5 @@
-import 'package:book/presentation/app_bar_login_register/widget/app_bar_log_reg.dart';
+import 'package:book/app_routes/app_routes.dart';
+import 'package:book/presentation/common/book_app_bar.dart';
 import 'package:book/styles/app_colors.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -24,17 +25,10 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
-    final welcomeText = AppLocalizations.of(context)!.welcome;
-    final registerText = AppLocalizations.of(context)!.login;
-    final signInText = AppLocalizations.of(context)!.login_to_continue;
-
     return Scaffold(
       appBar: AppBarLogReg(
-        welcomeText: welcomeText,
-        registerText: registerText,
-        signInText: signInText,
+        titleText: AppLocalizations.of(context)!.login,
       ),
-
       body: SingleChildScrollView(
         keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
         child: buildBody(),
@@ -112,7 +106,7 @@ class _LoginPageState extends State<LoginPage> {
                   ),
                   TextButton(
                     onPressed: () {
-                      Navigator.pushNamed(context, '/Register');
+                      Navigator.pushNamed(context, registerRoute);
                     },
                     child: Text(
                       AppLocalizations.of(context)!.sign_up,

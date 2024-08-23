@@ -1,19 +1,15 @@
 import 'package:book/styles/app_colors.dart';
 import 'package:book/styles/app_styles.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class AppBarLogReg extends StatelessWidget implements PreferredSizeWidget {
-  AppBarLogReg({
-    required this.welcomeText,
-    required this.registerText,
-    required this.signInText,
+  const AppBarLogReg({
+    super.key,
+    required this.titleText,
   });
 
-  final String welcomeText;
-  final String registerText;
-  final String signInText;
+  final String titleText;
 
   @override
   Widget build(BuildContext context) {
@@ -34,25 +30,18 @@ class AppBarLogReg extends StatelessWidget implements PreferredSizeWidget {
             ),
           ),
           child: Padding(
-            padding: const EdgeInsets.only(bottom: 20.0),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(
-                  welcomeText,
-                  style: TextStyle(fontSize: 30, color: AppColors.black),
+              padding: const EdgeInsets.only(bottom: 20.0),
+              child: Container(
+                decoration:
+                    BoxDecoration(shape: BoxShape.circle, color: Colors.white),
+                child: Icon(
+                  Icons.person,
+                  size: 50,
                 ),
-                SizedBox(height: 20),
-                Text(
-                  signInText,
-                  style: TextStyle(fontSize: 15, color: AppColors.black),
-                ),
-              ],
-            ),
-          ),
+              )),
         ),
       ),
-      title: Text(registerText, style: AppTextStyles.titleLogin()),
+      title: Text(titleText, style: AppTextStyles.titleLogin()),
       centerTitle: true,
       toolbarHeight: 75,
       backgroundColor: AppColors.brown.withOpacity(0.8),

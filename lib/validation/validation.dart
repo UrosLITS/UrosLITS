@@ -1,15 +1,19 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
+const emailRegex =
+    r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$';
+
+const passwordRegex =
+    r'^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[!@#\$&*~]).{8,}$';
+
 class ValidationUtils {
   static bool validateEmailAddress(String input) {
-    const emailRegex =
-        r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$';
-
     if (RegExp(emailRegex).hasMatch(input)) {
       return true;
-    } else
+    } else {
       return false;
+    }
   }
 
   static String? passwordValidator(BuildContext context, String? value) {
@@ -32,9 +36,6 @@ class ValidationUtils {
   }
 
   static bool validatePassword(String input) {
-    const passwordRegex =
-        r'^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[!@#\$&*~]).{8,}$';
-
     if (RegExp(passwordRegex).hasMatch(input)) {
       return true;
     } else {
