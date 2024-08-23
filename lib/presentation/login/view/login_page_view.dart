@@ -1,5 +1,7 @@
+import 'package:book/app_routes/app_routes.dart';
+import 'package:book/custom_text_form.dart';
+import 'package:book/presentation/common/book_app_bar.dart';
 import 'package:book/styles/app_colors.dart';
-import 'package:book/styles/app_styles.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -25,51 +27,8 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: PreferredSize(
-        preferredSize: Size.fromHeight(200),
-        child: AppBar(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.only(
-              bottomLeft: Radius.circular(60),
-            ),
-          ),
-          bottom: PreferredSize(
-            preferredSize: Size.fromHeight(100),
-            child: Container(
-              width: double.infinity,
-              height: 120,
-              decoration: BoxDecoration(
-                color: AppColors.brown.withOpacity(0),
-                borderRadius: BorderRadius.only(
-                  bottomLeft: Radius.elliptical(60, 60),
-                ),
-              ),
-              child: Padding(
-                padding: const EdgeInsets.only(bottom: 20.0),
-                child: Container(
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: AppColors.white,
-                  ),
-                  child: Icon(
-                    Icons.person,
-                    size: 50,
-                  ),
-                ),
-              ),
-            ),
-          ),
-          automaticallyImplyLeading: false,
-          title: Text(
-            AppLocalizations.of(context)!.login,
-            textAlign: TextAlign.center,
-            style: AppTextStyles.titleLogin(),
-          ),
-          centerTitle: true,
-          toolbarHeight: 100,
-          backgroundColor: AppColors.brown.withOpacity(0.8),
-          elevation: 0,
-        ),
+      appBar: AppBarLogReg(
+        titleText: AppLocalizations.of(context)!.login,
       ),
       body: SingleChildScrollView(
         keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
@@ -148,7 +107,7 @@ class _LoginPageState extends State<LoginPage> {
                   ),
                   TextButton(
                     onPressed: () {
-                      //ovde ide pushNamed ka Registraciji
+                      Navigator.pushNamed(context, registerRoute);
                     },
                     child: Text(
                       AppLocalizations.of(context)!.sign_up,
@@ -173,28 +132,7 @@ class _LoginPageState extends State<LoginPage> {
           SizedBox(
             height: 10,
           ),
-          TextFormField(
-            maxLines: 1,
-            enableInteractiveSelection: true,
-            keyboardType: TextInputType.emailAddress,
-            maxLength: 30,
-            decoration: InputDecoration(
-              counterText: "",
-              focusedBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(10),
-                borderSide: BorderSide(color: Colors.black, width: 1),
-              ),
-              alignLabelWithHint: true,
-              labelStyle: TextStyle(color: Colors.black),
-              labelText: AppLocalizations.of(context)!.email,
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(10),
-                borderSide: BorderSide(
-                  color: Colors.grey,
-                  width: 1,
-                ),
-              ),
-            ),
+          CustomTextForm(
             validator: (value) {
               if (value!.isNotEmpty) {
                 email = value;
@@ -203,46 +141,15 @@ class _LoginPageState extends State<LoginPage> {
                 return AppLocalizations.of(context)!.empty_email;
               }
             },
+            labelText: AppLocalizations.of(context)!.email,
+            isNonPasswordField: true,
+            keyboardType: TextInputType.text,
+            maxLenght: 30,
           ),
           SizedBox(
             height: 30,
           ),
-          TextFormField(
-            maxLines: 1,
-            obscureText: !passwordVisible,
-            enableInteractiveSelection: true,
-            keyboardType: TextInputType.text,
-            maxLength: 16,
-            decoration: InputDecoration(
-              counterText: "",
-              focusedBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(10),
-                borderSide: BorderSide(color: Colors.black, width: 1),
-              ),
-              alignLabelWithHint: true,
-              labelStyle: TextStyle(color: Colors.black),
-              labelText: AppLocalizations.of(context)!.password,
-              suffixIcon: IconButton(
-                icon: Icon(
-                  passwordVisible ? Icons.visibility : Icons.visibility_off,
-                  color: Colors.black,
-                ),
-                onPressed: () {
-                  setState(
-                    () {
-                      passwordVisible = !passwordVisible;
-                    },
-                  );
-                },
-              ),
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(10),
-                borderSide: BorderSide(
-                  color: Colors.grey,
-                  width: 1,
-                ),
-              ),
-            ),
+          CustomTextForm(
             validator: (value) {
               if (value!.isNotEmpty) {
                 password = value;
@@ -251,6 +158,10 @@ class _LoginPageState extends State<LoginPage> {
                 return AppLocalizations.of(context)!.empty_password;
               }
             },
+            labelText: AppLocalizations.of(context)!.password,
+            keyboardType: TextInputType.text,
+            isNonPasswordField: false,
+            maxLenght: 16,
           )
         ],
       ),

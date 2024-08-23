@@ -1,3 +1,4 @@
+import 'package:book/app_routes/app_routes.dart';
 import 'package:book/presentation/login/view/login_page_view.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -21,6 +22,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
         title: 'Flutter Demo',
+        onGenerateRoute: AppRoutes.onGenerateRoutes,
         debugShowCheckedModeBanner: false,
         theme: ThemeData(
           colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),

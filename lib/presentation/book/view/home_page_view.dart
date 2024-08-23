@@ -1,14 +1,14 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-class HomeBookPageView extends StatefulWidget {
-  const HomeBookPageView({super.key});
+class HomePageView extends StatefulWidget {
+  const HomePageView({super.key});
 
   @override
-  State<HomeBookPageView> createState() => _HomeBookPageView();
+  State<HomePageView> createState() => _HomeBookPageView();
 }
 
-class _HomeBookPageView extends State<HomeBookPageView> {
+class _HomeBookPageView extends State<HomePageView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold();
