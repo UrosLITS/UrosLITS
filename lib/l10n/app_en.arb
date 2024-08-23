@@ -54,6 +54,10 @@
   "no_more_pages_for_swipe": "No more pages for swipe",
   "stop_reading_dialog": "Are you sure you want to stop reading book?",
   "invalid_url": "Invalid url",
-  "go_back": "Go back"
-
+  "go_back": "Go back",
+  "no_upper_case": "Password must contain at least one uppercase letter",
+  "no_lowe_case": "Password must contain at least one lowercase letter",
+  "missing_number": "Password must contain at least one numeric character",
+  "missing_special_char": "Password must contain at least one special character",
+  "not_long_enough_pass": "Password must contain at least 8 characters"
 }

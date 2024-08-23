@@ -1,7 +1,8 @@
 import 'package:book/models/app_user.dart';
+import 'package:book/presentation/app_bar_login_register/widget/app_bar_log_reg.dart';
 import 'package:book/styles/app_colors.dart';
 import 'package:book/styles/app_styles.dart';
-import 'package:book/validation/validation_form.dart';
+import 'package:book/validation/validation.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -20,74 +21,27 @@ class _RegisterPageView extends State<RegisterPageView> {
   String? password;
   String? confirmPassword;
   final _formKey = GlobalKey<FormState>();
-  late String message;
   bool passwordVisible = false;
   bool confPasswordVisible = false;
 
   @override
   Widget build(BuildContext context) {
+    final welcomeText = AppLocalizations.of(context)!.welcome;
+    final registerText = AppLocalizations.of(context)!.register;
+    final signInText = AppLocalizations.of(context)!.sign_in;
     return WillPopScope(
-        child: Scaffold(
-            appBar: PreferredSize(
-              preferredSize: Size.fromHeight(200),
-              child: AppBar(
-                  automaticallyImplyLeading: false,
-                  shape: RoundedRectangleBorder(
-                      borderRadius:
-                          BorderRadius.only(bottomLeft: Radius.circular(60))),
-                  bottom: PreferredSize(
-                    preferredSize: Size.fromHeight(150),
-                    child: Container(
-                      width: double.infinity,
-                      height: 120,
-                      decoration: BoxDecoration(
-                        color: Colors.brown.withOpacity(0),
-                        borderRadius: BorderRadius.only(
-                          bottomLeft: Radius.elliptical(60, 60),
-                        ),
-                      ),
-                      child: Padding(
-                        padding: const EdgeInsets.only(bottom: 20.0),
-                        child: Container(
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Text(
-                                AppLocalizations.of(context)!.welcome,
-                                style: TextStyle(
-                                    fontSize: 30, color: AppColors.black),
-                              ),
-                              SizedBox(
-                                height: 20,
-                              ),
-                              Text(
-                                AppLocalizations.of(context)!.sign_in,
-                                style: TextStyle(
-                                    fontSize: 15, color: AppColors.black),
-                              )
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                  title: Text(AppLocalizations.of(context)!.register,
-                      style: AppTextStyles.titleLogin()),
-                  centerTitle: true,
-                  toolbarHeight: 75,
-                  backgroundColor: AppColors.brown.withOpacity(0.8),
-                  elevation: 0,
-                  leading: IconButton(
-                      onPressed: () {
-                        Navigator.maybePop(context);
-                      },
-                      icon: Icon(Icons.arrow_back_ios))),
-            ),
-            body: SingleChildScrollView(
-              keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
-              child: buildBody(),
-            )),
-        onWillPop: () => onBackPressed(context));
+      onWillPop: () => onBackPressed(context),
+      child: Scaffold(
+          appBar: AppBarLogReg(
+            welcomeText: welcomeText,
+            registerText: registerText,
+            signInText: signInText,
+          ),
+          body: SingleChildScrollView(
+            keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+            child: buildBody(),
+          )),
+    );
   }
 
   Widget buildBody() {
@@ -103,7 +57,7 @@ class _RegisterPageView extends State<RegisterPageView> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                inputForm(),
+                _buildInputForm(),
                 SizedBox(
                   height: 40,
                 ),
@@ -142,7 +96,7 @@ class _RegisterPageView extends State<RegisterPageView> {
     );
   }
 
-  Widget inputForm() {
+  Widget _buildInputForm() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -171,7 +125,6 @@ class _RegisterPageView extends State<RegisterPageView> {
             ),
             onChanged: (value) {
               name = value;
-              setState(() {});
             },
             validator: (value) {
               if (value == null || value.isEmpty) {
@@ -240,9 +193,9 @@ class _RegisterPageView extends State<RegisterPageView> {
               email = value;
             },
             validator: (value) {
-              final isValid = validateEmailAddress(value!);
+              email = value;
+              final isValid = ValidationUtils.validateEmailAddress(value!);
               if (value.isNotEmpty && isValid == true) {
-                email = value;
                 return null;
               } else if (value.isNotEmpty && isValid == false) {
                 return AppLocalizations.of(context)!.invalid_email;
@@ -287,13 +240,13 @@ class _RegisterPageView extends State<RegisterPageView> {
             ),
             onChanged: (value) {
               password = value;
-              setState(() {});
             },
             validator: (value) {
-              final isValid = passwordValidator(value);
+              password = value;
+
+              final isValid = ValidationUtils.passwordValidator(context, value);
 
               if (value!.isNotEmpty && isValid == null) {
-                password = value;
                 return null;
               } else if (value.isNotEmpty && isValid != null) {
                 return isValid;
@@ -338,11 +291,10 @@ class _RegisterPageView extends State<RegisterPageView> {
             ),
             onChanged: (value) {
               confirmPassword = value;
-              setState(() {});
             },
             validator: (value) {
+              confirmPassword = value;
               if (value!.isNotEmpty && value == password) {
-                confirmPassword = value;
                 return null;
               } else if (value.isNotEmpty && confirmPassword != password) {
                 return AppLocalizations.of(context)!.passwords_doesnt_match;

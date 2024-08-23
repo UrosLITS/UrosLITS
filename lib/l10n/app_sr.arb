@@ -53,9 +53,10 @@
   "no_more_pages_for_swipe": "Nema vise stranica za listanje",
   "stop_reading_dialog": "Da li ste sigurni da zelite da prekinete pisanje knjige",
   "invalid_url": "Neispravan url",
-  "go_back": "Idi nazad"
-
-
-
-
+  "go_back": "Idi nazad",
+  "no_upper_case": "Sifra mora da sadrzi makar jedno veliko slovo",
+  "no_lowe_case": "Sifra mora da sadrzi makar jedno malo slovo",
+  "missing_number": "Sifra mora da sadrzi makar jedan broj",
+  "missing_special_char": "Sifra mora da sadrzi makar jedan specijalni karakter",
+  "not_long_enough_pass": "Sifra mora da sadrzi makar 8 karaktera"
 }

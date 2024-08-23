@@ -1,5 +1,5 @@
+import 'package:book/presentation/app_bar_login_register/widget/app_bar_log_reg.dart';
 import 'package:book/styles/app_colors.dart';
-import 'package:book/styles/app_styles.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -24,53 +24,17 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
+    final welcomeText = AppLocalizations.of(context)!.welcome;
+    final registerText = AppLocalizations.of(context)!.login;
+    final signInText = AppLocalizations.of(context)!.login_to_continue;
+
     return Scaffold(
-      appBar: PreferredSize(
-        preferredSize: Size.fromHeight(200),
-        child: AppBar(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.only(
-              bottomLeft: Radius.circular(60),
-            ),
-          ),
-          bottom: PreferredSize(
-            preferredSize: Size.fromHeight(100),
-            child: Container(
-              width: double.infinity,
-              height: 120,
-              decoration: BoxDecoration(
-                color: AppColors.brown.withOpacity(0),
-                borderRadius: BorderRadius.only(
-                  bottomLeft: Radius.elliptical(60, 60),
-                ),
-              ),
-              child: Padding(
-                padding: const EdgeInsets.only(bottom: 20.0),
-                child: Container(
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: AppColors.white,
-                  ),
-                  child: Icon(
-                    Icons.person,
-                    size: 50,
-                  ),
-                ),
-              ),
-            ),
-          ),
-          automaticallyImplyLeading: false,
-          title: Text(
-            AppLocalizations.of(context)!.login,
-            textAlign: TextAlign.center,
-            style: AppTextStyles.titleLogin(),
-          ),
-          centerTitle: true,
-          toolbarHeight: 100,
-          backgroundColor: AppColors.brown.withOpacity(0.8),
-          elevation: 0,
-        ),
+      appBar: AppBarLogReg(
+        welcomeText: welcomeText,
+        registerText: registerText,
+        signInText: signInText,
       ),
+
       body: SingleChildScrollView(
         keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
         child: buildBody(),
@@ -148,7 +112,7 @@ class _LoginPageState extends State<LoginPage> {
                   ),
                   TextButton(
                     onPressed: () {
-                      //ovde ide pushNamed ka Registraciji
+                      Navigator.pushNamed(context, '/Register');
                     },
                     child: Text(
                       AppLocalizations.of(context)!.sign_up,
