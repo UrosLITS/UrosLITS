@@ -1,3 +1,4 @@
+import 'package:book/core/constants.dart';
 import 'package:book/models/app_user.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -29,7 +30,7 @@ class FirebaseAuthSingleton {
     await _auth
         .signInWithEmailAndPassword(email: email, password: password)
         .timeout(Duration(seconds: 3), onTimeout: () {
-      throw Exception("Can't reach server");
+      throw Exception(errorState);
     });
   }
 
@@ -44,14 +45,14 @@ class FirebaseAuthSingleton {
   Future<AppUser?> downloadCurrentUser() async {
     final result =
         await checkUserLogin().timeout(Duration(seconds: 3), onTimeout: () {
-      throw Exception("Can't reach server");
+      throw Exception(errorState);
     });
 
     if (result != null) {
       final userRef = _db.collection("users").doc(result);
       final snapshotRef =
           await userRef.get().timeout(Duration(seconds: 3), onTimeout: () {
-        throw Exception("Can't reach server");
+        throw Exception(errorState);
       });
 
       if (snapshotRef.data() != null) {
@@ -71,7 +72,7 @@ class FirebaseAuthSingleton {
         .createUserWithEmailAndPassword(
             email: user.email, password: user.password)
         .timeout(Duration(seconds: 3), onTimeout: () {
-      throw Exception("Can't reach server");
+      throw Exception(errorState);
     });
     final User? checkUser = _auth.currentUser;
     if (checkUser != null) {
@@ -80,7 +81,7 @@ class FirebaseAuthSingleton {
     final userRef = _db.collection("users").doc(uID);
     await userRef.set(user.toJson()).timeout(Duration(seconds: 3),
         onTimeout: () {
-      throw Exception("Can't reach server");
+      throw Exception(errorState);
     });
   }
 }

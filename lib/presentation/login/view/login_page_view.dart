@@ -1,8 +1,10 @@
 import 'package:book/app_routes/app_routes.dart';
+import 'package:book/core/constants.dart';
 import 'package:book/presentation/common/custom_text_form.dart';
 import 'package:book/models/app_user_singleton.dart';
 import 'package:book/presentation/book/view/home_page_view.dart';
 import 'package:book/presentation/common/book_app_bar.dart';
+import 'package:book/presentation/common/snackbar.dart';
 import 'package:book/presentation/login/bloc/bloc_login.dart';
 import 'package:book/presentation/login/bloc/login_event.dart';
 import 'package:book/presentation/login/bloc/login_state.dart';
@@ -52,22 +54,15 @@ class _LoginPageState extends State<LoginPage> {
           ),
         );
       } else if (state is ErrorState) {
-        final errorSnackbar = SnackBar(
-          content: Text(
-            AppLocalizations.of(context)!.error,
-            textAlign: TextAlign.center,
-          ),
-        );
-        ScaffoldMessenger.of(context).removeCurrentSnackBar();
-        ScaffoldMessenger.of(context).showSnackBar(errorSnackbar);
+        CustomSnackBar.showSnackBar(
+            color: Colors.red,
+            content: AppLocalizations.of(context)!.error,
+            context: context);
       } else if (state is ErrorAuthState) {
-        final errorAuthSnackBar = SnackBar(
-            content: Text(
-          AppLocalizations.of(context)!.error_auth,
-          textAlign: TextAlign.center,
-        ));
-        ScaffoldMessenger.of(context).removeCurrentSnackBar();
-        ScaffoldMessenger.of(context).showSnackBar(errorAuthSnackBar);
+        CustomSnackBar.showSnackBar(
+            color: Colors.red,
+            content: AppLocalizations.of(context)!.error_auth,
+            context: context);
       }
     });
   }
@@ -179,7 +174,7 @@ class _LoginPageState extends State<LoginPage> {
             labelText: AppLocalizations.of(context)!.email,
             isNonPasswordField: true,
             keyboardType: TextInputType.text,
-            maxLenght: 30,
+            maxLenght: emailMaxLenght,
           ),
           SizedBox(
             height: 30,
@@ -196,7 +191,7 @@ class _LoginPageState extends State<LoginPage> {
             labelText: AppLocalizations.of(context)!.password,
             keyboardType: TextInputType.text,
             isNonPasswordField: false,
-            maxLenght: 16,
+            maxLenght: maxPasswordLenght,
           )
         ],
       ),

@@ -14,14 +14,7 @@ Future<void> main() async {
   await SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,
   ]);
-  runApp(MultiBlocProvider(
-    providers: [
-      BlocProvider<LoginBloc>(
-        create: (BuildContext context) => LoginBloc(),
-      ),
-    ],
-    child: MyApp(),
-  ));
+  runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
@@ -29,20 +22,24 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-        title: 'Flutter Demo',
-        onGenerateRoute: AppRoutes.onGenerateRoutes,
-        debugShowCheckedModeBanner: false,
-        theme: ThemeData(
-          colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-          useMaterial3: true,
-        ),
-        localizationsDelegates: [
-          AppLocalizations.delegate,
-          GlobalMaterialLocalizations.delegate,
-          GlobalCupertinoLocalizations.delegate
+    return MultiBlocProvider(
+        providers: [
+          BlocProvider<LoginBloc>(create: (BuildContext context) => LoginBloc())
         ],
-        supportedLocales: [Locale('en'), Locale('sr')],
-        home: LoginPage());
+        child: MaterialApp(
+            title: 'Flutter Demo',
+            onGenerateRoute: AppRoutes.onGenerateRoutes,
+            debugShowCheckedModeBanner: false,
+            theme: ThemeData(
+              colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+              useMaterial3: true,
+            ),
+            localizationsDelegates: [
+              AppLocalizations.delegate,
+              GlobalMaterialLocalizations.delegate,
+              GlobalCupertinoLocalizations.delegate
+            ],
+            supportedLocales: [Locale('en'), Locale('sr')],
+            home: LoginPage()));
   }
 }

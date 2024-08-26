@@ -58,7 +58,7 @@
   "no_lowe_case": "Sifra mora da sadrzi makar jedno malo slovo",
   "missing_number": "Sifra mora da sadrzi makar jedan broj",
   "missing_special_char": "Sifra mora da sadrzi makar jedan specijalni karakter",
-  "not_long_enough_pass": "Sifra mora da sadrzi makar 8 karaktera",
-  "error": "Izgubljena konekciaj sa serverom",
+  "not_long_enough_pass": "Sifra mora da sadrzi makar  karaktera",
+  "error": "Izgubljena konekcija sa serverom",
   "error_auth": "Neispravan email"
 }
