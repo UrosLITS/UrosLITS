@@ -1,4 +1,5 @@
 import 'package:book/app_routes/app_routes.dart';
+import 'package:book/models/app_user_singleton.dart';
 import 'package:book/presentation/login/bloc/bloc_login.dart';
 import 'package:book/presentation/login/view/login_page_view.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -27,18 +28,19 @@ class MyApp extends StatelessWidget {
           BlocProvider<LoginBloc>(create: (BuildContext context) => LoginBloc())
         ],
         child: MaterialApp(
-            title: 'Flutter Demo',
-            onGenerateRoute: AppRoutes.onGenerateRoutes,
-            debugShowCheckedModeBanner: false,
-            theme: ThemeData(
-              colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-              useMaterial3: true,
-            ),
-            localizationsDelegates: [
-              AppLocalizations.delegate,
-              GlobalMaterialLocalizations.delegate,
-              GlobalCupertinoLocalizations.delegate
-            ],
-            home: LoginPage()));
+          onGenerateRoute: AppRoutes.onGenerateRoutes,
+          debugShowCheckedModeBanner: false,
+          theme: ThemeData(
+            colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+            useMaterial3: true,
+          ),
+          localizationsDelegates: [
+            AppLocalizations.delegate,
+            GlobalMaterialLocalizations.delegate,
+            GlobalCupertinoLocalizations.delegate
+          ],
+          initialRoute:
+              AppUserSingleton().appUser != null ? homeRoute : loginRoute,
+        ));
   }
 }

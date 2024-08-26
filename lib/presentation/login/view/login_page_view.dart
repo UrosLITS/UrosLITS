@@ -1,10 +1,11 @@
 import 'package:book/app_routes/app_routes.dart';
 import 'package:book/core/constants.dart';
+import 'package:book/presentation/common/custom_loading_screen.dart';
 import 'package:book/presentation/common/custom_text_form.dart';
 import 'package:book/models/app_user_singleton.dart';
 import 'package:book/presentation/book/view/home_page_view.dart';
 import 'package:book/presentation/common/book_app_bar.dart';
-import 'package:book/presentation/common/snackbar.dart';
+import 'package:book/presentation/common/custom_snackbar.dart';
 import 'package:book/presentation/login/bloc/bloc_login.dart';
 import 'package:book/presentation/login/bloc/login_event.dart';
 import 'package:book/presentation/login/bloc/login_state.dart';
@@ -35,36 +36,36 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<LoginBloc, LoginState>(
-        builder: (BuildContext context, Object? state) {
-      return Scaffold(
-        appBar: AppBarLogReg(
-          titleText: AppLocalizations.of(context)!.login,
-        ),
-        body: SingleChildScrollView(
-          keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
-          child: buildBody(),
-        ),
-      );
-    }, listener: (context, state) async {
-      if (state is SuccessfulLogin) {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-            builder: (context) => HomePageView(),
+      listener: (context, state) async {
+        if (state is LoadingState) {
+          CustomLoadingScreen.showLoadingScreen(context);
+        }
+        if (state is SuccessfulLogin) {
+          Navigator.pushReplacementNamed(context, registerRoute);
+        } else if (state is ErrorState) {
+          CustomSnackBar.showSnackBar(
+              color: Colors.red,
+              content: AppLocalizations.of(context)!.error,
+              context: context);
+        } else if (state is ErrorAuthState) {
+          CustomSnackBar.showSnackBar(
+              color: Colors.red,
+              content: AppLocalizations.of(context)!.error_auth,
+              context: context);
+        }
+      },
+      builder: (BuildContext context, Object? state) {
+        return Scaffold(
+          appBar: AppBarLogReg(
+            titleText: AppLocalizations.of(context)!.login,
+          ),
+          body: SingleChildScrollView(
+            keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+            child: buildBody(),
           ),
         );
-      } else if (state is ErrorState) {
-        CustomSnackBar.showSnackBar(
-            color: Colors.red,
-            content: AppLocalizations.of(context)!.error,
-            context: context);
-      } else if (state is ErrorAuthState) {
-        CustomSnackBar.showSnackBar(
-            color: Colors.red,
-            content: AppLocalizations.of(context)!.error_auth,
-            context: context);
-      }
-    });
+      },
+    );
   }
 
   Widget buildBody() {
@@ -174,7 +175,7 @@ class _LoginPageState extends State<LoginPage> {
             labelText: AppLocalizations.of(context)!.email,
             isNonPasswordField: true,
             keyboardType: TextInputType.text,
-            maxLenght: emailMaxLength,
+            maxLength: emailMaxLength,
           ),
           SizedBox(
             height: 30,
@@ -191,7 +192,7 @@ class _LoginPageState extends State<LoginPage> {
             labelText: AppLocalizations.of(context)!.password,
             keyboardType: TextInputType.text,
             isNonPasswordField: false,
-            maxLenght: maxPasswordLength,
+            maxLength: maxPasswordLength,
           )
         ],
       ),
