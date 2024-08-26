@@ -174,7 +174,7 @@ class _LoginPageState extends State<LoginPage> {
             labelText: AppLocalizations.of(context)!.email,
             isNonPasswordField: true,
             keyboardType: TextInputType.text,
-            maxLenght: emailMaxLenght,
+            maxLenght: emailMaxLength,
           ),
           SizedBox(
             height: 30,
@@ -191,7 +191,7 @@ class _LoginPageState extends State<LoginPage> {
             labelText: AppLocalizations.of(context)!.password,
             keyboardType: TextInputType.text,
             isNonPasswordField: false,
-            maxLenght: maxPasswordLenght,
+            maxLenght: maxPasswordLength,
           )
         ],
       ),

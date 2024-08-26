@@ -30,7 +30,7 @@ class FirebaseAuthSingleton {
     await _auth
         .signInWithEmailAndPassword(email: email, password: password)
         .timeout(Duration(seconds: 3), onTimeout: () {
-      throw Exception(errorState);
+      throw Exception(errorMessage);
     });
   }
 
@@ -45,14 +45,14 @@ class FirebaseAuthSingleton {
   Future<AppUser?> downloadCurrentUser() async {
     final result =
         await checkUserLogin().timeout(Duration(seconds: 3), onTimeout: () {
-      throw Exception(errorState);
+      throw Exception(errorMessage);
     });
 
     if (result != null) {
       final userRef = _db.collection("users").doc(result);
       final snapshotRef =
           await userRef.get().timeout(Duration(seconds: 3), onTimeout: () {
-        throw Exception(errorState);
+        throw Exception(errorMessage);
       });
 
       if (snapshotRef.data() != null) {
@@ -72,7 +72,7 @@ class FirebaseAuthSingleton {
         .createUserWithEmailAndPassword(
             email: user.email, password: user.password)
         .timeout(Duration(seconds: 3), onTimeout: () {
-      throw Exception(errorState);
+      throw Exception(errorMessage);
     });
     final User? checkUser = _auth.currentUser;
     if (checkUser != null) {
@@ -81,7 +81,7 @@ class FirebaseAuthSingleton {
     final userRef = _db.collection("users").doc(uID);
     await userRef.set(user.toJson()).timeout(Duration(seconds: 3),
         onTimeout: () {
-      throw Exception(errorState);
+      throw Exception(errorMessage);
     });
   }
 }

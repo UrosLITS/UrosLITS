@@ -1,5 +1,5 @@
-const maxPasswordLenght = 16;
-const minPasswordLenght = 8;
-const nameMaxLenght = 20;
-const emailMaxLenght = 30;
-const errorState = "Can not reach the server";
+const maxPasswordLength = 16;
+const minPasswordLength = 8;
+const nameMaxLength = 20;
+const emailMaxLength = 30;
+const errorMessage = "Can not reach the server";

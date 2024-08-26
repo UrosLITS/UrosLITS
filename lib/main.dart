@@ -39,7 +39,6 @@ class MyApp extends StatelessWidget {
               GlobalMaterialLocalizations.delegate,
               GlobalCupertinoLocalizations.delegate
             ],
-            supportedLocales: [Locale('en'), Locale('sr')],
             home: LoginPage()));
   }
 }

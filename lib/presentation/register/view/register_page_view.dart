@@ -136,7 +136,7 @@ class _RegisterPageView extends State<RegisterPageView> {
             labelText: AppLocalizations.of(context)!.name,
             keyboardType: TextInputType.text,
             isNonPasswordField: true,
-            maxLenght: nameMaxLenght),
+            maxLenght: nameMaxLength),
         SizedBox(
           height: 15,
         ),
@@ -151,7 +151,7 @@ class _RegisterPageView extends State<RegisterPageView> {
             labelText: AppLocalizations.of(context)!.last_name,
             keyboardType: TextInputType.text,
             isNonPasswordField: true,
-            maxLenght: nameMaxLenght),
+            maxLenght: nameMaxLength),
         SizedBox(
           height: 15,
         ),
@@ -170,7 +170,7 @@ class _RegisterPageView extends State<RegisterPageView> {
             labelText: AppLocalizations.of(context)!.email,
             keyboardType: TextInputType.text,
             isNonPasswordField: true,
-            maxLenght: emailMaxLenght),
+            maxLenght: emailMaxLength),
         SizedBox(
           height: 15,
         ),
@@ -191,7 +191,7 @@ class _RegisterPageView extends State<RegisterPageView> {
             labelText: AppLocalizations.of(context)!.password,
             keyboardType: TextInputType.text,
             isNonPasswordField: false,
-            maxLenght: maxPasswordLenght),
+            maxLenght: maxPasswordLength),
         SizedBox(
           height: 15,
         ),
@@ -209,7 +209,7 @@ class _RegisterPageView extends State<RegisterPageView> {
             labelText: AppLocalizations.of(context)!.confirm_password,
             keyboardType: TextInputType.text,
             isNonPasswordField: false,
-            maxLenght: maxPasswordLenght)
+            maxLenght: maxPasswordLength)
       ],
     );
   }
