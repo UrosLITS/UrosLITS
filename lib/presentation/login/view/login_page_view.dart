@@ -1,9 +1,15 @@
 import 'package:book/app_routes/app_routes.dart';
-import 'package:book/custom_text_form.dart';
+import 'package:book/presentation/common/custom_text_form.dart';
+import 'package:book/models/app_user_singleton.dart';
+import 'package:book/presentation/book/view/home_page_view.dart';
 import 'package:book/presentation/common/book_app_bar.dart';
+import 'package:book/presentation/login/bloc/bloc_login.dart';
+import 'package:book/presentation/login/bloc/login_event.dart';
+import 'package:book/presentation/login/bloc/login_state.dart';
 import 'package:book/styles/app_colors.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class LoginPage extends StatefulWidget {
@@ -26,15 +32,44 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBarLogReg(
-        titleText: AppLocalizations.of(context)!.login,
-      ),
-      body: SingleChildScrollView(
-        keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
-        child: buildBody(),
-      ),
-    );
+    return BlocConsumer<LoginBloc, LoginState>(
+        builder: (BuildContext context, Object? state) {
+      return Scaffold(
+        appBar: AppBarLogReg(
+          titleText: AppLocalizations.of(context)!.login,
+        ),
+        body: SingleChildScrollView(
+          keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+          child: buildBody(),
+        ),
+      );
+    }, listener: (context, state) async {
+      if (state is SuccessfulLogin) {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => HomePageView(),
+          ),
+        );
+      } else if (state is ErrorState) {
+        final errorSnackbar = SnackBar(
+          content: Text(
+            AppLocalizations.of(context)!.error,
+            textAlign: TextAlign.center,
+          ),
+        );
+        ScaffoldMessenger.of(context).removeCurrentSnackBar();
+        ScaffoldMessenger.of(context).showSnackBar(errorSnackbar);
+      } else if (state is ErrorAuthState) {
+        final errorAuthSnackBar = SnackBar(
+            content: Text(
+          AppLocalizations.of(context)!.error_auth,
+          textAlign: TextAlign.center,
+        ));
+        ScaffoldMessenger.of(context).removeCurrentSnackBar();
+        ScaffoldMessenger.of(context).showSnackBar(errorAuthSnackBar);
+      }
+    });
   }
 
   Widget buildBody() {
@@ -170,7 +205,7 @@ class _LoginPageState extends State<LoginPage> {
 
   void onLoginPressed() async {
     if (_formKey.currentState!.validate()) {
-      //login bloc function yet to be created
+      context.read<LoginBloc>().add(Login(email: email!, password: password!));
     }
   }
 }

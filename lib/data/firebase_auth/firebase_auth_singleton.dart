@@ -21,6 +21,8 @@ class FirebaseAuthSingleton {
 
   FirebaseFirestore get db => _db;
 
+  static FirebaseAuthSingleton get instance => FirebaseAuthSingleton();
+
   FirebaseAuth get auth => _auth;
 
   Future<void> login(String email, String password) async {

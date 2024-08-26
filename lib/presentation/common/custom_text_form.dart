@@ -32,15 +32,17 @@ class _CustomTextFormState extends State<CustomTextForm> {
       obscureText: widget.isNonPasswordField ? false : !obscureText,
       validator: widget.validator,
       decoration: InputDecoration(
-        suffixIcon: IconButton(
-            icon: widget.isNonPasswordField
-                ? Icon(null)
-                : !obscureText
-                    ? Icon(Icons.visibility)
-                    : Icon(Icons.visibility_off),
-            onPressed: () {
-              toggleObscureText();
-            }),
+        suffixIcon: !widget.isNonPasswordField
+            ? IconButton(
+                icon: widget.isNonPasswordField
+                    ? Icon(null)
+                    : !obscureText
+                        ? Icon(Icons.visibility)
+                        : Icon(Icons.visibility_off),
+                onPressed: () {
+                  toggleObscureText();
+                })
+            : null,
         counterText: "",
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10),

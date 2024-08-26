@@ -1,9 +1,14 @@
-import 'package:book/custom_text_form.dart';
+import 'package:book/presentation/common/custom_text_form.dart';
+import 'package:book/models/app_user.dart';
 import 'package:book/presentation/common/book_app_bar.dart';
+import 'package:book/presentation/login/bloc/bloc_login.dart';
+import 'package:book/presentation/login/bloc/login_event.dart';
+import 'package:book/presentation/login/bloc/login_state.dart';
 import 'package:book/styles/app_colors.dart';
 import 'package:book/validation/validation.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class RegisterPageView extends StatefulWidget {
@@ -25,17 +30,49 @@ class _RegisterPageView extends State<RegisterPageView> {
 
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-      onWillPop: () => onBackPressed(context),
-      child: Scaffold(
-          appBar: AppBarLogReg(
-            titleText: AppLocalizations.of(context)!.register,
+    return BlocConsumer<LoginBloc, LoginState>(
+        builder: (BuildContext context, Object? state) {
+      return WillPopScope(
+        onWillPop: () => onBackPressed(context),
+        child: Scaffold(
+            appBar: AppBarLogReg(
+              titleText: AppLocalizations.of(context)!.register,
+            ),
+            body: SingleChildScrollView(
+              keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+              child: buildBody(),
+            )),
+      );
+    }, listener: (context, state) async {
+      if (state is SuccessfulSignUp) {
+        Navigator.pop(context);
+        final successfulSignUpSnackBar = SnackBar(
+          content: Text(
+            AppLocalizations.of(context)!.successful_registration,
+            textAlign: TextAlign.center,
           ),
-          body: SingleChildScrollView(
-            keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
-            child: buildBody(),
-          )),
-    );
+        );
+
+        ScaffoldMessenger.of(context).showSnackBar(successfulSignUpSnackBar);
+      } else if (state is ErrorState) {
+        final errorSnackbar = SnackBar(
+          content: Text(
+            AppLocalizations.of(context)!.error,
+            textAlign: TextAlign.center,
+          ),
+        );
+        ScaffoldMessenger.of(context).removeCurrentSnackBar();
+        ScaffoldMessenger.of(context).showSnackBar(errorSnackbar);
+      } else if (state is ErrorAuthState) {
+        final errorAuthSnackBar = SnackBar(
+            content: Text(
+          AppLocalizations.of(context)!.error_auth,
+          textAlign: TextAlign.center,
+        ));
+        ScaffoldMessenger.of(context).removeCurrentSnackBar();
+        ScaffoldMessenger.of(context).showSnackBar(errorAuthSnackBar);
+      }
+    });
   }
 
   Widget buildBody() {
@@ -186,10 +223,6 @@ class _RegisterPageView extends State<RegisterPageView> {
     );
   }
 
-  void onSignUpPressed() {
-    if (_formKey.currentState!.validate()) {}
-  }
-
   Future<bool> onBackPressed(BuildContext context) async {
     if (name != null ||
         lastName != null ||
@@ -231,5 +264,13 @@ class _RegisterPageView extends State<RegisterPageView> {
       return result;
     }
     return true;
+  }
+
+  void onSignUpPressed() {
+    if (_formKey.currentState!.validate()) {
+      AppUser appUser = AppUser(
+          name: name!, lastName: lastName!, email: email!, password: password!);
+      context.read<LoginBloc>().add(SignUp(appUser: appUser));
+    }
   }
 }
