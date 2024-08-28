@@ -1,9 +1,17 @@
 import 'package:book/app_routes/app_routes.dart';
-import 'package:book/custom_text_form.dart';
+import 'package:book/core/constants.dart';
+import 'package:book/presentation/common/custom_text_form.dart';
 import 'package:book/presentation/common/book_app_bar.dart';
+import 'package:book/presentation/common/custom_snackbar.dart';
+import 'package:book/presentation/common/dialog_utils.dart';
+import 'package:book/presentation/login/bloc/login_bloc.dart';
+import 'package:book/presentation/login/bloc/login_event.dart';
+import 'package:book/presentation/login/bloc/login_state.dart';
 import 'package:book/styles/app_colors.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class LoginPage extends StatefulWidget {
@@ -18,6 +26,7 @@ class _LoginPageState extends State<LoginPage> {
   String? password;
   bool passwordVisible = false;
   final _formKey = GlobalKey<FormState>();
+  bool _visibleText = false;
 
   @override
   void initState() {
@@ -26,14 +35,37 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBarLogReg(
-        titleText: AppLocalizations.of(context)!.login,
-      ),
-      body: SingleChildScrollView(
-        keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
-        child: buildBody(),
-      ),
+    return BlocConsumer<LoginBloc, LoginState>(
+      listener: (context, state) async {
+        if (state is SuccessfulLogin) {
+          Navigator.pushReplacementNamed(context, homeRoute);
+        } else if (state is ErrorState) {
+          CustomSnackBar.showSnackBar(
+              color: Colors.red,
+              content: AppLocalizations.of(context)!.error,
+              context: context);
+        } else if (state is ErrorAuthState) {
+          CustomSnackBar.showSnackBar(
+              color: Colors.red,
+              content: AppLocalizations.of(context)!.error_auth,
+              context: context);
+        } else if (state is LoadingState) {
+          DialogUtils.showLoadingScreen(context);
+        } else if (state is LoadedState) {
+          Navigator.pop(context);
+        }
+      },
+      builder: (BuildContext context, Object? state) {
+        return Scaffold(
+          appBar: AppBarLogReg(
+            titleText: AppLocalizations.of(context)!.login,
+          ),
+          body: SingleChildScrollView(
+            keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+            child: buildBody(),
+          ),
+        );
+      },
     );
   }
 
@@ -135,16 +167,18 @@ class _LoginPageState extends State<LoginPage> {
           CustomTextForm(
             validator: (value) {
               if (value!.isNotEmpty) {
-                email = value;
                 return null;
               } else {
                 return AppLocalizations.of(context)!.empty_email;
               }
             },
             labelText: AppLocalizations.of(context)!.email,
-            isNonPasswordField: true,
+            isPasswordField: false,
             keyboardType: TextInputType.text,
-            maxLenght: 30,
+            maxLength: emailMaxLength,
+            onChanged: (value) {
+              email = value;
+            },
           ),
           SizedBox(
             height: 30,
@@ -152,25 +186,41 @@ class _LoginPageState extends State<LoginPage> {
           CustomTextForm(
             validator: (value) {
               if (value!.isNotEmpty) {
-                password = value;
                 return null;
               } else {
                 return AppLocalizations.of(context)!.empty_password;
               }
             },
+            suffixIcon: IconButton(
+                onPressed: () {
+                  toggleObscureText();
+                },
+                icon: !_visibleText
+                    ? Icon(Icons.visibility)
+                    : Icon(Icons.visibility_off)),
             labelText: AppLocalizations.of(context)!.password,
             keyboardType: TextInputType.text,
-            isNonPasswordField: false,
-            maxLenght: 16,
+            isPasswordField: true,
+            maxLength: maxPasswordLength,
+            obscureText: !_visibleText,
+            onChanged: (value) {
+              password = value;
+            },
           )
         ],
       ),
     );
   }
 
+  void toggleObscureText() {
+    setState(() {
+      _visibleText = !_visibleText;
+    });
+  }
+
   void onLoginPressed() async {
     if (_formKey.currentState!.validate()) {
-      //login bloc function yet to be created
+      context.read<LoginBloc>().add(Login(email: email!, password: password!));
     }
   }
 }

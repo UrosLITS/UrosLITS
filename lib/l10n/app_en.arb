@@ -59,5 +59,7 @@
   "no_lowe_case": "Password must contain at least one lowercase letter",
   "missing_number": "Password must contain at least one numeric character",
   "missing_special_char": "Password must contain at least one special character",
-  "not_long_enough_pass": "Password must contain at least 8 characters"
+  "not_long_enough_pass": "Password must contain at least 8 characters",
+  "error": "Can not  reach the server",
+  "error_auth": "Incorrect email"
 }

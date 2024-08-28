@@ -7,40 +7,40 @@ class CustomTextForm extends StatefulWidget {
       {required this.validator,
       required this.labelText,
       required this.keyboardType,
-      required this.isNonPasswordField,
+      this.isPasswordField = false,
       Key? key,
-      required this.maxLenght})
+      required this.maxLength,
+      this.suffixIcon,
+      this.obscureText = false,
+      required this.onChanged})
       : super(key: key);
 
-  final bool isNonPasswordField;
+  final bool isPasswordField;
   final String labelText;
   final TextInputType keyboardType;
   final String? Function(String?)? validator;
-  final int maxLenght;
+  final int maxLength;
+  final Widget? suffixIcon;
+  final ValueChanged onChanged;
+
+  final bool obscureText;
 
   @override
   State<CustomTextForm> createState() => _CustomTextFormState();
 }
 
 class _CustomTextFormState extends State<CustomTextForm> {
-  bool obscureText = false;
-
   @override
   Widget build(BuildContext context) {
     return TextFormField(
-      maxLength: widget.maxLenght,
-      obscureText: widget.isNonPasswordField ? false : !obscureText,
+      maxLength: widget.maxLength,
+      obscureText: widget.obscureText,
       validator: widget.validator,
+      onChanged: (value) {
+        widget.onChanged(value);
+      },
       decoration: InputDecoration(
-        suffixIcon: IconButton(
-            icon: widget.isNonPasswordField
-                ? Icon(null)
-                : !obscureText
-                    ? Icon(Icons.visibility)
-                    : Icon(Icons.visibility_off),
-            onPressed: () {
-              toggleObscureText();
-            }),
+        suffixIcon: widget.suffixIcon,
         counterText: "",
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10),
@@ -58,11 +58,5 @@ class _CustomTextFormState extends State<CustomTextForm> {
         ),
       ),
     );
-  }
-
-  void toggleObscureText() {
-    setState(() {
-      obscureText = !obscureText;
-    });
   }
 }

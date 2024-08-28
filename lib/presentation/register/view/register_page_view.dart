@@ -1,9 +1,17 @@
-import 'package:book/custom_text_form.dart';
+import 'package:book/core/constants.dart';
+import 'package:book/presentation/common/custom_text_form.dart';
+import 'package:book/models/app_user.dart';
 import 'package:book/presentation/common/book_app_bar.dart';
+import 'package:book/presentation/common/custom_snackbar.dart';
+import 'package:book/presentation/common/dialog_utils.dart';
+import 'package:book/presentation/login/bloc/login_bloc.dart';
+import 'package:book/presentation/login/bloc/login_event.dart';
+import 'package:book/presentation/login/bloc/login_state.dart';
 import 'package:book/styles/app_colors.dart';
 import 'package:book/validation/validation.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class RegisterPageView extends StatefulWidget {
@@ -22,19 +30,50 @@ class _RegisterPageView extends State<RegisterPageView> {
   final _formKey = GlobalKey<FormState>();
   bool passwordVisible = false;
   bool confPasswordVisible = false;
+  bool _visibleText = false;
 
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-      onWillPop: () => onBackPressed(context),
-      child: Scaffold(
-          appBar: AppBarLogReg(
-            titleText: AppLocalizations.of(context)!.register,
-          ),
-          body: SingleChildScrollView(
-            keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
-            child: buildBody(),
-          )),
+    return BlocConsumer<LoginBloc, LoginState>(
+      listener: (context, state) async {
+        if (state is LoadingState) {
+          DialogUtils.showLoadingScreen(context);
+        }
+        if (state is LoadedState) {
+          Navigator.pop(context);
+        }
+        if (state is SuccessfulSignUp) {
+          Navigator.pop(context);
+          CustomSnackBar.showSnackBar(
+              color: Colors.green,
+              content: AppLocalizations.of(context)!.successful_registration,
+              context: context);
+        } else if (state is ErrorState) {
+          CustomSnackBar.showSnackBar(
+              color: Colors.red,
+              content: AppLocalizations.of(context)!.error,
+              context: context);
+        } else if (state is ErrorAuthState) {
+          CustomSnackBar.showSnackBar(
+              color: Colors.red,
+              content: AppLocalizations.of(context)!.error_auth,
+              context: context);
+        }
+      },
+      builder: (BuildContext context, Object? state) {
+        return WillPopScope(
+          onWillPop: () => onBackPressed(context),
+          child: Scaffold(
+              appBar: AppBarLogReg(
+                titleText: AppLocalizations.of(context)!.register,
+              ),
+              body: SingleChildScrollView(
+                keyboardDismissBehavior:
+                    ScrollViewKeyboardDismissBehavior.onDrag,
+                child: buildBody(),
+              )),
+        );
+      },
     );
   }
 
@@ -98,96 +137,120 @@ class _RegisterPageView extends State<RegisterPageView> {
           height: 10,
         ),
         CustomTextForm(
-            validator: (value) {
-              if (value == null || value.isEmpty) {
-                return AppLocalizations.of(context)!.empty_name;
-              }
-              name = value;
+          validator: (value) {
+            if (value == null || value.isEmpty) {
+              return AppLocalizations.of(context)!.empty_name;
+            }
+            return null;
+          },
+          labelText: AppLocalizations.of(context)!.name,
+          keyboardType: TextInputType.text,
+          maxLength: nameMaxLength,
+          onChanged: (value) {
+            name = value;
+          },
+        ),
+        SizedBox(
+          height: 15,
+        ),
+        CustomTextForm(
+          validator: (value) {
+            if (value == null || value.isEmpty) {
+              return AppLocalizations.of(context)!.empty_last_name;
+            }
+            return null;
+          },
+          labelText: AppLocalizations.of(context)!.last_name,
+          keyboardType: TextInputType.text,
+          maxLength: nameMaxLength,
+          onChanged: (value) {
+            lastName = value;
+          },
+        ),
+        SizedBox(
+          height: 15,
+        ),
+        CustomTextForm(
+          validator: (value) {
+            final isValid = ValidationUtils.validateEmailAddress(value!);
+            if (value.isNotEmpty && isValid == true) {
               return null;
-            },
-            labelText: AppLocalizations.of(context)!.name,
-            keyboardType: TextInputType.text,
-            isNonPasswordField: true,
-            maxLenght: 20),
+            } else if (value.isNotEmpty && isValid == false) {
+              return AppLocalizations.of(context)!.invalid_email;
+            } else {
+              return AppLocalizations.of(context)!.empty_email;
+            }
+          },
+          labelText: AppLocalizations.of(context)!.email,
+          keyboardType: TextInputType.text,
+          maxLength: emailMaxLength,
+          onChanged: (value) {
+            email = value;
+          },
+        ),
         SizedBox(
           height: 15,
         ),
         CustomTextForm(
-            validator: (value) {
-              if (value == null || value.isEmpty) {
-                return AppLocalizations.of(context)!.empty_last_name;
-              }
-              lastName = value;
-              return null;
-            },
-            labelText: AppLocalizations.of(context)!.last_name,
-            keyboardType: TextInputType.text,
-            isNonPasswordField: true,
-            maxLenght: 20),
-        SizedBox(
-          height: 15,
-        ),
-        CustomTextForm(
-            validator: (value) {
-              final isValid = ValidationUtils.validateEmailAddress(value!);
-              if (value.isNotEmpty && isValid == true) {
-                email = value;
-                return null;
-              } else if (value.isNotEmpty && isValid == false) {
-                return AppLocalizations.of(context)!.invalid_email;
-              } else {
-                return AppLocalizations.of(context)!.empty_email;
-              }
-            },
-            labelText: AppLocalizations.of(context)!.email,
-            keyboardType: TextInputType.text,
-            isNonPasswordField: true,
-            maxLenght: 20),
-        SizedBox(
-          height: 15,
-        ),
-        CustomTextForm(
-            validator: (value) {
-              final isValid =
-                  ValidationUtils.passwordValidator(context, value, 8);
+          validator: (value) {
+            final isValid =
+                ValidationUtils.passwordValidator(context, value, 8);
 
-              if (value!.isNotEmpty && isValid == null) {
-                password = value;
-                return null;
-              } else if (value.isNotEmpty && isValid != null) {
-                return isValid;
-              } else {
-                return isValid;
-              }
-            },
-            labelText: AppLocalizations.of(context)!.password,
-            keyboardType: TextInputType.text,
-            isNonPasswordField: false,
-            maxLenght: 16),
+            if (value!.isNotEmpty && isValid == null) {
+              return null;
+            } else if (value.isNotEmpty && isValid != null) {
+              return isValid;
+            } else {
+              return isValid;
+            }
+          },
+          labelText: AppLocalizations.of(context)!.password,
+          keyboardType: TextInputType.text,
+          isPasswordField: true,
+          suffixIcon: IconButton(
+              onPressed: () {
+                toggleObscureText();
+              },
+              icon: !_visibleText
+                  ? Icon(Icons.visibility)
+                  : Icon(Icons.visibility_off)),
+          maxLength: maxPasswordLength,
+          obscureText: !_visibleText,
+          onChanged: (value) {
+            password = value;
+          },
+        ),
         SizedBox(
           height: 15,
         ),
         CustomTextForm(
-            validator: (value) {
-              if (value!.isNotEmpty && value == password) {
-                confirmPassword = value;
-                return null;
-              } else if (value.isNotEmpty && confirmPassword != password) {
-                return AppLocalizations.of(context)!.passwords_doesnt_match;
-              } else {
-                return AppLocalizations.of(context)!.confirm_password_validate;
-              }
-            },
-            labelText: AppLocalizations.of(context)!.confirm_password,
-            keyboardType: TextInputType.text,
-            isNonPasswordField: false,
-            maxLenght: 16)
+          validator: (value) {
+            if (value!.isNotEmpty && value == password) {
+              return null;
+            } else if (value.isNotEmpty && confirmPassword != password) {
+              return AppLocalizations.of(context)!.passwords_doesnt_match;
+            } else {
+              return AppLocalizations.of(context)!.confirm_password_validate;
+            }
+          },
+          labelText: AppLocalizations.of(context)!.confirm_password,
+          keyboardType: TextInputType.text,
+          isPasswordField: true,
+          suffixIcon: IconButton(
+              onPressed: () {
+                toggleObscureText();
+              },
+              icon: !_visibleText
+                  ? Icon(Icons.visibility)
+                  : Icon(Icons.visibility_off)),
+          maxLength: maxPasswordLength,
+          obscureText: !_visibleText,
+          onChanged: (value) {
+            confirmPassword = value;
+          },
+        )
       ],
     );
-  }
-
-  void onSignUpPressed() {
-    if (_formKey.currentState!.validate()) {}
   }
 
   Future<bool> onBackPressed(BuildContext context) async {
@@ -231,5 +294,19 @@ class _RegisterPageView extends State<RegisterPageView> {
       return result;
     }
     return true;
+  }
+
+  void toggleObscureText() {
+    setState(() {
+      _visibleText = !_visibleText;
+    });
+  }
+
+  void onSignUpPressed() {
+    if (_formKey.currentState!.validate()) {
+      AppUser appUser = AppUser(
+          name: name!, lastName: lastName!, email: email!, password: password!);
+      context.read<LoginBloc>().add(SignUp(appUser: appUser));
+    }
   }
 }
