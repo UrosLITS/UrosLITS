@@ -7,11 +7,12 @@ class CustomTextForm extends StatefulWidget {
       {required this.validator,
       required this.labelText,
       required this.keyboardType,
-      required this.isPasswordField,
+      this.isPasswordField = false,
       Key? key,
       required this.maxLength,
       this.suffixIcon,
-      required this.obscureText})
+      required this.obscureText,
+      required this.onChanged})
       : super(key: key);
 
   final bool isPasswordField;
@@ -20,6 +21,7 @@ class CustomTextForm extends StatefulWidget {
   final String? Function(String?)? validator;
   final int maxLength;
   final Widget? suffixIcon;
+  final ValueChanged onChanged;
 
   final bool obscureText;
 
@@ -34,6 +36,9 @@ class _CustomTextFormState extends State<CustomTextForm> {
       maxLength: widget.maxLength,
       obscureText: widget.obscureText,
       validator: widget.validator,
+      onChanged: (value) {
+        widget.onChanged(value);
+      },
       decoration: InputDecoration(
         suffixIcon: widget.suffixIcon,
         counterText: "",

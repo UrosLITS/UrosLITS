@@ -1,6 +1,5 @@
 import 'package:book/app_routes/app_routes.dart';
 import 'package:book/core/constants.dart';
-import 'package:book/presentation/common/custom_loading_screen.dart';
 import 'package:book/presentation/common/custom_text_form.dart';
 import 'package:book/presentation/common/book_app_bar.dart';
 import 'package:book/presentation/common/custom_snackbar.dart';
@@ -168,7 +167,6 @@ class _LoginPageState extends State<LoginPage> {
           CustomTextForm(
             validator: (value) {
               if (value!.isNotEmpty) {
-                email = value;
                 return null;
               } else {
                 return AppLocalizations.of(context)!.empty_email;
@@ -179,6 +177,9 @@ class _LoginPageState extends State<LoginPage> {
             keyboardType: TextInputType.text,
             maxLength: emailMaxLength,
             obscureText: false,
+            onChanged: (value) {
+              email = value;
+            },
           ),
           SizedBox(
             height: 30,
@@ -186,28 +187,26 @@ class _LoginPageState extends State<LoginPage> {
           CustomTextForm(
             validator: (value) {
               if (value!.isNotEmpty) {
-                password = value;
                 return null;
               } else {
                 return AppLocalizations.of(context)!.empty_password;
               }
             },
-            suffixIcon: !_visibleText
-                ? IconButton(
-                    onPressed: () {
-                      toggleObscureText();
-                    },
-                    icon: Icon(Icons.visibility))
-                : IconButton(
-                    onPressed: () {
-                      toggleObscureText();
-                    },
-                    icon: Icon(Icons.visibility_off)),
+            suffixIcon: IconButton(
+                onPressed: () {
+                  toggleObscureText();
+                },
+                icon: !_visibleText
+                    ? Icon(Icons.visibility)
+                    : Icon(Icons.visibility_off)),
             labelText: AppLocalizations.of(context)!.password,
             keyboardType: TextInputType.text,
             isPasswordField: true,
             maxLength: maxPasswordLength,
             obscureText: !_visibleText,
+            onChanged: (value) {
+              password = value;
+            },
           )
         ],
       ),

@@ -1,5 +1,4 @@
 import 'package:book/core/constants.dart';
-import 'package:book/presentation/common/custom_loading_screen.dart';
 import 'package:book/presentation/common/custom_text_form.dart';
 import 'package:book/models/app_user.dart';
 import 'package:book/presentation/common/book_app_bar.dart';
@@ -142,14 +141,15 @@ class _RegisterPageView extends State<RegisterPageView> {
             if (value == null || value.isEmpty) {
               return AppLocalizations.of(context)!.empty_name;
             }
-            name = value;
             return null;
           },
           labelText: AppLocalizations.of(context)!.name,
           keyboardType: TextInputType.text,
-          isPasswordField: false,
           maxLength: nameMaxLength,
           obscureText: false,
+          onChanged: (value) {
+            name = value;
+          },
         ),
         SizedBox(
           height: 15,
@@ -159,14 +159,15 @@ class _RegisterPageView extends State<RegisterPageView> {
             if (value == null || value.isEmpty) {
               return AppLocalizations.of(context)!.empty_last_name;
             }
-            lastName = value;
             return null;
           },
           labelText: AppLocalizations.of(context)!.last_name,
           keyboardType: TextInputType.text,
-          isPasswordField: false,
           maxLength: nameMaxLength,
           obscureText: false,
+          onChanged: (value) {
+            lastName = value;
+          },
         ),
         SizedBox(
           height: 15,
@@ -175,7 +176,6 @@ class _RegisterPageView extends State<RegisterPageView> {
           validator: (value) {
             final isValid = ValidationUtils.validateEmailAddress(value!);
             if (value.isNotEmpty && isValid == true) {
-              email = value;
               return null;
             } else if (value.isNotEmpty && isValid == false) {
               return AppLocalizations.of(context)!.invalid_email;
@@ -185,9 +185,11 @@ class _RegisterPageView extends State<RegisterPageView> {
           },
           labelText: AppLocalizations.of(context)!.email,
           keyboardType: TextInputType.text,
-          isPasswordField: false,
           maxLength: emailMaxLength,
           obscureText: false,
+          onChanged: (value) {
+            email = value;
+          },
         ),
         SizedBox(
           height: 15,
@@ -198,7 +200,6 @@ class _RegisterPageView extends State<RegisterPageView> {
                 ValidationUtils.passwordValidator(context, value, 8);
 
             if (value!.isNotEmpty && isValid == null) {
-              password = value;
               return null;
             } else if (value.isNotEmpty && isValid != null) {
               return isValid;
@@ -209,19 +210,18 @@ class _RegisterPageView extends State<RegisterPageView> {
           labelText: AppLocalizations.of(context)!.password,
           keyboardType: TextInputType.text,
           isPasswordField: true,
-          suffixIcon: !_visibleText
-              ? IconButton(
-                  onPressed: () {
-                    toggleObscureText();
-                  },
-                  icon: Icon(Icons.visibility))
-              : IconButton(
-                  onPressed: () {
-                    toggleObscureText();
-                  },
-                  icon: Icon(Icons.visibility_off)),
+          suffixIcon: IconButton(
+              onPressed: () {
+                toggleObscureText();
+              },
+              icon: !_visibleText
+                  ? Icon(Icons.visibility)
+                  : Icon(Icons.visibility_off)),
           maxLength: maxPasswordLength,
           obscureText: !_visibleText,
+          onChanged: (value) {
+            password = value;
+          },
         ),
         SizedBox(
           height: 15,
@@ -229,7 +229,6 @@ class _RegisterPageView extends State<RegisterPageView> {
         CustomTextForm(
           validator: (value) {
             if (value!.isNotEmpty && value == password) {
-              confirmPassword = value;
               return null;
             } else if (value.isNotEmpty && confirmPassword != password) {
               return AppLocalizations.of(context)!.passwords_doesnt_match;
@@ -240,19 +239,18 @@ class _RegisterPageView extends State<RegisterPageView> {
           labelText: AppLocalizations.of(context)!.confirm_password,
           keyboardType: TextInputType.text,
           isPasswordField: true,
-          suffixIcon: !_visibleText
-              ? IconButton(
-                  onPressed: () {
-                    toggleObscureText();
-                  },
-                  icon: Icon(Icons.visibility))
-              : IconButton(
-                  onPressed: () {
-                    toggleObscureText();
-                  },
-                  icon: Icon(Icons.visibility_off)),
+          suffixIcon: IconButton(
+              onPressed: () {
+                toggleObscureText();
+              },
+              icon: !_visibleText
+                  ? Icon(Icons.visibility)
+                  : Icon(Icons.visibility_off)),
           maxLength: maxPasswordLength,
           obscureText: !_visibleText,
+          onChanged: (value) {
+            confirmPassword = value;
+          },
         )
       ],
     );
