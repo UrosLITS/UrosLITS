@@ -30,6 +30,10 @@ class LoadingState extends LoginState {
   LoadingState();
 }
 
+class LoadedState extends LoginState {
+  LoadedState();
+}
+
 class ErrorAuthState extends LoginState {
   ErrorAuthState({required this.errorAuth});
 
