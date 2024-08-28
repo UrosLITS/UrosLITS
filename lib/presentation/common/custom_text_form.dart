@@ -11,7 +11,7 @@ class CustomTextForm extends StatefulWidget {
       Key? key,
       required this.maxLength,
       this.suffixIcon,
-      required this.obscureText,
+      this.obscureText = false,
       required this.onChanged})
       : super(key: key);
 

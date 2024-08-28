@@ -146,7 +146,6 @@ class _RegisterPageView extends State<RegisterPageView> {
           labelText: AppLocalizations.of(context)!.name,
           keyboardType: TextInputType.text,
           maxLength: nameMaxLength,
-          obscureText: false,
           onChanged: (value) {
             name = value;
           },
@@ -164,7 +163,6 @@ class _RegisterPageView extends State<RegisterPageView> {
           labelText: AppLocalizations.of(context)!.last_name,
           keyboardType: TextInputType.text,
           maxLength: nameMaxLength,
-          obscureText: false,
           onChanged: (value) {
             lastName = value;
           },
@@ -186,7 +184,6 @@ class _RegisterPageView extends State<RegisterPageView> {
           labelText: AppLocalizations.of(context)!.email,
           keyboardType: TextInputType.text,
           maxLength: emailMaxLength,
-          obscureText: false,
           onChanged: (value) {
             email = value;
           },

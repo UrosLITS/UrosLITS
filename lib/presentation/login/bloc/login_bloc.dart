@@ -19,7 +19,7 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
       if (result != null) {
         emit(LoadedState());
         emit(SuccessfulLogin());
-      }
+      } else {}
     } on FirebaseAuthException catch (e) {
       emit(ErrorAuthState(errorAuth: e));
       emit(LoadedState());

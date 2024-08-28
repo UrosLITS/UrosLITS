@@ -176,7 +176,6 @@ class _LoginPageState extends State<LoginPage> {
             isPasswordField: false,
             keyboardType: TextInputType.text,
             maxLength: emailMaxLength,
-            obscureText: false,
             onChanged: (value) {
               email = value;
             },
