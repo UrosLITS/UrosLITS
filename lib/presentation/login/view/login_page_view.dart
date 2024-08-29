@@ -1,5 +1,6 @@
 import 'package:book/app_routes/app_routes.dart';
 import 'package:book/core/constants.dart';
+import 'package:book/models/app_user_singleton.dart';
 import 'package:book/presentation/common/custom_text_form.dart';
 import 'package:book/presentation/common/book_app_bar.dart';
 import 'package:book/presentation/common/custom_snackbar.dart';
@@ -38,7 +39,10 @@ class _LoginPageState extends State<LoginPage> {
     return BlocConsumer<LoginBloc, LoginState>(
       listener: (context, state) async {
         if (state is SuccessfulLogin) {
-          Navigator.pushReplacementNamed(context, homeRoute);
+          final userResult = await AppUserSingleton().setUser();
+          if (userResult != null) {
+            Navigator.pushReplacementNamed(context, kHomeRoute);
+          }
         } else if (state is ErrorState) {
           CustomSnackBar.showSnackBar(
               color: Colors.red,
@@ -139,7 +143,7 @@ class _LoginPageState extends State<LoginPage> {
                   ),
                   TextButton(
                     onPressed: () {
-                      Navigator.pushNamed(context, registerRoute);
+                      Navigator.pushNamed(context, kRegisterRoute);
                     },
                     child: Text(
                       AppLocalizations.of(context)!.sign_up,
