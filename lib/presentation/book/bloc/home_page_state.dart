@@ -1,9 +1,9 @@
+import 'package:book/models/book.dart';
 import 'package:equatable/equatable.dart';
-import 'package:flutter/cupertino.dart';
 
 sealed class HomePageState extends Equatable {
   @override
-  List<Object?> get props => throw UnimplementedError();
+  List<Object?> get props => [];
 }
 
 class LoadingState extends HomePageState {
@@ -15,7 +15,9 @@ class LoadedState extends HomePageState {
 }
 
 class SuccessfulBookAdded extends HomePageState {
-  SuccessfulBookAdded();
+  final Book book;
+
+  SuccessfulBookAdded({required this.book});
 }
 
 class InitialState extends HomePageState {

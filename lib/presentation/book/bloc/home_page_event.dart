@@ -1,21 +1,30 @@
-import 'dart:math';
+import 'dart:io';
 
+import 'package:book/models/book.dart';
 import 'package:equatable/equatable.dart';
 
 sealed class HomePageEvent extends Equatable {}
 
-class AddBook extends HomePageEvent {
+class AddNewBook extends HomePageEvent {
   final String author;
   final String title;
-  final String url;
-  final String id;
+  final File imageFile;
 
-  AddBook(
-      {required this.title,
-      required this.author,
-      required this.url,
-      required this.id});
+  AddNewBook({
+    required this.title,
+    required this.author,
+    required this.imageFile,
+  });
 
   @override
-  List<Object?> get props => [title, author, url, id, Random().nextInt(10000)];
+  List<Object?> get props => [title, author, imageFile];
+}
+
+class RefreshBooks extends HomePageEvent {
+  final List<Book>? bookList;
+
+  RefreshBooks({this.bookList});
+
+  @override
+  List<Object?> get props => [bookList];
 }

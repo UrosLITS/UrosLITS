@@ -1,12 +1,13 @@
-import 'dart:ffi';
-
 import 'package:book/app_routes/app_routes.dart';
-import 'package:book/models/app_user.dart';
-import 'package:book/models/app_user_singleton.dart';
 import 'package:book/models/book.dart';
+import 'package:book/presentation/book/bloc/home_page_bloc.dart';
+import 'package:book/presentation/book/bloc/home_page_event.dart';
+import 'package:book/presentation/book/bloc/home_page_state.dart';
+import 'package:book/presentation/common/dialog_utils.dart';
 import 'package:book/styles/app_styles.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class HomePageView extends StatefulWidget {
@@ -19,69 +20,68 @@ class HomePageView extends StatefulWidget {
 class _HomeBookPageView extends State<HomePageView> {
   late final _controller;
   late List<Book> bookList = [];
-  late AppUser appUser;
-  late Book book;
-
-  bool shouldAbsorb = true;
 
   @override
   void initState() {
-    final singleton = AppUserSingleton();
-
-    appUser = singleton.appUser!;
-
     _controller = PageController(viewportFraction: 0.9, initialPage: 0);
 
-    book = new Book(
-        author: 'author',
-        title: 'title',
-        url:
-            'https://images.unsplash.com/reserve/bOvf94dPRxWu0u3QsPjF_tree.jpg?ixlib=rb-4.0.3',
-        id: 'id');
-    bookList.add(book);
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        leading: IconButton(
-          onPressed: () {},
-          icon: Icon(Icons.exit_to_app),
-        ),
-        centerTitle: true,
-        automaticallyImplyLeading: false,
-        title: Text(AppLocalizations.of(context)!.pick_any_book),
-      ),
-      body: SizedBox(
-        height: 500,
-        child: PageView.builder(
-          pageSnapping: true,
-          controller: _controller,
-          itemCount: 3,
-          itemBuilder: (context, index) => _buildBookItem(),
-        ),
-      ),
-      floatingActionButton: Visibility(
-        visible: appUser.isAdmin == true,
-        child: FloatingActionButton(
-          onPressed: () async {
-            final Book? result =
-                await Navigator.pushNamed<dynamic>(context, kAddNewBookPage);
+    return BlocConsumer<HomePageBloc, HomePageState>(
+      listener: (context, state) {
+        if (state is LoadingState) {
+          DialogUtils.showLoadingScreen(context);
+        } else if (state is LoadedState) {
+          Navigator.pop(context);
+        }
+      },
+      builder: (BuildContext context, Object? state) {
+        return Scaffold(
+          appBar: AppBar(
+            leading: IconButton(
+              onPressed: () {},
+              icon: Icon(Icons.exit_to_app),
+            ),
+            centerTitle: true,
+            automaticallyImplyLeading: false,
+            title: Text(AppLocalizations.of(context)!.pick_any_book),
+          ),
+          body: SizedBox(
+            height: 500,
+            child: PageView.builder(
+              pageSnapping: true,
+              controller: _controller,
+              itemCount: bookList.length,
+              itemBuilder: (context, index) =>
+                  _buildBookItem(bookList.elementAt(index)),
+            ),
+          ),
+          floatingActionButton: Visibility(
+            visible: true,
+            child: FloatingActionButton(
+              onPressed: () async {
+                final Book? result = await Navigator.pushNamed<dynamic>(
+                    context, kAddNewBookRoute);
 
-            if (result != null) {
-              bookList.add(result);
-              setState(() {});
-            }
-          },
-          child: Icon(CupertinoIcons.add),
-        ),
-      ),
+                if (result != null) {
+                  bookList.add(result);
+                  context
+                      .read<HomePageBloc>()
+                      .add(RefreshBooks(bookList: bookList));
+                }
+              },
+              child: Icon(CupertinoIcons.add),
+            ),
+          ),
+        );
+      },
     );
   }
 
-  Widget _buildBookItem() {
+  Widget _buildBookItem(Book book) {
     return Card(
       clipBehavior: Clip.hardEdge,
       shape: RoundedRectangleBorder(
@@ -105,7 +105,7 @@ class _HomeBookPageView extends State<HomePageView> {
                   bottomRight: Radius.circular(30),
                 ),
                 image: DecorationImage(
-                    image: NetworkImage(book.url), fit: BoxFit.cover),
+                    image: NetworkImage(book.imageUrl), fit: BoxFit.cover),
               ),
             ),
             Positioned.fill(

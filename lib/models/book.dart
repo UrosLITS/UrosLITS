@@ -6,19 +6,16 @@ class Book extends Equatable {
   Book({
     required this.author,
     required this.title,
-    required this.url,
+    required this.imageUrl,
     required this.id,
   });
 
   String title;
   String author;
   @JsonKey(name: "image")
-  String url;
+  String imageUrl;
   String id;
 
-  //yet to be added
-  //BookData? bookData;
-
   @override
-  List<Object?> get props => [title, author, id, url];
+  List<Object?> get props => [title, author, id, imageUrl];
 }

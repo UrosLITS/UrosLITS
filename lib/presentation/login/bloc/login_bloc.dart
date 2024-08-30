@@ -15,11 +15,11 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
     emit(LoadingState());
     try {
       await FirebaseAuthSingleton.instance.login(event.email, event.password);
-      final result = await AppUserSingleton.instance.downloadCurrentUser();
+      final result = await FirebaseAuthSingleton.instance.downloadCurrentUser();
       if (result != null) {
         emit(LoadedState());
         emit(SuccessfulLogin());
-      } else {}
+      }
     } on FirebaseAuthException catch (e) {
       emit(ErrorAuthState(errorAuth: e));
       emit(LoadedState());

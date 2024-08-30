@@ -26,7 +26,7 @@ class AppUserSingleton {
     _appUser = null;
   }
 
-  static FirebaseAuthSingleton get instance => FirebaseAuthSingleton();
+  static AppUserSingleton get instance => AppUserSingleton();
 
   AppUser? get appUser => _appUser;
 }
