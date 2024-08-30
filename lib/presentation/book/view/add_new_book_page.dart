@@ -33,7 +33,6 @@ class _AddNewBookPage extends State<AddNewBookPage> {
   @override
   void initState() {
     _imagePicker = ImagePicker();
-    imageName = "";
     super.initState();
   }
 
@@ -47,6 +46,11 @@ class _AddNewBookPage extends State<AddNewBookPage> {
           DialogUtils.showLoadingScreen(context);
         } else if (state is LoadedState) {
           Navigator.pop(context);
+        } else if (state is SuccessfulImageAdded) {
+          imageName = state.imageName;
+        } else if (state is SuccessfulImageDeleted) {
+          imageName = null;
+          imageFile = null;
         }
       },
       builder: (BuildContext context, Object? state) {
@@ -113,7 +117,7 @@ class _AddNewBookPage extends State<AddNewBookPage> {
                       ),
                       Expanded(
                         child: Text(
-                          imageName!,
+                          imageName != null ? imageName! : '',
                           overflow: TextOverflow.ellipsis,
                           maxLines: 1,
                         ),
@@ -124,7 +128,7 @@ class _AddNewBookPage extends State<AddNewBookPage> {
                           onPressed: () {
                             imageFile = null;
                             imageName = "";
-                            setState(() {});
+                            context.read<HomePageBloc>().add(DeleteBookImage());
                           },
                           icon: Icon(Icons.close),
                         ),
@@ -170,9 +174,10 @@ class _AddNewBookPage extends State<AddNewBookPage> {
                     await _imagePicker.pickImage(source: ImageSource.gallery);
                 if (result != null) {
                   imageFile = File(result.path);
-                  imageName = imageFile?.path.split("/").last;
 
-                  setState(() {});
+                  context
+                      .read<HomePageBloc>()
+                      .add(AddBookImageEvent(file: imageFile!));
                 }
               },
             ),
@@ -184,8 +189,11 @@ class _AddNewBookPage extends State<AddNewBookPage> {
 
   void addNewBook(BuildContext context) async {
     if (_formKey.currentState?.validate() ?? false) {
-      context.read<HomePageBloc>().add(
-          AddNewBook(title: title!, author: author!, imageFile: imageFile!));
+      context.read<HomePageBloc>().add(AddNewBook(
+            title: title!,
+            author: author!,
+            imageFile: imageFile!,
+          ));
     }
   }
 }

@@ -39,10 +39,7 @@ class _LoginPageState extends State<LoginPage> {
     return BlocConsumer<LoginBloc, LoginState>(
       listener: (context, state) async {
         if (state is SuccessfulLogin) {
-          final userResult = await AppUserSingleton().setUser();
-          if (userResult != null) {
-            Navigator.pushReplacementNamed(context, kHomeRoute);
-          }
+          Navigator.pushReplacementNamed(context, kHomeRoute);
         } else if (state is ErrorState) {
           CustomSnackBar.showSnackBar(
               color: Colors.red,

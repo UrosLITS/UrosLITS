@@ -29,6 +29,12 @@ class _HomeBookPageView extends State<HomePageView> {
   }
 
   @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return BlocConsumer<HomePageBloc, HomePageState>(
       listener: (context, state) {

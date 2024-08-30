@@ -17,7 +17,11 @@ class AddNewBook extends HomePageEvent {
   });
 
   @override
-  List<Object?> get props => [title, author, imageFile];
+  List<Object?> get props => [
+        title,
+        author,
+        imageFile,
+      ];
 }
 
 class RefreshBooks extends HomePageEvent {
@@ -27,4 +31,20 @@ class RefreshBooks extends HomePageEvent {
 
   @override
   List<Object?> get props => [bookList];
+}
+
+class DeleteBookImage extends HomePageEvent {
+  DeleteBookImage();
+
+  @override
+  List<Object?> get props => [];
+}
+
+class AddBookImageEvent extends HomePageEvent {
+  final File file;
+
+  AddBookImageEvent({required this.file});
+
+  @override
+  List<Object?> get props => [file];
 }

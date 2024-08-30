@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:book/models/book.dart';
 import 'package:equatable/equatable.dart';
 
@@ -18,6 +20,16 @@ class SuccessfulBookAdded extends HomePageState {
   final Book book;
 
   SuccessfulBookAdded({required this.book});
+}
+
+class SuccessfulImageAdded extends HomePageState {
+  final String imageName;
+
+  SuccessfulImageAdded({required this.imageName});
+}
+
+class SuccessfulImageDeleted extends HomePageState {
+  SuccessfulImageDeleted();
 }
 
 class InitialState extends HomePageState {
