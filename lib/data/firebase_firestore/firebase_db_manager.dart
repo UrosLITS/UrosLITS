@@ -10,7 +10,7 @@ class FirebaseDbManager {
   late Reference storageRef;
   late FirebaseStorage storage;
 
-  FirebaseDbManager.internal() {
+  FirebaseDbManager._internal() {
     db = FirebaseFirestore.instance;
     storage = FirebaseStorage.instance;
     storageRef = storage.ref();
@@ -18,7 +18,7 @@ class FirebaseDbManager {
 
   factory FirebaseDbManager() {
     if (_instance == null) {
-      _instance = FirebaseDbManager.internal();
+      _instance = FirebaseDbManager._internal();
     }
     return _instance!;
   }

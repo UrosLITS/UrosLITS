@@ -14,8 +14,8 @@ part 'home_page_state.dart';
 class HomePageBloc extends Bloc<HomePageEvent, HomePageState> {
   HomePageBloc() : super((InitialState())) {
     on<AddNewBook>(_onBookAdded);
-    on<NewBookAdded>(_NewBookAdded);
-    on<AddBookImageEvent>(AddBookImage);
+    on<NewBookAdded>(_onNewBookAdded);
+    on<AddBookImageEvent>(_onAddBookImage);
     on<DeleteBookImage>(_onDeleteBookImage);
     on<DownloadBooks>(_onDownloadBooks);
   }
@@ -43,7 +43,7 @@ class HomePageBloc extends Bloc<HomePageEvent, HomePageState> {
     }
   }
 
-  Future<void> AddBookImage(
+  Future<void> _onAddBookImage(
       AddBookImageEvent event, Emitter<HomePageState> emit) async {
     emit(LoadingState());
 
@@ -61,7 +61,7 @@ class HomePageBloc extends Bloc<HomePageEvent, HomePageState> {
     emit(SuccessfulImageDeleted());
   }
 
-  Future<void> _NewBookAdded(
+  Future<void> _onNewBookAdded(
       NewBookAdded event, Emitter<HomePageState> emit) async {
     emit(SuccessfulBookAdded(book: event.book));
   }

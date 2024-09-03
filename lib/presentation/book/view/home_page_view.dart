@@ -2,7 +2,7 @@ import 'package:book/app_routes/app_routes.dart';
 import 'package:book/models/book/book.dart';
 import 'package:book/presentation/book/bloc/home_page_bloc.dart';
 import 'package:book/presentation/common/common.dart';
- import 'package:book/styles/app_styles.dart';
+import 'package:book/styles/app_styles.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -21,6 +21,8 @@ class _HomeBookPageView extends State<HomePageView> {
 
   @override
   void initState() {
+    bookList = [];
+
     context.read<HomePageBloc>().add(DownloadBooks());
 
     _controller = PageController(viewportFraction: 0.9, initialPage: 0);
@@ -77,9 +79,7 @@ class _HomeBookPageView extends State<HomePageView> {
                     context, kAddNewBookRoute);
 
                 if (result != null) {
-                  context
-                      .read<HomePageBloc>()
-                      .add(NewBookAdded(book: result));
+                  context.read<HomePageBloc>().add(NewBookAdded(book: result));
                 }
               },
               child: Icon(CupertinoIcons.add),
