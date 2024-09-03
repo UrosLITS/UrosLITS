@@ -1,20 +1,17 @@
-import 'dart:io';
-
-import 'package:book/models/book/book.dart';
-import 'package:equatable/equatable.dart';
+part of 'home_page_bloc.dart';
 
 sealed class HomePageEvent extends Equatable {}
 
 class AddNewBook extends HomePageEvent {
-  final String author;
-  final String title;
-  final File imageFile;
-
   AddNewBook({
     required this.title,
     required this.author,
     required this.imageFile,
   });
+
+  final String author;
+  final String title;
+  final File imageFile;
 
   @override
   List<Object?> get props => [
@@ -24,10 +21,10 @@ class AddNewBook extends HomePageEvent {
       ];
 }
 
-class onNewBookAdded extends HomePageEvent {
-  final Book book;
+class NewBookAdded extends HomePageEvent {
+  NewBookAdded({required this.book});
 
-  onNewBookAdded({required this.book});
+  final Book book;
 
   @override
   List<Object?> get props => [book];
@@ -41,9 +38,9 @@ class DeleteBookImage extends HomePageEvent {
 }
 
 class AddBookImageEvent extends HomePageEvent {
-  final File file;
-
   AddBookImageEvent({required this.file});
+
+  final File file;
 
   @override
   List<Object?> get props => [file];

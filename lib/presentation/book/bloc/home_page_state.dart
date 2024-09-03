@@ -1,5 +1,4 @@
-import 'package:book/models/book/book.dart';
-import 'package:equatable/equatable.dart';
+part of 'home_page_bloc.dart';
 
 sealed class HomePageState extends Equatable {
   @override
@@ -15,15 +14,15 @@ class LoadedState extends HomePageState {
 }
 
 class SuccessfulBookAdded extends HomePageState {
-  final Book book;
-
   SuccessfulBookAdded({required this.book});
+
+  final Book book;
 }
 
 class SuccessfulImageAdded extends HomePageState {
-  final String imageName;
-
   SuccessfulImageAdded({required this.imageName});
+
+  final String imageName;
 }
 
 class SuccessfulImageDeleted extends HomePageState {
@@ -31,9 +30,9 @@ class SuccessfulImageDeleted extends HomePageState {
 }
 
 class ServerError extends HomePageState {
-  final Exception error;
-
   ServerError({required this.error});
+
+  final Exception error;
 }
 
 class InitialState extends HomePageState {
@@ -41,7 +40,7 @@ class InitialState extends HomePageState {
 }
 
 class BooksDownloadedState extends HomePageState {
-  final List<Book> bookList;
-
   BooksDownloadedState({required this.bookList});
+
+  final List<Book> bookList;
 }

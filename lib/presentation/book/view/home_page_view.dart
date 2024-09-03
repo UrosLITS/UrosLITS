@@ -1,11 +1,8 @@
 import 'package:book/app_routes/app_routes.dart';
-import 'package:book/data/firebase_firestore/firebase_db_manager.dart';
 import 'package:book/models/book/book.dart';
 import 'package:book/presentation/book/bloc/home_page_bloc.dart';
-import 'package:book/presentation/book/bloc/home_page_event.dart';
-import 'package:book/presentation/book/bloc/home_page_state.dart';
-import 'package:book/presentation/common/dialog_utils.dart';
-import 'package:book/styles/app_styles.dart';
+import 'package:book/presentation/common/common.dart';
+ import 'package:book/styles/app_styles.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -82,7 +79,7 @@ class _HomeBookPageView extends State<HomePageView> {
                 if (result != null) {
                   context
                       .read<HomePageBloc>()
-                      .add(onNewBookAdded(book: result));
+                      .add(NewBookAdded(book: result));
                 }
               },
               child: Icon(CupertinoIcons.add),

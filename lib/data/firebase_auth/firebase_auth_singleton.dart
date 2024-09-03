@@ -49,7 +49,7 @@ class FirebaseAuthSingleton {
     });
 
     if (result != null) {
-      final userRef = _db.collection("users").doc(result);
+      final userRef = _db.collection(usersCollection).doc(result);
       final snapshotRef =
           await userRef.get().timeout(Duration(seconds: 3), onTimeout: () {
         throw Exception(timeoutErrorMessage);
@@ -78,7 +78,7 @@ class FirebaseAuthSingleton {
     if (checkUser != null) {
       uID = checkUser.uid;
     }
-    final userRef = _db.collection("users").doc(uID);
+    final userRef = _db.collection(usersCollection).doc(uID);
     await userRef.set(user.toJson()).timeout(Duration(seconds: 3),
         onTimeout: () {
       throw Exception(timeoutErrorMessage);

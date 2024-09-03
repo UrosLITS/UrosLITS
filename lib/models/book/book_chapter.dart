@@ -4,7 +4,10 @@ import 'package:json_annotation/json_annotation.dart';
 part 'book_chapter.g.dart';
 
 class BookChapters extends Equatable {
-  BookChapters({this.chTitle = '', required this.chNumber});
+  BookChapters({
+    this.chTitle = '',
+    required this.chNumber,
+  });
 
   @JsonKey(name: "title")
   String? chTitle;

@@ -5,3 +5,7 @@ const int emailMaxLength = 30;
 const int titleMaxLength = 30;
 const int authorMaxLength = 30;
 const String timeoutErrorMessage = "Can not reach the server";
+const String booksCollection = 'books';
+const String usersCollection = 'users';
+const String pagesCollection = 'pages';
+const String chaptersCollection = 'chapters';

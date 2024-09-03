@@ -25,7 +25,7 @@ class FirebaseDbManager {
 
   static FirebaseDbManager get instance => FirebaseDbManager();
 
-  Future<String> uploadBookImage(File? imageFile) async {
+  Future<String> uploadBookImage(File? imageFile, String bookTitle) async {
     final timeStamp = DateTime.now();
 
     final fileRef = storageRef.child('${timeStamp.toString()}');
@@ -43,7 +43,7 @@ class FirebaseDbManager {
   }
 
   Future<void> addBookToServer(Book book) async {
-    final bookRef = db.collection("books").doc();
+    final bookRef = db.collection(booksCollection).doc();
 
     await bookRef.set(book.toJson()).timeout(
       Duration(seconds: 3),
@@ -54,7 +54,7 @@ class FirebaseDbManager {
   }
 
   Future<List<Book>> downloadBooks() async {
-    final querySnapshots = await db.collection('books').get();
+    final querySnapshots = await db.collection(booksCollection).get();
     final List<Book> books = [];
     for (final item in querySnapshots.docs) {
       books.add(Book.fromJson(item.data(), item.id));

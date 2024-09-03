@@ -1,7 +1,5 @@
-import 'package:book/models/book/book.dart';
-import 'package:book/models/book/book_chapter.dart';
-import 'package:book/models/book/book_page_image.dart';
-import 'package:equatable/equatable.dart';
+
+import 'package:book/models/book/book_imports.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'book_pages.g.dart';

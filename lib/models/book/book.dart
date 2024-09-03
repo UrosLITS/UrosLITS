@@ -1,4 +1,4 @@
-import 'package:book/models/book/book_data.dart';
+import 'package:book/models/book/book_imports.dart';
 import 'package:equatable/equatable.dart';
 import 'package:json_annotation/json_annotation.dart';
 
@@ -33,5 +33,11 @@ class Book extends Equatable {
   Map<String, dynamic> toJson() => _$BookToJson(this);
 
   @override
-  List<Object?> get props => [title, author, id, imageUrl, bookData];
+  List<Object?> get props => [
+        title,
+        author,
+        id,
+        imageUrl,
+        bookData,
+      ];
 }

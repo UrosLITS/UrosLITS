@@ -7,10 +7,13 @@ part 'book_data.g.dart';
 
 @JsonSerializable()
 class BookData extends Equatable {
+  BookData({
+    required this.chapters,
+    required this.pages,
+  });
+
   List<BookChapters> chapters;
   List<BookPages> pages;
-
-  BookData({required this.chapters, required this.pages});
 
   @override
   List<Object?> get props => [chapters, pages];
