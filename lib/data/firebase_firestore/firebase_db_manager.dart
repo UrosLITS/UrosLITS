@@ -1,10 +1,10 @@
 import 'dart:io';
 import 'package:book/core/constants.dart';
+import 'package:book/models/book/book.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 
 class FirebaseDbManager {
-
   static FirebaseDbManager? _instance;
   late FirebaseFirestore db;
   late Reference storageRef;
@@ -25,7 +25,7 @@ class FirebaseDbManager {
 
   static FirebaseDbManager get instance => FirebaseDbManager();
 
-  Future<String> AddBookImage(File? imageFile) async {
+  Future<String> uploadBookImage(File? imageFile) async {
     final timeStamp = DateTime.now();
 
     final fileRef = storageRef.child('${timeStamp.toString()}');
@@ -40,5 +40,26 @@ class FirebaseDbManager {
       throw Exception(timeoutErrorMessage);
     });
     return Future.value(url);
+  }
+
+  Future<void> addBookToServer(Book book) async {
+    final bookRef = db.collection("books").doc();
+
+    await bookRef.set(book.toJson()).timeout(
+      Duration(seconds: 3),
+      onTimeout: () {
+        throw Exception(timeoutErrorMessage);
+      },
+    );
+  }
+
+  Future<List<Book>> downloadBooks() async {
+    final querySnapshots = await db.collection('books').get();
+    final List<Book> books = [];
+    for (final item in querySnapshots.docs) {
+      books.add(Book.fromJson(item.data(), item.id));
+    }
+
+    return Future.value(books);
   }
 }

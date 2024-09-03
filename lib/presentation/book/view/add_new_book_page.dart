@@ -4,6 +4,7 @@ import 'package:book/core/constants.dart';
 import 'package:book/presentation/book/bloc/home_page_bloc.dart';
 import 'package:book/presentation/book/bloc/home_page_event.dart';
 import 'package:book/presentation/book/bloc/home_page_state.dart';
+import 'package:book/presentation/common/custom_snackbar.dart';
 import 'package:book/presentation/common/custom_text_form.dart';
 import 'package:book/presentation/common/dialog_utils.dart';
 import 'package:book/styles/app_colors.dart';
@@ -51,6 +52,11 @@ class _AddNewBookPage extends State<AddNewBookPage> {
         } else if (state is SuccessfulImageDeleted) {
           imageName = null;
           imageFile = null;
+        } else if (state is ServerError) {
+          CustomSnackBar.showSnackBar(
+              color: Colors.red,
+              content: AppLocalizations.of(context)!.error,
+              context: context);
         }
       },
       builder: (BuildContext context, Object? state) {

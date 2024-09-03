@@ -1,5 +1,6 @@
 import 'package:book/app_routes/app_routes.dart';
-import 'package:book/models/book.dart';
+import 'package:book/data/firebase_firestore/firebase_db_manager.dart';
+import 'package:book/models/book/book.dart';
 import 'package:book/presentation/book/bloc/home_page_bloc.dart';
 import 'package:book/presentation/book/bloc/home_page_event.dart';
 import 'package:book/presentation/book/bloc/home_page_state.dart';
@@ -23,6 +24,8 @@ class _HomeBookPageView extends State<HomePageView> {
 
   @override
   void initState() {
+    context.read<HomePageBloc>().add(DownloadBooks());
+
     _controller = PageController(viewportFraction: 0.9, initialPage: 0);
 
     super.initState();
@@ -42,6 +45,10 @@ class _HomeBookPageView extends State<HomePageView> {
           DialogUtils.showLoadingScreen(context);
         } else if (state is LoadedState) {
           Navigator.pop(context);
+        } else if (state is SuccessfulBookAdded) {
+          context.read<HomePageBloc>().add(DownloadBooks());
+        } else if (state is BooksDownloadedState) {
+          bookList.addAll(state.bookList);
         }
       },
       builder: (BuildContext context, Object? state) {
@@ -73,10 +80,9 @@ class _HomeBookPageView extends State<HomePageView> {
                     context, kAddNewBookRoute);
 
                 if (result != null) {
-                  bookList.add(result);
                   context
                       .read<HomePageBloc>()
-                      .add(RefreshBooks(bookList: bookList));
+                      .add(onNewBookAdded(book: result));
                 }
               },
               child: Icon(CupertinoIcons.add),

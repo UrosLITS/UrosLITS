@@ -1,6 +1,4 @@
-import 'dart:io';
-
-import 'package:book/models/book.dart';
+import 'package:book/models/book/book.dart';
 import 'package:equatable/equatable.dart';
 
 sealed class HomePageState extends Equatable {
@@ -32,6 +30,18 @@ class SuccessfulImageDeleted extends HomePageState {
   SuccessfulImageDeleted();
 }
 
+class ServerError extends HomePageState {
+  final Exception error;
+
+  ServerError({required this.error});
+}
+
 class InitialState extends HomePageState {
   InitialState();
+}
+
+class BooksDownloadedState extends HomePageState {
+  final List<Book> bookList;
+
+  BooksDownloadedState({required this.bookList});
 }
