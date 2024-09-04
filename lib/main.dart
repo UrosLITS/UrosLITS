@@ -1,7 +1,7 @@
 import 'package:book/app_routes/app_routes.dart';
 import 'package:book/models/app_user_singleton.dart';
+import 'package:book/presentation/book/bloc/home_page_bloc.dart';
 import 'package:book/presentation/login/bloc/login_bloc.dart';
-import 'package:book/presentation/login/view/login_page_view.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -15,6 +15,8 @@ Future<void> main() async {
   await SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,
   ]);
+
+  await AppUserSingleton.instance.setUser();
   runApp(MyApp());
 }
 
@@ -24,23 +26,26 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MultiBlocProvider(
-        providers: [
-          BlocProvider<LoginBloc>(create: (BuildContext context) => LoginBloc())
+      providers: [
+        BlocProvider<LoginBloc>(create: (BuildContext context) => LoginBloc()),
+        BlocProvider<HomePageBloc>(
+            create: (BuildContext context) => HomePageBloc()),
+      ],
+      child: MaterialApp(
+        onGenerateRoute: AppRoutes.onGenerateRoutes,
+        debugShowCheckedModeBanner: false,
+        theme: ThemeData(
+          colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+          useMaterial3: true,
+        ),
+        localizationsDelegates: [
+          AppLocalizations.delegate,
+          GlobalMaterialLocalizations.delegate,
+          GlobalCupertinoLocalizations.delegate
         ],
-        child: MaterialApp(
-          onGenerateRoute: AppRoutes.onGenerateRoutes,
-          debugShowCheckedModeBanner: false,
-          theme: ThemeData(
-            colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-            useMaterial3: true,
-          ),
-          localizationsDelegates: [
-            AppLocalizations.delegate,
-            GlobalMaterialLocalizations.delegate,
-            GlobalCupertinoLocalizations.delegate
-          ],
-          initialRoute:
-              AppUserSingleton().appUser != null ? homeRoute : loginRoute,
-        ));
+        initialRoute:
+            AppUserSingleton().appUser != null ? kHomeRoute : kLoginRoute,
+      ),
+    );
   }
 }

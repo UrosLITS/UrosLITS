@@ -5,7 +5,7 @@ class AppUserSingleton {
   static AppUserSingleton? _instance;
   AppUser? _appUser;
 
-  AppUserSingleton._internal() {}
+  AppUserSingleton._internal();
 
   factory AppUserSingleton() {
     if (_instance == null) {
@@ -26,7 +26,7 @@ class AppUserSingleton {
     _appUser = null;
   }
 
-  static FirebaseAuthSingleton get instance => FirebaseAuthSingleton();
+  static AppUserSingleton get instance => AppUserSingleton();
 
   AppUser? get appUser => _appUser;
 }

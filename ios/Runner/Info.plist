@@ -47,5 +47,14 @@
 		<true/>
 		<key>UIStatusBarHidden</key>
 		<false/>
+
+		<key>UIApplicationSupportsIndirectInputEvents</key>
+        		<true/>
+        		<key>UIStatusBarHidden</key>
+        		<false/>
+                <key>NSPhotoLibraryUsageDescription</key>
+        		<string>We need access to your photo library to allow you to select and upload photos.</string>
+        		<key>NSCameraUsageDescription</key>
+        		<string>We need acceess to your camera to upload photos</string>
 	</dict>
 </plist>
