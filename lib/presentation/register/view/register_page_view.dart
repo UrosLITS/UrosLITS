@@ -1,15 +1,15 @@
 import 'package:book/core/constants.dart';
-import 'package:book/presentation/common/custom_text_form.dart';
 import 'package:book/models/app_user.dart';
 import 'package:book/presentation/common/book_app_bar.dart';
+import 'package:book/presentation/common/custom_dialog.dart';
 import 'package:book/presentation/common/custom_snackbar.dart';
+import 'package:book/presentation/common/custom_text_form.dart';
 import 'package:book/presentation/common/dialog_utils.dart';
 import 'package:book/presentation/login/bloc/login_bloc.dart';
 import 'package:book/presentation/login/bloc/login_event.dart';
 import 'package:book/presentation/login/bloc/login_state.dart';
 import 'package:book/styles/app_colors.dart';
 import 'package:book/validation/validation.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -66,6 +66,12 @@ class _RegisterPageView extends State<RegisterPageView> {
           child: Scaffold(
               appBar: AppBarLogReg(
                 titleText: AppLocalizations.of(context)!.register,
+                leading: IconButton(
+                  onPressed: () {
+                    Navigator.maybePop(context);
+                  },
+                  icon: Icon(Icons.arrow_back_ios),
+                ),
               ),
               body: SingleChildScrollView(
                 keyboardDismissBehavior:
@@ -263,33 +269,14 @@ class _RegisterPageView extends State<RegisterPageView> {
           context: context,
           barrierDismissible: false,
           builder: (BuildContext context) {
-            return AlertDialog(
-              content: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text(AppLocalizations.of(context)!.discard_changes),
-                ],
-              ),
-              actions: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    TextButton(
-                      onPressed: () {
-                        Navigator.of(context).pop(true);
-                      },
-                      child: Text(AppLocalizations.of(context)!.yes),
-                    ),
-                    TextButton(
-                      onPressed: () {
-                        Navigator.of(context).pop(false);
-                      },
-                      child: Text(AppLocalizations.of(context)!.no),
-                    ),
-                  ],
-                ),
-              ],
-            );
+            return CustomDialog(
+                content: AppLocalizations.of(context)!.discard_changes,
+                positiveAnswer: () {
+                  Navigator.of(context).pop(true);
+                },
+                negativeAnswer: () {
+                  Navigator.of(context).pop(false);
+                });
           });
       return result;
     }

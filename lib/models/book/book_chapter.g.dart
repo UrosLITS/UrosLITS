@@ -2,11 +2,7 @@
 
 part of 'book_chapter.dart';
 
-
-
-
-BookChapters _$BookChaptersFromJson(Map<String, dynamic> json) =>
-    BookChapters(
+BookChapters _$BookChaptersFromJson(Map<String, dynamic> json) => BookChapters(
       chTitle: json['title'] as String? ?? '',
       chNumber: (json['number'] as num).toInt(),
     );

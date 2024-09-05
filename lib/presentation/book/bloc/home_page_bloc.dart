@@ -2,13 +2,11 @@ import 'dart:io';
 
 import 'package:book/data/firebase_firestore/firebase_db_manager.dart';
 import 'package:book/models/book/book.dart';
-
 import 'package:book/utils/file_utils.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 part 'home_page_event.dart';
-
 part 'home_page_state.dart';
 
 class HomePageBloc extends Bloc<HomePageEvent, HomePageState> {
@@ -18,6 +16,7 @@ class HomePageBloc extends Bloc<HomePageEvent, HomePageState> {
     on<AddBookImageEvent>(_onAddBookImage);
     on<DeleteBookImage>(_onDeleteBookImage);
     on<DownloadBooks>(_onDownloadBooks);
+    on<GetBookData>(_onDataRetrieved);
   }
 
   Future<void> _onBookAdded(
@@ -71,6 +70,23 @@ class HomePageBloc extends Bloc<HomePageEvent, HomePageState> {
     try {
       final result = await FirebaseDbManager.instance.downloadBooks();
       emit(BooksDownloadedState(bookList: result));
+    } on Exception catch (e) {
+      emit(LoadedState());
+      emit(ServerError(error: e));
+    }
+  }
+
+  Future<void> _onDataRetrieved(
+      GetBookData event, Emitter<HomePageState> emit) async {
+    emit(LoadingState());
+
+    try {
+      final result =
+          await FirebaseDbManager.instance.getBookData(event.book.id);
+
+      event.book.bookData = result;
+      emit(LoadedState());
+      emit(DataRetrieved(book: event.book));
     } on Exception catch (e) {
       emit(LoadedState());
       emit(ServerError(error: e));

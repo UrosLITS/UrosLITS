@@ -1,7 +1,10 @@
 import 'package:book/app_routes/app_routes.dart';
+import 'package:book/data/firebase_auth/firebase_auth_singleton.dart';
+import 'package:book/models/app_user_singleton.dart';
 import 'package:book/models/book/book.dart';
 import 'package:book/presentation/book/bloc/home_page_bloc.dart';
 import 'package:book/presentation/common/common.dart';
+import 'package:book/presentation/common/custom_dialog.dart';
 import 'package:book/styles/app_styles.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -48,13 +51,38 @@ class _HomeBookPageView extends State<HomePageView> {
           context.read<HomePageBloc>().add(DownloadBooks());
         } else if (state is BooksDownloadedState) {
           bookList.addAll(state.bookList);
+        } else if (state is ServerError) {
+          CustomSnackBar.showSnackBar(
+              color: Colors.red,
+              content: AppLocalizations.of(context)!.error,
+              context: context);
+        } else if (state is DataRetrieved) {
+          Navigator.pushNamed(context, kBookPageRoute, arguments: state.book);
         }
       },
       builder: (BuildContext context, Object? state) {
         return Scaffold(
           appBar: AppBar(
             leading: IconButton(
-              onPressed: () {},
+              onPressed: () async {
+                final result = await showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return CustomDialog(
+                          content: AppLocalizations.of(context)!.log_out,
+                          positiveAnswer: () {
+                            FirebaseAuthSingleton.instance.auth.signOut();
+                            AppUserSingleton.instance.clearUser();
+                            Navigator.of(context).pop(true);
+                          },
+                          negativeAnswer: () {
+                            Navigator.of(context).pop(false);
+                          });
+                    });
+                if (result == true) {
+                  Navigator.pushReplacementNamed(context, kLoginRoute);
+                }
+              },
               icon: Icon(Icons.exit_to_app),
             ),
             centerTitle: true,
@@ -104,7 +132,9 @@ class _HomeBookPageView extends State<HomePageView> {
         onDoubleTap: () {
           return null;
         },
-        onTap: () async {},
+        onTap: () async {
+          context.read<HomePageBloc>().add(GetBookData(book: book));
+        },
         child: Stack(
           children: [
             Container(

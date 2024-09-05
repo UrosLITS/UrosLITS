@@ -44,3 +44,9 @@ class BooksDownloadedState extends HomePageState {
 
   final List<Book> bookList;
 }
+
+class DataRetrieved extends HomePageState {
+  DataRetrieved({required this.book});
+
+  final Book book;
+}

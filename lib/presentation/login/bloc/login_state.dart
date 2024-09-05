@@ -12,14 +12,14 @@ class SuccessfulLogin extends LoginState {
   SuccessfulLogin();
 
   @override
-  List<Object?> get props => [Random().nextInt(10000)];
+  List<Object?> get props => [];
 }
 
 class SuccessfulSignUp extends LoginState {
   SuccessfulSignUp();
 
   @override
-  List<Object?> get props => [Random().nextInt(10000)];
+  List<Object?> get props => [];
 }
 
 class InitialState extends LoginState {

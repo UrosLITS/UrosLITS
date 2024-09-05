@@ -52,3 +52,12 @@ class DownloadBooks extends HomePageEvent {
   @override
   List<Object?> get props => [];
 }
+
+class GetBookData extends HomePageEvent {
+  GetBookData({required this.book});
+
+  final Book book;
+
+  @override
+  List<Object?> get props => [book];
+}

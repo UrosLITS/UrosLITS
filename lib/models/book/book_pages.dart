@@ -1,4 +1,3 @@
-
 import 'package:book/models/book/book_imports.dart';
 import 'package:json_annotation/json_annotation.dart';
 
