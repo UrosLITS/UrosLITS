@@ -1,7 +1,7 @@
 import 'package:book/app_routes/app_routes.dart';
 import 'package:book/models/app_user_singleton.dart';
 import 'package:book/presentation/book/bloc/home_page_bloc.dart';
-import 'package:book/presentation/bookPages/bloc/book_page_bloc.dart';
+import 'package:book/presentation/bookPages/bloc/book_bloc.dart';
 import 'package:book/presentation/login/bloc/login_bloc.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -31,8 +31,8 @@ class MyApp extends StatelessWidget {
         BlocProvider<LoginBloc>(create: (BuildContext context) => LoginBloc()),
         BlocProvider<HomePageBloc>(
             create: (BuildContext context) => HomePageBloc()),
-        BlocProvider<BookPagesBloc>(
-            create: (BuildContext context) => BookPagesBloc()),
+        BlocProvider<BookBloc>(
+            create: (BuildContext context) => BookBloc()),
       ],
       child: MaterialApp(
         onGenerateRoute: AppRoutes.onGenerateRoutes,

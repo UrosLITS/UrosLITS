@@ -5,13 +5,14 @@ part 'book_pages.g.dart';
 
 @JsonSerializable()
 class BookPages {
-  BookPages(
-      {this.text = '',
-      required this.pageNumber,
-      this.bookPageImage,
-      required this.bookChapter,
-      this.dateTime,
-      this.pickBook});
+  BookPages({
+    this.text = '',
+    required this.pageNumber,
+    this.bookPageImage,
+    required this.bookChapter,
+    this.dateTime,
+    this.pickBook,
+  });
 
   @JsonKey(name: "number")
   late int pageNumber;
@@ -25,8 +26,14 @@ class BookPages {
   Book? pickBook;
 
   @override
-  List<Object?> get props =>
-      [pageNumber, text, url, bookPageImage, bookChapter, dateTime];
+  List<Object?> get props => [
+        pageNumber,
+        text,
+        url,
+        bookPageImage,
+        bookChapter,
+        dateTime,
+      ];
 
   factory BookPages.fromJson(Map<String, dynamic> json) =>
       _$BookPageFromJson(json);

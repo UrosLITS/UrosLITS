@@ -87,7 +87,7 @@ class FirebaseDbManager {
     final chapterRefs = db.collection(chaptersCollection).doc(bookID);
     final snapShoots =
         await chapterRefs.get().timeout(Duration(seconds: 3), onTimeout: () {
-      throw Exception("Cant reach server");
+      throw Exception(timeoutErrorMessage);
     });
     final Data = snapShoots.data();
     final List<dynamic>? Items = Data?["items"] ?? [];

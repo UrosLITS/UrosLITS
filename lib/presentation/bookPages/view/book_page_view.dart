@@ -1,7 +1,7 @@
 import 'package:book/models/book/book_imports.dart';
-import 'package:book/presentation/bookPages/bloc/book_page_bloc.dart';
-import 'package:book/presentation/bookPages/bloc/book_page_events.dart';
-import 'package:book/presentation/bookPages/bloc/book_page_state.dart';
+import 'package:book/presentation/bookPages/bloc/book_bloc.dart';
+import 'package:book/presentation/bookPages/bloc/book_events.dart';
+import 'package:book/presentation/bookPages/bloc/book_state.dart';
 import 'package:book/presentation/bookPages/widgets/build_page_body.dart';
 import 'package:book/presentation/common/common.dart';
 import 'package:flutter/cupertino.dart';
@@ -11,7 +11,10 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class BookPageView extends StatefulWidget {
-  const BookPageView({Key? key, required this.book}) : super(key: key);
+  const BookPageView({
+    Key? key,
+    required this.book,
+  }) : super(key: key);
 
   final Book book;
 
@@ -33,12 +36,12 @@ class _BookPageView extends State<BookPageView> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocConsumer<BookPagesBloc, BookPagesState>(
+    return BlocConsumer<BookBloc, BookState>(
       listener: (context, state) {
         if (state is NextPage) {
-          currentIndex = state.currentIndex;
+          currentIndex++;
         } else if (state is PreviousPage) {
-          currentIndex = state.currentIndex;
+          currentIndex--;
         } else if (state is ErrorState) {
           CustomSnackBar.showSnackBar(
               color: Colors.red,
@@ -117,9 +120,7 @@ class _BookPageView extends State<BookPageView> {
               child: IconButton(
                 onPressed: bookPagesList[currentIndex].pageNumber > 1
                     ? () {
-                        context
-                            .read<BookPagesBloc>()
-                            .add(PreviousPageEvent(currentIndex: currentIndex));
+                        context.read<BookBloc>().add(PreviousPageEvent());
                       }
                     : null,
                 icon: Icon(CupertinoIcons.back),
@@ -151,9 +152,7 @@ class _BookPageView extends State<BookPageView> {
                         bookPagesList.length
                     ? () {
                         if (currentIndex < bookPagesList.length - 1) {
-                          context
-                              .read<BookPagesBloc>()
-                              .add(NextPageEvent(currentIndex: currentIndex));
+                          context.read<BookBloc>().add(NextPageEvent());
                         }
                       }
                     : null,

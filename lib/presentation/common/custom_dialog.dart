@@ -16,8 +16,9 @@ class CustomDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      content: SingleChildScrollView(
+      content: Container(
         child: Column(
+          mainAxisSize: MainAxisSize.min,
           children: [
             Text(
               content,
