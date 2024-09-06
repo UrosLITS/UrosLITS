@@ -66,20 +66,15 @@ class _HomeBookPageView extends State<HomePageView> {
             leading: IconButton(
               onPressed: () async {
                 final result = await showDialog(
-                    context: context,
-                    builder: (BuildContext context) {
-                      return CustomDialog(
-                          content: AppLocalizations.of(context)!.log_out,
-                          positiveAnswer: () {
-                            FirebaseAuthSingleton.instance.auth.signOut();
-                            AppUserSingleton.instance.clearUser();
-                            Navigator.of(context).pop(true);
-                          },
-                          negativeAnswer: () {
-                            Navigator.of(context).pop(false);
-                          });
-                    });
+                  context: context,
+                  builder: (BuildContext context) {
+                    return CustomDialog(
+                        content: AppLocalizations.of(context)!.log_out);
+                  },
+                );
                 if (result == true) {
+                  FirebaseAuthSingleton.instance.auth.signOut();
+                  AppUserSingleton.instance.clearUser();
                   Navigator.pushReplacementNamed(context, kLoginRoute);
                 }
               },

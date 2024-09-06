@@ -5,13 +5,9 @@ class CustomDialog extends StatelessWidget {
   const CustomDialog({
     Key? key,
     required this.content,
-    required this.positiveAnswer,
-    required this.negativeAnswer,
   }) : super(key: key);
 
   final String content;
-  final VoidCallback positiveAnswer;
-  final VoidCallback negativeAnswer;
 
   @override
   Widget build(BuildContext context) {
@@ -27,11 +23,15 @@ class CustomDialog extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 TextButton(
-                  onPressed: positiveAnswer,
+                  onPressed: () {
+                    Navigator.of(context).pop(true);
+                  },
                   child: Text(AppLocalizations.of(context)!.yes),
                 ),
                 TextButton(
-                  onPressed: negativeAnswer,
+                  onPressed: () {
+                    Navigator.of(context).pop(false);
+                  },
                   child: Text(AppLocalizations.of(context)!.no),
                 )
               ],

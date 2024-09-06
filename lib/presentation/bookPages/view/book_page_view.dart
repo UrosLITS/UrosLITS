@@ -22,15 +22,12 @@ class BookPageView extends StatefulWidget {
 }
 
 class _BookPageView extends State<BookPageView> {
-  int pageNumber = 0;
   int currentIndex = 0;
   List<BookPages> bookPagesList = [];
 
   @override
   void initState() {
-    bookPagesList = [];
-    bookPagesList.addAll(widget.book.bookData!.pages);
-
+    context.read<BookBloc>().add(InitBookEvent(widget.book));
     super.initState();
   }
 
@@ -38,70 +35,77 @@ class _BookPageView extends State<BookPageView> {
   Widget build(BuildContext context) {
     return BlocConsumer<BookBloc, BookState>(
       listener: (context, state) {
-        if (state is NextPage) {
-          currentIndex++;
-        } else if (state is PreviousPage) {
-          currentIndex--;
-        } else if (state is ErrorState) {
+        if (state is ErrorState) {
           CustomSnackBar.showSnackBar(
               color: Colors.red,
               content: AppLocalizations.of(context)!.error,
               context: context);
+        } else if (state is DisplayBookPageState) {
+          currentIndex = state.pageIndex;
+          bookPagesList = state.bookData.pages;
+        } else if (state is InitialState) {
+          context.read<BookBloc>().add(InitBookEvent(widget.book));
         }
       },
       builder: (BuildContext context, Object? state) {
-        return Scaffold(
-            appBar: AppBar(
-                centerTitle: true,
-                actions: [
-                  Container(
-                    margin: EdgeInsets.only(bottom: 10),
-                    child: Visibility(
+        if (state is DisplayBookPageState) {
+          return Scaffold(
+              appBar: AppBar(
+                  centerTitle: true,
+                  actions: [
+                    Container(
+                      margin: EdgeInsets.only(bottom: 10),
+                      child: Visibility(
+                        visible: bookPagesList.length > 0,
+                        child: IconButton(
+                          onPressed: () {},
+                          icon: Icon(
+                            Icons.edit,
+                            size: 35,
+                          ),
+                        ),
+                      ),
+                    ),
+                    Visibility(
                       visible: bookPagesList.length > 0,
-                      child: IconButton(
-                        onPressed: () {},
-                        icon: Icon(
-                          Icons.edit,
-                          size: 35,
+                      child: Align(
+                        alignment: AlignmentDirectional.topEnd,
+                        child: IconButton(
+                          onPressed: () {},
+                          icon: Icon(
+                            Icons.delete,
+                            color: Colors.red,
+                            size: 35,
+                          ),
                         ),
                       ),
                     ),
-                  ),
-                  Visibility(
-                    visible: bookPagesList.length > 0,
-                    child: Align(
-                      alignment: AlignmentDirectional.topEnd,
-                      child: IconButton(
-                        onPressed: () {},
-                        icon: Icon(
-                          Icons.delete,
-                          color: Colors.red,
-                          size: 35,
-                        ),
-                      ),
+                  ],
+                  title: bookPagesList.isEmpty
+                      ? Text(widget.book.title)
+                      : Text('Chapter title')),
+              body: bookPagesList.length > 0
+                  ? _buildPageBody(bookPagesList[currentIndex])
+                  : Center(
+                      child: Text(AppLocalizations.of(context)!.add_pages),
                     ),
+              floatingActionButton: Visibility(
+                child: Padding(
+                  padding: EdgeInsets.only(bottom: 60),
+                  // Adjust padding as needed
+                  child: FloatingActionButton(
+                    onPressed: () {},
+                    child: Icon(Icons.add),
                   ),
-                ],
-                title: bookPagesList.isEmpty
-                    ? Text(widget.book.title)
-                    : Text('Chapter title')),
-            body: bookPagesList.length > 0
-                ? _buildPageBody(bookPagesList[currentIndex])
-                : Center(
-                    child: Text(AppLocalizations.of(context)!.add_pages),
-                  ),
-            floatingActionButton: Visibility(
-              child: Padding(
-                padding: EdgeInsets.only(bottom: 60),
-                // Adjust padding as needed
-                child: FloatingActionButton(
-                  onPressed: () {},
-                  child: Icon(Icons.add),
                 ),
               ),
-            ),
-            floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
-            bottomSheet: bookPagesList.length > 0 ? _buildFooter() : null);
+              floatingActionButtonLocation:
+                  FloatingActionButtonLocation.endFloat,
+              bottomSheet: bookPagesList.length > 0 ? _buildFooter() : null);
+        }
+        return Center(
+          child: CircularProgressIndicator(),
+        );
       },
     );
   }
@@ -118,7 +122,7 @@ class _BookPageView extends State<BookPageView> {
             Container(
               margin: EdgeInsets.only(left: 10),
               child: IconButton(
-                onPressed: bookPagesList[currentIndex].pageNumber > 1
+                onPressed: isFirstPage
                     ? () {
                         context.read<BookBloc>().add(PreviousPageEvent());
                       }
@@ -148,8 +152,7 @@ class _BookPageView extends State<BookPageView> {
             Container(
               margin: EdgeInsets.only(right: 10),
               child: IconButton(
-                onPressed: bookPagesList[currentIndex].pageNumber <
-                        bookPagesList.length
+                onPressed: isLastPage
                     ? () {
                         if (currentIndex < bookPagesList.length - 1) {
                           context.read<BookBloc>().add(NextPageEvent());
@@ -164,6 +167,11 @@ class _BookPageView extends State<BookPageView> {
       ),
     );
   }
+
+  bool get isLastPage =>
+      bookPagesList[currentIndex].pageNumber < bookPagesList.length;
+
+  bool get isFirstPage => bookPagesList[currentIndex].pageNumber > 1;
 
   Widget _buildPageBody(BookPages bookPage) {
     return Container(

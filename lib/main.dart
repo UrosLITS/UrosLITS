@@ -31,8 +31,7 @@ class MyApp extends StatelessWidget {
         BlocProvider<LoginBloc>(create: (BuildContext context) => LoginBloc()),
         BlocProvider<HomePageBloc>(
             create: (BuildContext context) => HomePageBloc()),
-        BlocProvider<BookBloc>(
-            create: (BuildContext context) => BookBloc()),
+        BlocProvider<BookBloc>(create: (BuildContext context) => BookBloc()),
       ],
       child: MaterialApp(
         onGenerateRoute: AppRoutes.onGenerateRoutes,

@@ -75,7 +75,7 @@ class FirebaseDbManager {
       throw Exception(timeoutErrorMessage);
     });
     final data = snapShoot.data();
-    final List<dynamic>? items = data?["items"] ?? [];
+    final List<dynamic>? items = data?[collectionItems] ?? [];
     if (items != null) {
       for (final item in items) {
         if (item != null) {
@@ -89,10 +89,10 @@ class FirebaseDbManager {
         await chapterRefs.get().timeout(Duration(seconds: 3), onTimeout: () {
       throw Exception(timeoutErrorMessage);
     });
-    final Data = snapShoots.data();
-    final List<dynamic>? Items = Data?["items"] ?? [];
-    if (Items != null) {
-      for (final item in Items) {
+    final chaptersData = snapShoots.data();
+    final List<dynamic>? chaptersItem = chaptersData?[collectionItems] ?? [];
+    if (chaptersItem != null) {
+      for (final item in chaptersItem) {
         if (item != null) {
           bookChaptersList.add(BookChapters.fromJson(item));
         }

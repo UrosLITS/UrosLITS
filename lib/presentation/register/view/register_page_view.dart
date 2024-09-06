@@ -266,18 +266,13 @@ class _RegisterPageView extends State<RegisterPageView> {
         password != null ||
         confirmPassword != null) {
       final result = await showDialog(
-          context: context,
-          barrierDismissible: false,
-          builder: (BuildContext context) {
-            return CustomDialog(
-                content: AppLocalizations.of(context)!.discard_changes,
-                positiveAnswer: () {
-                  Navigator.of(context).pop(true);
-                },
-                negativeAnswer: () {
-                  Navigator.of(context).pop(false);
-                });
-          });
+        context: context,
+        barrierDismissible: false,
+        builder: (BuildContext context) {
+          return CustomDialog(
+              content: AppLocalizations.of(context)!.discard_changes);
+        },
+      );
       return result;
     }
     return true;

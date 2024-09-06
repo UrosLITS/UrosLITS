@@ -1,3 +1,4 @@
+import 'package:book/models/book/book_data.dart';
 import 'package:equatable/equatable.dart';
 
 sealed class BookState extends Equatable {
@@ -9,24 +10,27 @@ class InitialState extends BookState {
   InitialState();
 }
 
-class NextPage extends BookState {
-  NextPage();
+class DisplayBookPageState extends BookState {
+  DisplayBookPageState({
+    required this.bookData,
+    required this.pageIndex,
+  });
+
+  final int pageIndex;
+  final BookData bookData;
 
   @override
-  List<Object?> get props => [];
+  List<Object?> get props => [pageIndex];
 }
 
-class PreviousPage extends BookState {
-  PreviousPage();
-
-  @override
-  List<Object?> get props => [];
-}
-
-class ErrorState extends BookState {
-  ErrorState({required this.error});
-
+class ErrorState extends DisplayBookPageState {
   final Exception error;
+
+  ErrorState({
+    required super.bookData,
+    required this.error,
+    required super.pageIndex,
+  });
 
   @override
   List<Object?> get props => [error];

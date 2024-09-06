@@ -25,7 +25,7 @@ class LandscapeImage extends StatelessWidget {
           ),
           Floatable(
             float: FCFloat.start,
-            child: Text(""),
+            child: Container(),
           ),
           Floatable(
             clearMinSpacing: MediaQuery.of(context).size.height * 0.52,
