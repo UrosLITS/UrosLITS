@@ -1,17 +1,14 @@
 import 'package:book/app_routes/app_routes.dart';
 import 'package:book/core/constants.dart';
-import 'package:book/models/app_user_singleton.dart';
-import 'package:book/presentation/common/custom_text_form.dart';
 import 'package:book/presentation/common/book_app_bar.dart';
 import 'package:book/presentation/common/custom_snackbar.dart';
+import 'package:book/presentation/common/custom_text_form.dart';
 import 'package:book/presentation/common/dialog_utils.dart';
 import 'package:book/presentation/login/bloc/login_bloc.dart';
 import 'package:book/presentation/login/bloc/login_event.dart';
 import 'package:book/presentation/login/bloc/login_state.dart';
 import 'package:book/styles/app_colors.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 

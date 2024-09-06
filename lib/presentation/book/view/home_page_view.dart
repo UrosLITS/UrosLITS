@@ -2,6 +2,7 @@ import 'package:book/app_routes/app_routes.dart';
 import 'package:book/models/book/book.dart';
 import 'package:book/presentation/book/bloc/home_page_bloc.dart';
 import 'package:book/presentation/common/common.dart';
+import 'package:book/presentation/common/custom_dialog.dart';
 import 'package:book/styles/app_styles.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -23,7 +24,7 @@ class _HomeBookPageView extends State<HomePageView> {
   void initState() {
     bookList = [];
 
-    context.read<HomePageBloc>().add(DownloadBooks());
+    context.read<HomePageBloc>().add(DownloadBooksEvent());
 
     _controller = PageController(viewportFraction: 0.9, initialPage: 0);
 
@@ -39,22 +40,23 @@ class _HomeBookPageView extends State<HomePageView> {
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<HomePageBloc, HomePageState>(
-      listener: (context, state) {
-        if (state is LoadingState) {
-          DialogUtils.showLoadingScreen(context);
-        } else if (state is LoadedState) {
-          Navigator.pop(context);
-        } else if (state is SuccessfulBookAdded) {
-          context.read<HomePageBloc>().add(DownloadBooks());
-        } else if (state is BooksDownloadedState) {
-          bookList.addAll(state.bookList);
-        }
-      },
+      listener: listenForStateChanges,
       builder: (BuildContext context, Object? state) {
         return Scaffold(
           appBar: AppBar(
             leading: IconButton(
-              onPressed: () {},
+              onPressed: () async {
+                final result = await showDialog(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return CustomDialog(
+                        content: AppLocalizations.of(context)!.log_out);
+                  },
+                );
+                if (result == true) {
+                  context.read<HomePageBloc>().add(SignOutEvent());
+                }
+              },
               icon: Icon(Icons.exit_to_app),
             ),
             centerTitle: true,
@@ -79,7 +81,9 @@ class _HomeBookPageView extends State<HomePageView> {
                     context, kAddNewBookRoute);
 
                 if (result != null) {
-                  context.read<HomePageBloc>().add(NewBookAdded(book: result));
+                  context
+                      .read<HomePageBloc>()
+                      .add(NewBookAddedEvent(book: result));
                 }
               },
               child: Icon(CupertinoIcons.add),
@@ -88,6 +92,27 @@ class _HomeBookPageView extends State<HomePageView> {
         );
       },
     );
+  }
+
+  void listenForStateChanges(context, state) {
+    if (state is LoadingState) {
+      DialogUtils.showLoadingScreen(context);
+    } else if (state is LoadedState) {
+      Navigator.pop(context);
+    } else if (state is SuccessfulBookAddedState) {
+      context.read<HomePageBloc>().add(DownloadBooksEvent());
+    } else if (state is BooksDownloadedState) {
+      bookList.addAll(state.bookList);
+    } else if (state is ErrorState) {
+      CustomSnackBar.showSnackBar(
+          color: Colors.red,
+          content: AppLocalizations.of(context)!.error,
+          context: context);
+    } else if (state is DataRetrieved) {
+      Navigator.pushNamed(context, kBookPageRoute, arguments: state.book);
+    } else if (state is SignOutState) {
+      Navigator.pushReplacementNamed(context, kLoginRoute);
+    }
   }
 
   Widget _buildBookItem(Book book) {
@@ -104,7 +129,9 @@ class _HomeBookPageView extends State<HomePageView> {
         onDoubleTap: () {
           return null;
         },
-        onTap: () async {},
+        onTap: () async {
+          context.read<HomePageBloc>().add(GetBookDataEvent(book: book));
+        },
         child: Stack(
           children: [
             Container(

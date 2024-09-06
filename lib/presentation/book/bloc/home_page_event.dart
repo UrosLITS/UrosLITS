@@ -2,8 +2,8 @@ part of 'home_page_bloc.dart';
 
 sealed class HomePageEvent extends Equatable {}
 
-class AddNewBook extends HomePageEvent {
-  AddNewBook({
+class AddNewBookEvent extends HomePageEvent {
+  AddNewBookEvent({
     required this.title,
     required this.author,
     required this.imageFile,
@@ -21,8 +21,8 @@ class AddNewBook extends HomePageEvent {
       ];
 }
 
-class NewBookAdded extends HomePageEvent {
-  NewBookAdded({required this.book});
+class NewBookAddedEvent extends HomePageEvent {
+  NewBookAddedEvent({required this.book});
 
   final Book book;
 
@@ -30,8 +30,8 @@ class NewBookAdded extends HomePageEvent {
   List<Object?> get props => [book];
 }
 
-class DeleteBookImage extends HomePageEvent {
-  DeleteBookImage();
+class DeleteBookImageEvent extends HomePageEvent {
+  DeleteBookImageEvent();
 
   @override
   List<Object?> get props => [];
@@ -46,8 +46,24 @@ class AddBookImageEvent extends HomePageEvent {
   List<Object?> get props => [file];
 }
 
-class DownloadBooks extends HomePageEvent {
-  DownloadBooks();
+class DownloadBooksEvent extends HomePageEvent {
+  DownloadBooksEvent();
+
+  @override
+  List<Object?> get props => [];
+}
+
+class GetBookDataEvent extends HomePageEvent {
+  GetBookDataEvent({required this.book});
+
+  final Book book;
+
+  @override
+  List<Object?> get props => [book];
+}
+
+class SignOutEvent extends HomePageEvent {
+  SignOutEvent();
 
   @override
   List<Object?> get props => [];

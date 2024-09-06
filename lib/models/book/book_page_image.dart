@@ -19,7 +19,13 @@ class BookPageImage extends Equatable {
   String? storagePath;
 
   @override
-  List<Object?> get props => [url, filePath, width, height, storagePath];
+  List<Object?> get props => [
+        url,
+        filePath,
+        width,
+        height,
+        storagePath,
+      ];
 
   factory BookPageImage.fromJson(Map<String, dynamic> json) =>
       _$BookPageImageFromJson(json);

@@ -15,7 +15,10 @@ class BookChapters extends Equatable {
   int chNumber;
 
   @override
-  List<Object?> get props => [chNumber, chTitle];
+  List<Object?> get props => [
+        chNumber,
+        chTitle,
+      ];
 
   factory BookChapters.fromJson(Map<String, dynamic> json) =>
       _$BookChaptersFromJson(json);

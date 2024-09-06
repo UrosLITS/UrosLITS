@@ -37,18 +37,18 @@ class _AddNewBookPage extends State<AddNewBookPage> {
   Widget build(BuildContext context) {
     return BlocConsumer<HomePageBloc, HomePageState>(
       listener: (context, state) {
-        if (state is SuccessfulBookAdded) {
+        if (state is SuccessfulBookAddedState) {
           Navigator.of(context).pop(state.book);
         } else if (state is LoadingState) {
           DialogUtils.showLoadingScreen(context);
         } else if (state is LoadedState) {
           Navigator.pop(context);
-        } else if (state is SuccessfulImageAdded) {
+        } else if (state is SuccessfulImageAddedState) {
           imageName = state.imageName;
         } else if (state is SuccessfulImageDeleted) {
           imageName = null;
           imageFile = null;
-        } else if (state is ServerError) {
+        } else if (state is ErrorState) {
           CustomSnackBar.showSnackBar(
               color: Colors.red,
               content: AppLocalizations.of(context)!.error,
@@ -130,7 +130,7 @@ class _AddNewBookPage extends State<AddNewBookPage> {
                           onPressed: () {
                             imageFile = null;
                             imageName = "";
-                            context.read<HomePageBloc>().add(DeleteBookImage());
+                            context.read<HomePageBloc>().add(DeleteBookImageEvent());
                           },
                           icon: Icon(Icons.close),
                         ),
@@ -191,7 +191,7 @@ class _AddNewBookPage extends State<AddNewBookPage> {
 
   void addNewBook(BuildContext context) async {
     if (_formKey.currentState?.validate() ?? false) {
-      context.read<HomePageBloc>().add(AddNewBook(
+      context.read<HomePageBloc>().add(AddNewBookEvent(
             title: title!,
             author: author!,
             imageFile: imageFile!,

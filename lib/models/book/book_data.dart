@@ -16,7 +16,10 @@ class BookData extends Equatable {
   List<BookPages> pages;
 
   @override
-  List<Object?> get props => [chapters, pages];
+  List<Object?> get props => [
+        chapters,
+        pages,
+      ];
 
   factory BookData.fromJson(Map<String, dynamic> json) =>
       _$BookDataFromJson(json);
