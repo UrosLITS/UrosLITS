@@ -90,9 +90,9 @@ class FirebaseDbManager {
       throw Exception(timeoutErrorMessage);
     });
     final chaptersData = snapShoots.data();
-    final List<dynamic>? chaptersItem = chaptersData?[collectionItems] ?? [];
-    if (chaptersItem != null) {
-      for (final item in chaptersItem) {
+    final List<dynamic>? chapterItems = chaptersData?[collectionItems] ?? [];
+    if (chapterItems != null) {
+      for (final item in chapterItems) {
         if (item != null) {
           bookChaptersList.add(BookChapters.fromJson(item));
         }

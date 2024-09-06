@@ -13,14 +13,14 @@ class LoadedState extends HomePageState {
   LoadedState();
 }
 
-class SuccessfulBookAdded extends HomePageState {
-  SuccessfulBookAdded({required this.book});
+class SuccessfulBookAddedState extends HomePageState {
+  SuccessfulBookAddedState({required this.book});
 
   final Book book;
 }
 
-class SuccessfulImageAdded extends HomePageState {
-  SuccessfulImageAdded({required this.imageName});
+class SuccessfulImageAddedState extends HomePageState {
+  SuccessfulImageAddedState({required this.imageName});
 
   final String imageName;
 }
@@ -29,8 +29,14 @@ class SuccessfulImageDeleted extends HomePageState {
   SuccessfulImageDeleted();
 }
 
-class ServerError extends HomePageState {
-  ServerError({required this.error});
+class ErrorState extends HomePageState {
+  ErrorState({required this.error});
+
+  final Exception error;
+}
+
+class ErrorAuthState extends HomePageState {
+  ErrorAuthState({required this.error});
 
   final Exception error;
 }
@@ -49,4 +55,8 @@ class DataRetrieved extends HomePageState {
   DataRetrieved({required this.book});
 
   final Book book;
+}
+
+class SignOutState extends HomePageState {
+  SignOutState();
 }
