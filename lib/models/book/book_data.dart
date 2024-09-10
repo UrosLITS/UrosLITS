@@ -13,7 +13,7 @@ class BookData extends Equatable {
   });
 
   List<BookChapters> chapters;
-  List<BookPages> pages;
+  List<BookPage> pages;
 
   @override
   List<Object?> get props => [

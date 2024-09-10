@@ -13,7 +13,7 @@ part 'home_page_event.dart';
 part 'home_page_state.dart';
 
 class HomePageBloc extends Bloc<HomePageEvent, HomePageState> {
-  HomePageBloc() : super((InitialState())) {
+  HomePageBloc() : super((InitialBookState())) {
     on<AddNewBookEvent>(_onBookAdded);
     on<NewBookAddedEvent>(_onNewBookAdded);
     on<AddBookImageEvent>(_onAddBookImage);

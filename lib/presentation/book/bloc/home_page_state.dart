@@ -41,8 +41,8 @@ class ErrorAuthState extends HomePageState {
   final Exception error;
 }
 
-class InitialState extends HomePageState {
-  InitialState();
+class InitialBookState extends HomePageState {
+  InitialBookState();
 }
 
 class BooksDownloadedState extends HomePageState {

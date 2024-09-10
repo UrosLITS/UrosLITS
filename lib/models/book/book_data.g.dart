@@ -11,7 +11,7 @@ BookData _$BookDataFromJson(Map<String, dynamic> json) => BookData(
           .map((e) => BookChapters.fromJson(e as Map<String, dynamic>))
           .toList(),
       pages: (json['pages'] as List<dynamic>)
-          .map((e) => BookPages.fromJson(e as Map<String, dynamic>))
+          .map((e) => BookPage.fromJson(e as Map<String, dynamic>))
           .toList(),
     );
 

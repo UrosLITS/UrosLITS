@@ -65,7 +65,7 @@ class FirebaseDbManager {
   }
 
   Future<BookData> getBookData(String bookID) async {
-    List<BookPages> bookPagesList = [];
+    List<BookPage> bookPagesList = [];
     List<BookChapters> bookChaptersList = [];
 
     final booksRef = db.collection(pagesCollection).doc(bookID);
@@ -79,7 +79,7 @@ class FirebaseDbManager {
     if (items != null) {
       for (final item in items) {
         if (item != null) {
-          bookPagesList.add(BookPages.fromJson(item));
+          bookPagesList.add(BookPage.fromJson(item));
         }
       }
     }
@@ -103,5 +103,24 @@ class FirebaseDbManager {
         BookData(chapters: bookChaptersList, pages: bookPagesList);
 
     return Future.value(bookData);
+  }
+
+  Future<bool> addImageToServer(
+      BookPage bookPage, File imageFile, String id) async {
+    final timeStamp = DateTime.now();
+    final fileRef = storageRef.child("${id}/${timeStamp.toString()}");
+    final storagePath = fileRef.fullPath;
+    bookPage.bookPageImage?.storagePath = storagePath;
+    File file = File(imageFile.path);
+    await fileRef.putFile(file).timeout(Duration(seconds: 3), onTimeout: () {
+      throw Exception(timeoutErrorMessage);
+    });
+
+    final url = await fileRef.getDownloadURL().timeout(Duration(seconds: 3),
+        onTimeout: () {
+      throw Exception(timeoutErrorMessage);
+    });
+    bookPage.bookPageImage?.url = url;
+    return Future.value(true);
   }
 }

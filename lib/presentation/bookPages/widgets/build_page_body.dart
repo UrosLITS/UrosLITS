@@ -11,7 +11,7 @@ class LandscapeImage extends StatelessWidget {
     required this.currentIndex,
   });
 
-  final List<BookPages> bookPagesList;
+  final List<BookPage> bookPagesList;
   final int currentIndex;
   final BookPageImage bookPageImage;
 
@@ -59,7 +59,7 @@ class PortraitImage extends StatelessWidget {
   });
 
   final BookPageImage bookPageImage;
-  final List<BookPages> bookPagesList;
+  final List<BookPage> bookPagesList;
   final int currentIndex;
 
   @override
@@ -90,7 +90,7 @@ class PortraitImage extends StatelessWidget {
 }
 
 class NoImage extends StatelessWidget {
-  final List<BookPages> bookPagesList;
+  final List<BookPage> bookPagesList;
   final int currentIndex;
 
   NoImage({
