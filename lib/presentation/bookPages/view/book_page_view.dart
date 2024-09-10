@@ -1,3 +1,4 @@
+import 'package:book/app_routes/app_routes.dart';
 import 'package:book/models/book/book_imports.dart';
 import 'package:book/presentation/bookPages/bloc/book_bloc.dart';
 import 'package:book/presentation/bookPages/bloc/book_events.dart';
@@ -23,7 +24,7 @@ class BookPageView extends StatefulWidget {
 
 class _BookPageView extends State<BookPageView> {
   int currentIndex = 0;
-  List<BookPages> bookPagesList = [];
+  List<BookPage> bookPagesList = [];
 
   @override
   void initState() {
@@ -34,7 +35,7 @@ class _BookPageView extends State<BookPageView> {
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<BookBloc, BookState>(
-      listener: (context, state) {
+      listener: (context, state) async {
         if (state is ErrorState) {
           CustomSnackBar.showSnackBar(
               color: Colors.red,
@@ -52,6 +53,7 @@ class _BookPageView extends State<BookPageView> {
           return Scaffold(
               appBar: AppBar(
                   centerTitle: true,
+                  backgroundColor: Colors.brown.withOpacity(0.8),
                   actions: [
                     Container(
                       margin: EdgeInsets.only(bottom: 10),
@@ -94,7 +96,26 @@ class _BookPageView extends State<BookPageView> {
                   padding: EdgeInsets.only(bottom: 60),
                   // Adjust padding as needed
                   child: FloatingActionButton(
-                    onPressed: () {},
+                    onPressed: () async {
+                      BookPage bookPage = BookPage(
+                        pageNumber: bookPagesList.length + 1,
+                        text: '',
+                      );
+
+                      BookPage? result = await Navigator.pushNamed<dynamic>(
+                        context,
+                        kAddNewPageRoute,
+                        arguments: <String, dynamic>{
+                          'bookPage': bookPage,
+                          'bookID': widget.book.id
+                        },
+                      );
+                      if (result != null) {
+                        context.read<BookBloc>().add(AddNewPageEvent(
+                              bookPage: result,
+                            ));
+                      }
+                    },
                     child: Icon(Icons.add),
                   ),
                 ),
@@ -173,7 +194,7 @@ class _BookPageView extends State<BookPageView> {
 
   bool get isFirstPage => bookPagesList[currentIndex].pageNumber > 1;
 
-  Widget _buildPageBody(BookPages bookPage) {
+  Widget _buildPageBody(BookPage bookPage) {
     return Container(
       color: Colors.grey.withOpacity(0.5),
       padding: const EdgeInsets.symmetric(horizontal: kIsWeb ? 200.0 : 20),

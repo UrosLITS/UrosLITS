@@ -10,13 +10,13 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:image_picker/image_picker.dart';
 
-class AddNewBookPage extends StatefulWidget {
-  const AddNewBookPage({super.key});
+class AddNewBook extends StatefulWidget {
+  const AddNewBook({super.key});
 
-  State<AddNewBookPage> createState() => _AddNewBookPage();
+  State<AddNewBook> createState() => _AddNewBookPage();
 }
 
-class _AddNewBookPage extends State<AddNewBookPage> {
+class _AddNewBookPage extends State<AddNewBook> {
   final _formKey = GlobalKey<FormState>();
 
   String? title;
@@ -130,7 +130,9 @@ class _AddNewBookPage extends State<AddNewBookPage> {
                           onPressed: () {
                             imageFile = null;
                             imageName = "";
-                            context.read<HomePageBloc>().add(DeleteBookImageEvent());
+                            context
+                                .read<HomePageBloc>()
+                                .add(DeleteBookImageEvent());
                           },
                           icon: Icon(Icons.close),
                         ),
