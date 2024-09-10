@@ -3,11 +3,13 @@ import 'dart:ui' as ui;
 
 import 'package:book/data/firebase_firestore/firebase_db_manager.dart';
 import 'package:book/models/book/book_imports.dart';
-import 'package:book/presentation/bookPages/bloc/book_events.dart';
-import 'package:book/presentation/bookPages/bloc/book_state.dart';
 import 'package:book/utils/file_utils.dart';
+import 'package:equatable/equatable.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+
+part 'book_events.dart';
+part 'book_state.dart';
 
 class BookBloc extends Bloc<BookEvents, BookState> {
   BookBloc() : super((InitialState())) {
@@ -68,23 +70,28 @@ class BookBloc extends Bloc<BookEvents, BookState> {
       AddImageToServerEvent event, Emitter<BookState> emit) async {
     emit(LoadingBookPageState());
 
-    ui.Image? decodedImage;
-    File image = File(event.imageFile.path);
+    try {
+      ui.Image? decodedImage;
+      File image = File(event.imageFile.path);
 
-    decodedImage = await decodeImageFromList(image.readAsBytesSync());
-    BookPageImage bookPageImage = BookPageImage(
-      width: decodedImage.width,
-      height: decodedImage.height,
-      filePath: event.imageFile.path,
-    );
-    event.bookPage.bookPageImage = bookPageImage;
+      decodedImage = await decodeImageFromList(image.readAsBytesSync());
+      BookPageImage bookPageImage = BookPageImage(
+        width: decodedImage.width,
+        height: decodedImage.height,
+        filePath: event.imageFile.path,
+      );
+      event.bookPage.bookPageImage = bookPageImage;
 
-    final result = await FirebaseDbManager.instance
-        .addImageToServer(event.bookPage, event.imageFile, event.bookID);
+      final result = await FirebaseDbManager.instance
+          .addImageToServer(event.bookPage, event.imageFile, event.bookID);
 
-    emit(UploadedImageToServerState(
-        isUploaded: result, bookPage: event.bookPage));
-    emit(LoadedBookPageState());
+      emit(UploadedImageToServerState(
+          isUploaded: result, bookPage: event.bookPage));
+      emit(LoadedBookPageState());
+    } on Exception catch (e) {
+      emit(ErrorState(
+          bookData: book.bookData!, error: e, pageIndex: currentPageIndex));
+    }
   }
 
   Future<void> _onPopBackBookPage(

@@ -2,8 +2,6 @@ import 'dart:io';
 
 import 'package:book/models/book/book_imports.dart';
 import 'package:book/presentation/bookPages/bloc/book_bloc.dart';
-import 'package:book/presentation/bookPages/bloc/book_events.dart';
-import 'package:book/presentation/bookPages/bloc/book_state.dart';
 import 'package:book/presentation/common/common.dart';
 import 'package:book/styles/app_colors.dart';
 import 'package:flutter/cupertino.dart';

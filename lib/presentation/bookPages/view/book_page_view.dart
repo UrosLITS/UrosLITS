@@ -1,8 +1,6 @@
 import 'package:book/app_routes/app_routes.dart';
 import 'package:book/models/book/book_imports.dart';
 import 'package:book/presentation/bookPages/bloc/book_bloc.dart';
-import 'package:book/presentation/bookPages/bloc/book_events.dart';
-import 'package:book/presentation/bookPages/bloc/book_state.dart';
 import 'package:book/presentation/bookPages/widgets/build_page_body.dart';
 import 'package:book/presentation/common/common.dart';
 import 'package:flutter/cupertino.dart';

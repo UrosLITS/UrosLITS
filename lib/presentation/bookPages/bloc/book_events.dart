@@ -1,7 +1,4 @@
-import 'dart:io';
-
-import 'package:book/models/book/book_imports.dart';
-import 'package:equatable/equatable.dart';
+part of 'book_bloc.dart';
 
 sealed class BookEvents extends Equatable {}
 
@@ -60,7 +57,11 @@ class AddImageToServerEvent extends BookEvents {
   final BookPage bookPage;
 
   @override
-  List<Object?> get props => [];
+  List<Object?> get props => [
+        imageFile,
+        bookID,
+        bookPage,
+      ];
 }
 
 class PopBackBookPageEvent extends BookEvents {

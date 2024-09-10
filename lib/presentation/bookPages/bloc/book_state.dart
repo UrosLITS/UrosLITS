@@ -1,7 +1,4 @@
-import 'dart:io';
-
-import 'package:book/models/book/book_imports.dart';
-import 'package:equatable/equatable.dart';
+part of 'book_bloc.dart';
 
 sealed class BookState extends Equatable {
   @override
