@@ -89,6 +89,8 @@ class BookBloc extends Bloc<BookEvents, BookState> {
           isUploaded: result, bookPage: event.bookPage));
       emit(LoadedBookPageState());
     } on Exception catch (e) {
+      emit(LoadedBookPageState());
+
       emit(ErrorState(
           bookData: book.bookData!, error: e, pageIndex: currentPageIndex));
     }
