@@ -13,3 +13,4 @@ const String pagesCollection = 'pages';
 const String chaptersCollection = 'chapters';
 const String collectionItems = 'items';
 const String noImage = 'No image';
+const String numberField = 'number';

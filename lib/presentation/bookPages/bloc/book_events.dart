@@ -140,3 +140,10 @@ class SelectChapterEvent extends BookEvents {
   @override
   List<Object?> get props => [selectedChapter];
 }
+
+class DeletePageEvent extends BookEvents {
+  DeletePageEvent();
+
+  @override
+  List<Object?> get props => [];
+}

@@ -106,7 +106,23 @@ class _BookPageView extends State<BookPageView> {
                         child: Align(
                           alignment: AlignmentDirectional.topEnd,
                           child: IconButton(
-                            onPressed: () {},
+                            onPressed: () async {
+                              final result = showDialog(
+                                  context: context,
+                                  builder: (BuildContext) {
+                                    return CustomDialog(
+                                        content: AppLocalizations.of(context)!
+                                            .delete_page);
+                                  });
+
+                              if (result == true) {
+                                context.read<BookBloc>().add(DeletePageEvent());
+                              } else {
+                                context
+                                    .read<BookBloc>()
+                                    .add(InitBookEvent(widget.book));
+                              }
+                            },
                             icon: Icon(
                               Icons.delete,
                               color: Colors.red,
@@ -118,7 +134,8 @@ class _BookPageView extends State<BookPageView> {
                     ],
                     title: bookPagesList.isEmpty
                         ? Text(widget.book.title)
-                        : Text('Chapter title'),
+                        : Text(
+                            bookPagesList[currentIndex].bookChapter!.chTitle!),
                   ),
                   drawer: Drawer(
                     child: bookChaptersList.isNotEmpty

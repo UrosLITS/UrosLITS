@@ -166,4 +166,39 @@ class FirebaseDbManager {
     });
     return bookPagesList;
   }
+
+  Future<bool> deletePage(BookPage bookPage, String id) async {
+    final pageNumberToDel = bookPage.pageNumber;
+    final docRef = db.collection(pagesCollection).doc(id);
+
+    final snapShoot =
+        await docRef.get().timeout(Duration(seconds: 3), onTimeout: () {
+      throw Exception(timeoutErrorMessage);
+    });
+
+    final List<dynamic>? items = snapShoot.data()?[collectionItems];
+
+    items?.removeWhere((item) => item[numberField] == pageNumberToDel);
+
+    if (items != null) {
+      for (final item in items) {
+        if (item[numberField] > pageNumberToDel) {
+          item[numberField] = item[numberField] - 1;
+        }
+      }
+    }
+
+    if (bookPage.bookPageImage != null) {
+      final imageRef = storageRef.child(bookPage.bookPageImage!.storagePath!);
+      await imageRef.delete().timeout(Duration(seconds: 3), onTimeout: () {
+        throw Exception(timeoutErrorMessage);
+      });
+    }
+
+    await docRef.update({collectionItems: items}).timeout(Duration(seconds: 3),
+        onTimeout: () {
+      throw Exception(timeoutErrorMessage);
+    });
+    return Future.value(true);
+  }
 }
