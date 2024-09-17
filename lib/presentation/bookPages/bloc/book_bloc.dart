@@ -26,6 +26,7 @@ class BookBloc extends Bloc<BookEvents, BookState> {
     on<NavigateToPageEvent>(_onNavigateToPage);
     on<RemoveImageEvent>(_onRemoveImageEvent);
     on<SelectChapterEvent>(_onSelectChapterEvent);
+    on<DeletePageEvent>(_onDeletePageEvent);
   }
 
   late Book book;
@@ -189,5 +190,31 @@ class BookBloc extends Bloc<BookEvents, BookState> {
   Future<void> _onSelectChapterEvent(
       SelectChapterEvent event, Emitter<BookState> emit) async {
     emit(SelectedChapterState(bookChapter: event.selectedChapter));
+  }
+
+  Future<void> _onDeletePageEvent(
+      DeletePageEvent event, Emitter<BookState> emit) async {
+    emit(LoadingBookPageState());
+    try {
+      await FirebaseDbManager.instance
+          .deletePage(book.bookData!.pages[currentPageIndex], book.id);
+      book.bookData!.pages.removeAt(currentPageIndex);
+
+      for (int i = currentPageIndex; i < book.bookData!.pages.length; i++) {
+        book.bookData!.pages[i].pageNumber--;
+      }
+
+      if (currentPageIndex > 0 &&
+          currentPageIndex == book.bookData!.pages.length) {
+        currentPageIndex--;
+      }
+      emit(LoadedBookPageState());
+      emit(DisplayBookPageState(
+          bookData: book.bookData!, pageIndex: currentPageIndex));
+    } on Exception catch (e) {
+      emit(LoadedBookPageState());
+      emit(ErrorState(
+          bookData: book.bookData!, error: e, pageIndex: currentPageIndex));
+    }
   }
 }
