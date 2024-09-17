@@ -132,11 +132,11 @@ class FirebaseDbManager {
 
   Future<List<BookPage>> addPagesToServer(
       List<BookPage> bookPagesList, String id) async {
-    final booksRef = db.collection("pages").doc(id);
+    final booksRef = db.collection(pagesCollection).doc(id);
     await booksRef.set({
-      "items": bookPagesList.map((page) => page.toJson()).toList()
+      collectionItems: bookPagesList.map((page) => page.toJson()).toList()
     }).timeout(Duration(seconds: 3), onTimeout: () {
-      throw Exception("Cant reach server");
+      throw Exception(timeoutErrorMessage);
     });
 
     return bookPagesList;
@@ -144,24 +144,25 @@ class FirebaseDbManager {
 
   Future<List<BookChapter>> addChapterToServer(
       List<BookChapter> bookChaptersList, String id) async {
-    final chapterRef = db.collection("chapters").doc(id);
+    final chapterRef = db.collection(chaptersCollection).doc(id);
 
     await chapterRef.set({
-      "items": bookChaptersList.map((chapter) => chapter.toJson()).toList()
+      collectionItems:
+          bookChaptersList.map((chapter) => chapter.toJson()).toList()
     }).timeout(Duration(seconds: 3), onTimeout: () {
-      throw Exception("Cant reach server");
+      throw Exception(timeoutErrorMessage);
     });
     return bookChaptersList;
   }
 
   Future<List<BookPage>> updatePage(
       List<BookPage> bookPagesList, String id) async {
-    final booksRef = db.collection("pages").doc(id);
+    final booksRef = db.collection(pagesCollection).doc(id);
 
     await booksRef.update({
-      "items": bookPagesList.map((chapter) => chapter.toJson()).toList()
+      collectionItems: bookPagesList.map((chapter) => chapter.toJson()).toList()
     }).timeout(Duration(seconds: 3), onTimeout: () {
-      throw Exception("Cant reach server");
+      throw Exception(timeoutErrorMessage);
     });
     return bookPagesList;
   }

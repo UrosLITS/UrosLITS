@@ -42,7 +42,6 @@ class BookBloc extends Bloc<BookEvents, BookState> {
     if (book.bookData == null) {
       book.bookData = BookData(chapters: [], pages: []);
     }
-    this.currentPageIndex = 0;
     emit(DisplayBookPageState(
         bookData: book.bookData!, pageIndex: currentPageIndex));
   }
@@ -70,6 +69,7 @@ class BookBloc extends Bloc<BookEvents, BookState> {
     try {
       await FirebaseDbManager.instance
           .addPagesToServer(book.bookData!.pages, book.id);
+      currentPageIndex = book.bookData!.pages.indexOf(event.bookPage);
       emit(LoadedBookPageState());
       emit(DisplayBookPageState(
           bookData: book.bookData!, pageIndex: currentPageIndex));
@@ -160,6 +160,8 @@ class BookBloc extends Bloc<BookEvents, BookState> {
     try {
       await FirebaseDbManager.instance
           .updatePage(book.bookData!.pages, book.id);
+      currentPageIndex = book.bookData!.pages.indexOf(event.bookPage);
+
       emit(LoadedBookPageState());
       emit(DisplayBookPageState(
           bookData: book.bookData!, pageIndex: currentPageIndex));
@@ -172,8 +174,8 @@ class BookBloc extends Bloc<BookEvents, BookState> {
 
   Future<void> _onNavigateToPage(
       NavigateToPageEvent event, Emitter<BookState> emit) async {
-    if (event.chapterIndex != -1) {
-      currentPageIndex = event.chapterIndex;
+    if (event.pageIndex != -1) {
+      currentPageIndex = event.pageIndex;
       emit(DisplayBookPageState(
           bookData: book.bookData!, pageIndex: currentPageIndex));
     }

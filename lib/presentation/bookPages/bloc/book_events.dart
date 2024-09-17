@@ -117,12 +117,12 @@ class PageEditedEvent extends BookEvents {
 }
 
 class NavigateToPageEvent extends BookEvents {
-  NavigateToPageEvent({required this.chapterIndex});
+  NavigateToPageEvent({required this.pageIndex});
 
-  final int chapterIndex;
+  final int pageIndex;
 
   @override
-  List<Object?> get props => [chapterIndex];
+  List<Object?> get props => [pageIndex];
 }
 
 class RemoveImageEvent extends BookEvents {
