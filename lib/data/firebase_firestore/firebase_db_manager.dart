@@ -55,7 +55,13 @@ class FirebaseDbManager {
   }
 
   Future<List<Book>> downloadBooks() async {
-    final querySnapshots = await db.collection(booksCollection).get();
+    final querySnapshots = await db
+        .collection(booksCollection)
+        .get()
+        .timeout(Duration(seconds: 3), onTimeout: () {
+      throw Exception(timeoutErrorMessage);
+    });
+
     final List<Book> books = [];
     for (final item in querySnapshots.docs) {
       books.add(Book.fromJson(item.data(), item.id));
@@ -66,7 +72,7 @@ class FirebaseDbManager {
 
   Future<BookData> getBookData(String bookID) async {
     List<BookPage> bookPagesList = [];
-    List<BookChapters> bookChaptersList = [];
+    List<BookChapter> bookChaptersList = [];
 
     final booksRef = db.collection(pagesCollection).doc(bookID);
 
@@ -94,7 +100,7 @@ class FirebaseDbManager {
     if (chapterItems != null) {
       for (final item in chapterItems) {
         if (item != null) {
-          bookChaptersList.add(BookChapters.fromJson(item));
+          bookChaptersList.add(BookChapter.fromJson(item));
         }
       }
     }
@@ -122,5 +128,41 @@ class FirebaseDbManager {
     });
     bookPage.bookPageImage?.url = url;
     return Future.value(true);
+  }
+
+  Future<List<BookPage>> addPagesToServer(
+      List<BookPage> bookPagesList, String id) async {
+    final booksRef = db.collection("pages").doc(id);
+    await booksRef.set({
+      "items": bookPagesList.map((page) => page.toJson()).toList()
+    }).timeout(Duration(seconds: 3), onTimeout: () {
+      throw Exception("Cant reach server");
+    });
+
+    return bookPagesList;
+  }
+
+  Future<List<BookChapter>> addChapterToServer(
+      List<BookChapter> bookChaptersList, String id) async {
+    final chapterRef = db.collection("chapters").doc(id);
+
+    await chapterRef.set({
+      "items": bookChaptersList.map((chapter) => chapter.toJson()).toList()
+    }).timeout(Duration(seconds: 3), onTimeout: () {
+      throw Exception("Cant reach server");
+    });
+    return bookChaptersList;
+  }
+
+  Future<List<BookPage>> updatePage(
+      List<BookPage> bookPagesList, String id) async {
+    final booksRef = db.collection("pages").doc(id);
+
+    await booksRef.update({
+      "items": bookPagesList.map((chapter) => chapter.toJson()).toList()
+    }).timeout(Duration(seconds: 3), onTimeout: () {
+      throw Exception("Cant reach server");
+    });
+    return bookPagesList;
   }
 }

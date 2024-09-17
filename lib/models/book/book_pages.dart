@@ -21,7 +21,7 @@ class BookPage {
   @JsonKey(name: "image")
   BookPageImage? bookPageImage;
   @JsonKey(name: "chapter")
-  BookChapters? bookChapter;
+  BookChapter? bookChapter;
   DateTime? dateTime;
   Book? pickBook;
 

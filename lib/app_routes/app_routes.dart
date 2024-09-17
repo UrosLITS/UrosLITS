@@ -1,3 +1,4 @@
+import 'package:book/enums/page_mode.dart';
 import 'package:book/models/book/book_imports.dart';
 import 'package:book/presentation/book/view/add_new_book.dart';
 import 'package:book/presentation/book/view/home_page_view.dart';
@@ -29,10 +30,17 @@ class AppRoutes {
         return _materialRoute(BookPageView(book: setting.arguments as Book));
       case kAddNewPageRoute:
         return _materialRoute(AddEditNewPage(
-            bookPage: (setting.arguments as Map<String, dynamic>)['bookPage']
-                as BookPage,
-            bookID: (setting.arguments as Map<String, dynamic>)['bookID']
-                as String));
+          bookPage: (setting.arguments as Map<String, dynamic>)['bookPage']
+              as BookPage,
+          bookID:
+              (setting.arguments as Map<String, dynamic>)['bookID'] as String,
+          pageMode: (setting.arguments as Map<String, dynamic>)['pageMode']
+              as PageMode,
+          bookChapterList: (setting.arguments
+              as Map<String, dynamic>)['chapterList'] as List<BookChapter>,
+          bookPageList: (setting.arguments as Map<String, dynamic>)['pagesList']
+              as List<BookPage>,
+        ));
     }
 
     return null;

@@ -8,7 +8,7 @@ part of 'book_data.dart';
 
 BookData _$BookDataFromJson(Map<String, dynamic> json) => BookData(
       chapters: (json['chapters'] as List<dynamic>)
-          .map((e) => BookChapters.fromJson(e as Map<String, dynamic>))
+          .map((e) => BookChapter.fromJson(e as Map<String, dynamic>))
           .toList(),
       pages: (json['pages'] as List<dynamic>)
           .map((e) => BookPage.fromJson(e as Map<String, dynamic>))

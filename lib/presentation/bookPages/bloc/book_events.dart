@@ -22,17 +22,23 @@ class InitBookEvent extends BookEvents {
   final Book book;
 
   @override
-  List<Object?> get props => [book];
+  List<Object?> get props => [
+        book,
+        Random().nextInt(10000),
+      ];
 }
 
 class AddNewPageEvent extends BookEvents {
-  AddNewPageEvent({required this.bookPage});
+  AddNewPageEvent({
+    required this.bookPage,
+  });
 
   final BookPage bookPage;
 
   @override
   List<Object?> get props => [
         bookPage,
+        Random().nextInt(10000),
       ];
 }
 
@@ -42,7 +48,10 @@ class AddBookPageImageEvent extends BookEvents {
   final File file;
 
   @override
-  List<Object?> get props => [file];
+  List<Object?> get props => [
+        file,
+        Random().nextInt(10000),
+      ];
 }
 
 class AddImageToServerEvent extends BookEvents {
@@ -61,6 +70,7 @@ class AddImageToServerEvent extends BookEvents {
         imageFile,
         bookID,
         bookPage,
+        Random().nextInt(10000),
       ];
 }
 
@@ -72,5 +82,61 @@ class PopBackBookPageEvent extends BookEvents {
   final BookPage bookPage;
 
   @override
-  List<Object?> get props => [bookPage];
+  List<Object?> get props => [
+        bookPage,
+        Random().nextInt(10000),
+      ];
+}
+
+class AddNewChapterEvent extends BookEvents {
+  AddNewChapterEvent({
+    required this.bookChapter,
+  });
+
+  final BookChapter? bookChapter;
+
+  @override
+  List<Object?> get props => [
+        bookChapter,
+        Random().nextInt(10000),
+      ];
+}
+
+class PageEditedEvent extends BookEvents {
+  PageEditedEvent({
+    required this.bookPage,
+  });
+
+  final BookPage bookPage;
+
+  @override
+  List<Object?> get props => [
+        bookPage,
+        Random().nextInt(10000),
+      ];
+}
+
+class NavigateToPageEvent extends BookEvents {
+  NavigateToPageEvent({required this.chapterIndex});
+
+  final int chapterIndex;
+
+  @override
+  List<Object?> get props => [chapterIndex];
+}
+
+class RemoveImageEvent extends BookEvents {
+  RemoveImageEvent();
+
+  @override
+  List<Object?> get props => [];
+}
+
+class SelectChapterEvent extends BookEvents {
+  SelectChapterEvent({required this.selectedChapter});
+
+  final BookChapter? selectedChapter;
+
+  @override
+  List<Object?> get props => [selectedChapter];
 }

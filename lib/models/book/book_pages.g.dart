@@ -8,7 +8,7 @@ BookPage _$BookPageFromJson(Map<String, dynamic> json) => BookPage(
           : BookPageImage.fromJson(json['image'] as Map<String, dynamic>),
       bookChapter: json['chapter'] == null
           ? null
-          : BookChapters.fromJson(json['chapter'] as Map<String, dynamic>),
+          : BookChapter.fromJson(json['chapter'] as Map<String, dynamic>),
     );
 
 Map<String, dynamic> _$BookPageToJson(BookPage instance) => <String, dynamic>{
