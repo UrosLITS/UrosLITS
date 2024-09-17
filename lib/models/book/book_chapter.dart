@@ -3,8 +3,8 @@ import 'package:json_annotation/json_annotation.dart';
 
 part 'book_chapter.g.dart';
 
-class BookChapters extends Equatable {
-  BookChapters({
+class BookChapter extends Equatable {
+  BookChapter({
     this.chTitle = '',
     required this.chNumber,
   });
@@ -20,7 +20,7 @@ class BookChapters extends Equatable {
         chTitle,
       ];
 
-  factory BookChapters.fromJson(Map<String, dynamic> json) =>
+  factory BookChapter.fromJson(Map<String, dynamic> json) =>
       _$BookChaptersFromJson(json);
 
   Map<String, dynamic> toJson() => _$BookChaptersToJson(this);

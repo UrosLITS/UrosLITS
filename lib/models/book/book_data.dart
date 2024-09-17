@@ -12,7 +12,7 @@ class BookData extends Equatable {
     required this.pages,
   });
 
-  List<BookChapters> chapters;
+  List<BookChapter> chapters;
   List<BookPage> pages;
 
   @override

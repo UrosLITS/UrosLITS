@@ -70,6 +70,9 @@ class UploadedImageToServerState extends BookState {
 
   final bool isUploaded;
   final BookPage bookPage;
+
+  @override
+  List<Object?> get props => [isUploaded, bookPage];
 }
 
 class PopBackBookPageState extends BookState {
@@ -78,4 +81,46 @@ class PopBackBookPageState extends BookState {
   });
 
   final BookPage bookPage;
+
+  @override
+  List<Object?> get props => [bookPage];
+}
+
+class LoadBookChapterListState extends BookState {
+  LoadBookChapterListState({
+    required this.bookChapterList,
+  });
+
+  final List<BookChapter> bookChapterList;
+
+  @override
+  List<Object?> get props => [bookChapterList];
+}
+
+class PagesAddedToServerState extends BookState {
+  PagesAddedToServerState({
+    required this.bookPagesList,
+  });
+
+  final List<BookPage> bookPagesList;
+
+  @override
+  List<Object?> get props => [bookPagesList];
+}
+
+class NavigateToPageState extends BookState {
+  NavigateToPageState();
+}
+
+class RemoveImageState extends BookState {
+  RemoveImageState();
+}
+
+class SelectedChapterState extends BookState {
+  SelectedChapterState({required this.bookChapter});
+
+  final BookChapter? bookChapter;
+
+  @override
+  List<Object?> get props => [bookChapter];
 }

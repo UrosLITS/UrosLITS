@@ -69,14 +69,17 @@ class PortraitImage extends StatelessWidget {
         children: [
           SizedBox(height: 10),
           Floatable(
-              clearMinSpacing: MediaQuery.of(context).size.height / 2,
-              padding: EdgeInsets.only(right: 8),
-              float: FCFloat.start,
-              maxWidthPercentage: 0.5,
-              clear: FCClear.both,
-              child: bookPageImage.url != null
-                  ? Image.network(bookPageImage.url!)
-                  : Image.file(File(bookPageImage.filePath!))),
+            clearMinSpacing: MediaQuery.of(context).size.height / 2,
+            padding: EdgeInsets.only(right: 8),
+            float: FCFloat.start,
+            maxWidthPercentage: 0.5,
+            clear: FCClear.both,
+            child: bookPageImage.url != null
+                ? Image.network(bookPageImage.url!)
+                : Image.file(
+                    File(bookPageImage.filePath!),
+                  ),
+          ),
           WrappableText(
             textAlign: TextAlign.justify,
             text: TextSpan(
