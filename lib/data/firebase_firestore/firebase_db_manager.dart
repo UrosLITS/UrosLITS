@@ -54,6 +54,18 @@ class FirebaseDbManager {
     );
   }
 
+  Future<Book> downloadBookInfo(String bookID) async {
+    final ref = db.collection(booksCollection).doc(bookID);
+
+    final snapShot =
+        await ref.get().timeout(Duration(seconds: 3), onTimeout: () {
+      throw Exception(timeoutErrorMessage);
+    });
+    final result = Book.fromJson(snapShot.data()!, bookID);
+
+    return Future.value(result);
+  }
+
   Future<List<Book>> downloadBooks() async {
     final querySnapshots = await db
         .collection(booksCollection)
@@ -200,5 +212,45 @@ class FirebaseDbManager {
       throw Exception(timeoutErrorMessage);
     });
     return Future.value(true);
+  }
+
+  Future<BookData> downloadBookData(String id) async {
+    List<BookPage> bookPages = [];
+    List<BookChapter> chapters = [];
+
+    final booksRef = db.collection(pagesCollection).doc(id);
+
+    final snapShoot =
+        await booksRef.get().timeout(Duration(seconds: 3), onTimeout: () {
+      throw Exception(timeoutErrorMessage);
+    });
+    final data = snapShoot.data();
+    final List<dynamic>? items = data?[collectionItems] ?? [];
+    if (items != null) {
+      for (final item in items) {
+        if (item != null) {
+          bookPages.add(BookPage.fromJson(item));
+        }
+      }
+    }
+
+    final chapterRefs = db.collection(chaptersCollection).doc(id);
+    final snapShoots =
+        await chapterRefs.get().timeout(Duration(seconds: 3), onTimeout: () {
+      throw Exception(timeoutErrorMessage);
+    });
+    final Data = snapShoots.data();
+    final List<dynamic>? Items = Data?[collectionItems] ?? [];
+    if (Items != null) {
+      for (final item in Items) {
+        if (item != null) {
+          chapters.add(BookChapter.fromJson(item));
+        }
+      }
+    }
+
+    BookData bookData = BookData(chapters: chapters, pages: bookPages);
+
+    return Future.value(bookData);
   }
 }

@@ -3,23 +3,31 @@ part of 'book_bloc.dart';
 sealed class BookEvents extends Equatable {}
 
 class NextPageEvent extends BookEvents {
-  NextPageEvent();
+  NextPageEvent({required this.currentIndex});
+
+  final int currentIndex;
 
   @override
-  List<Object?> get props => [];
+  List<Object?> get props => [currentIndex, Random().nextInt(10000)];
 }
 
 class PreviousPageEvent extends BookEvents {
-  PreviousPageEvent();
+  PreviousPageEvent({required this.currentIndex});
+
+  final int currentIndex;
 
   @override
-  List<Object?> get props => [];
+  List<Object?> get props => [currentIndex, Random().nextInt(10000)];
 }
 
 class InitBookEvent extends BookEvents {
-  InitBookEvent(this.book);
+  InitBookEvent(
+    this.book,
+    this.currentIndex,
+  );
 
   final Book book;
+  final int currentIndex;
 
   @override
   List<Object?> get props => [
@@ -146,4 +154,28 @@ class DeletePageEvent extends BookEvents {
 
   @override
   List<Object?> get props => [];
+}
+
+class SwipeLeftEvent extends BookEvents {
+  SwipeLeftEvent({required this.currentIndex});
+
+  final int currentIndex;
+
+  @override
+  List<Object?> get props => [
+        currentIndex,
+        Random().nextInt(10000),
+      ];
+}
+
+class SwipeRightEvent extends BookEvents {
+  SwipeRightEvent({required this.currentIndex});
+
+  final int currentIndex;
+
+  @override
+  List<Object?> get props => [
+        currentIndex,
+        Random().nextInt(10000),
+      ];
 }

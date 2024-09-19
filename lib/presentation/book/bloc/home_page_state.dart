@@ -17,6 +17,24 @@ class SuccessfulBookAddedState extends HomePageState {
   SuccessfulBookAddedState({required this.book});
 
   final Book book;
+
+  @override
+  List<Object?> get props => [
+        book,
+        Random().nextInt(10000),
+      ];
+}
+
+class PopBackBookState extends HomePageState {
+  PopBackBookState({required this.book});
+
+  final Book book;
+
+  @override
+  List<Object?> get props => [
+        book,
+        Random().nextInt(10000),
+      ];
 }
 
 class SuccessfulImageAddedState extends HomePageState {
@@ -29,16 +47,28 @@ class SuccessfulImageDeleted extends HomePageState {
   SuccessfulImageDeleted();
 }
 
-class ErrorState extends HomePageState {
-  ErrorState({required this.error});
+class ErrorHomeState extends HomePageState {
+  ErrorHomeState({required this.error});
 
   final Exception error;
+
+  @override
+  List<Object?> get props => [
+        error,
+        Random().nextInt(10000),
+      ];
 }
 
 class ErrorAuthState extends HomePageState {
   ErrorAuthState({required this.error});
 
   final Exception error;
+
+  @override
+  List<Object?> get props => [
+        error,
+        Random().nextInt(10000),
+      ];
 }
 
 class InitialBookState extends HomePageState {
@@ -49,12 +79,24 @@ class BooksDownloadedState extends HomePageState {
   BooksDownloadedState({required this.bookList});
 
   final List<Book> bookList;
+
+  @override
+  List<Object?> get props => [
+        bookList,
+        Random().nextInt(10000),
+      ];
 }
 
 class DataRetrieved extends HomePageState {
   DataRetrieved({required this.book});
 
   final Book book;
+
+  @override
+  List<Object?> get props => [
+        book,
+        Random().nextInt(10000),
+      ];
 }
 
 class SignOutState extends HomePageState {

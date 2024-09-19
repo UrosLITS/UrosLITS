@@ -2,6 +2,8 @@ import 'dart:io';
 import 'dart:math';
 import 'dart:ui' as ui;
 
+import 'package:book/core/constants.dart';
+import 'package:book/data/firebase_cloud_messaging.dart';
 import 'package:book/data/firebase_firestore/firebase_db_manager.dart';
 import 'package:book/models/book/book_imports.dart';
 import 'package:book/utils/file_utils.dart';
@@ -27,12 +29,15 @@ class BookBloc extends Bloc<BookEvents, BookState> {
     on<RemoveImageEvent>(_onRemoveImageEvent);
     on<SelectChapterEvent>(_onSelectChapterEvent);
     on<DeletePageEvent>(_onDeletePageEvent);
+    on<SwipeLeftEvent>(_onSwipeLeftEvent);
+    on<SwipeRightEvent>(_onSwipeRightEvent);
   }
 
   late Book book;
   int currentPageIndex = 0;
 
   Future<void> _onNextPage(NextPageEvent event, Emitter<BookState> emit) async {
+    currentPageIndex = event.currentIndex;
     currentPageIndex++;
     emit(DisplayBookPageState(
         bookData: book.bookData!, pageIndex: currentPageIndex));
@@ -40,15 +45,17 @@ class BookBloc extends Bloc<BookEvents, BookState> {
 
   Future<void> _onInitBook(InitBookEvent event, Emitter<BookState> emit) async {
     this.book = event.book;
-    if (book.bookData == null) {
-      book.bookData = BookData(chapters: [], pages: []);
-    }
+
+    currentPageIndex = event.currentIndex;
+    final result = await FirebaseDbManager.instance.downloadBookData(book.id);
+    book.bookData = result;
     emit(DisplayBookPageState(
         bookData: book.bookData!, pageIndex: currentPageIndex));
   }
 
   Future<void> _onPreviousPage(
       PreviousPageEvent event, Emitter<BookState> emit) async {
+    currentPageIndex = event.currentIndex;
     currentPageIndex--;
     emit(DisplayBookPageState(
         bookData: book.bookData!, pageIndex: currentPageIndex));
@@ -72,8 +79,25 @@ class BookBloc extends Bloc<BookEvents, BookState> {
           .addPagesToServer(book.bookData!.pages, book.id);
       currentPageIndex = book.bookData!.pages.indexOf(event.bookPage);
       emit(LoadedBookPageState());
-      emit(DisplayBookPageState(
-          bookData: book.bookData!, pageIndex: currentPageIndex));
+
+      Map<String, dynamic> additionalData = {
+        'action': 'pageChanged',
+        'bookId': book.id,
+        'index': currentPageIndex.toString()
+      };
+
+      final result = await FCM.instance.sendPushMessage(
+        topic: 'books',
+        title: 'New page for reading',
+        body:
+            'A new page has been added by ${book.author} inside ${book.title} book',
+        additionalData: additionalData,
+      );
+
+      if (result) {
+        emit(DisplayBookPageState(
+            bookData: book.bookData!, pageIndex: currentPageIndex));
+      }
     } on Exception catch (e) {
       emit(LoadedBookPageState());
       emit(ErrorState(
@@ -162,10 +186,25 @@ class BookBloc extends Bloc<BookEvents, BookState> {
       await FirebaseDbManager.instance
           .updatePage(book.bookData!.pages, book.id);
       currentPageIndex = book.bookData!.pages.indexOf(event.bookPage);
-
       emit(LoadedBookPageState());
-      emit(DisplayBookPageState(
-          bookData: book.bookData!, pageIndex: currentPageIndex));
+
+      Map<String, dynamic> additionalData = {
+        'action': pageAddedAction,
+        'bookId': book.id,
+        'index': currentPageIndex.toString()
+      };
+
+      final result = await FCM.instance.sendPushMessage(
+        topic: messageTopic,
+        title: 'New page has been edited',
+        body:
+            'A new page has been edited by ${book.author} with a page number ${event.bookPage.pageNumber} inside ${book.title} book',
+        additionalData: additionalData,
+      );
+      if (result) {
+        emit(DisplayBookPageState(
+            bookData: book.bookData!, pageIndex: currentPageIndex));
+      }
     } on Exception catch (e) {
       emit(LoadedBookPageState());
       emit(ErrorState(
@@ -209,12 +248,43 @@ class BookBloc extends Bloc<BookEvents, BookState> {
         currentPageIndex--;
       }
       emit(LoadedBookPageState());
-      emit(DisplayBookPageState(
-          bookData: book.bookData!, pageIndex: currentPageIndex));
+
+      Map<String, dynamic> additionalData = {
+        'action': 'pageChanged',
+        'bookId': book.id,
+      };
+
+      final result = await FCM.instance.sendPushMessage(
+        topic: 'books',
+        title: 'New page has been edited',
+        body:
+            'A  page has been deleted by ${book.author} inside ${book.title} book',
+        additionalData: additionalData,
+      );
+      if (result) {
+        emit(DisplayBookPageState(
+            bookData: book.bookData!, pageIndex: currentPageIndex));
+      }
     } on Exception catch (e) {
       emit(LoadedBookPageState());
       emit(ErrorState(
           bookData: book.bookData!, error: e, pageIndex: currentPageIndex));
     }
+  }
+
+  Future<void> _onSwipeLeftEvent(
+      SwipeLeftEvent event, Emitter<BookState> emit) async {
+    currentPageIndex = event.currentIndex;
+    currentPageIndex++;
+    emit(DisplayBookPageState(
+        bookData: book.bookData!, pageIndex: currentPageIndex));
+  }
+
+  Future<void> _onSwipeRightEvent(
+      SwipeRightEvent event, Emitter<BookState> emit) async {
+    currentPageIndex = event.currentIndex;
+    currentPageIndex--;
+    emit(DisplayBookPageState(
+        bookData: book.bookData!, pageIndex: currentPageIndex));
   }
 }

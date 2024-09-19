@@ -1,6 +1,8 @@
 import 'dart:io';
+import 'dart:math';
 
 import 'package:book/data/firebase_auth/firebase_auth_singleton.dart';
+import 'package:book/data/firebase_cloud_messaging.dart';
 import 'package:book/data/firebase_firestore/firebase_db_manager.dart';
 import 'package:book/models/app_user_singleton.dart';
 import 'package:book/models/book/book.dart';
@@ -48,12 +50,19 @@ class HomePageBloc extends Bloc<HomePageEvent, HomePageState> {
           id: '');
 
       await FirebaseDbManager.instance.addBookToServer(result!);
-
       emit(LoadedState());
-      emit(SuccessfulBookAddedState(book: result));
+
+      final messageResult = await FCM.instance.sendPushMessage(
+        topic: 'books',
+        title: 'New  book has been added',
+        body: 'A new book has been published by ${result.author}',
+      );
+      if (messageResult) {
+        emit(PopBackBookState(book: result));
+      }
     } on Exception catch (e) {
       emit(LoadedState());
-      emit(ErrorState(error: e));
+      emit(ErrorHomeState(error: e));
     }
   }
 
@@ -87,7 +96,7 @@ class HomePageBloc extends Bloc<HomePageEvent, HomePageState> {
       emit(BooksDownloadedState(bookList: result));
     } on Exception catch (e) {
       emit(LoadedState());
-      emit(ErrorState(error: e));
+      emit(ErrorHomeState(error: e));
     }
   }
 
@@ -104,7 +113,7 @@ class HomePageBloc extends Bloc<HomePageEvent, HomePageState> {
       emit(DataRetrieved(book: event.book));
     } on Exception catch (e) {
       emit(LoadedState());
-      emit(ErrorState(error: e));
+      emit(ErrorHomeState(error: e));
     }
   }
 }

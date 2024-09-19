@@ -87,6 +87,7 @@ class _AddEditNewPage extends State<AddEditNewPage> {
         }
       } else if (state is PopBackBookPageState) {
         Navigator.of(context).pop(state.bookPage);
+
       } else if (state is LoadBookChapterListState) {
         selectedChapter = widget.bookChapterList.lastOrNull;
 
