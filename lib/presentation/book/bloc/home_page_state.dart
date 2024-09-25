@@ -75,18 +75,6 @@ class InitialBookState extends HomePageState {
   InitialBookState();
 }
 
-class BooksDownloadedState extends HomePageState {
-  BooksDownloadedState({required this.bookList});
-
-  final List<Book> bookList;
-
-  @override
-  List<Object?> get props => [
-        bookList,
-        Random().nextInt(10000),
-      ];
-}
-
 class DataRetrieved extends HomePageState {
   DataRetrieved({required this.book});
 
@@ -101,4 +89,16 @@ class DataRetrieved extends HomePageState {
 
 class SignOutState extends HomePageState {
   SignOutState();
+}
+
+class BookListRetrievedState extends HomePageState {
+  BookListRetrievedState({required this.bookList});
+
+  final List<Book> bookList;
+
+  @override
+  List<Object?> get props => [
+        bookList,
+        Random().nextInt(10000),
+      ];
 }

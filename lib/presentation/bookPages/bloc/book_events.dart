@@ -39,14 +39,20 @@ class InitBookEvent extends BookEvents {
 class AddNewPageEvent extends BookEvents {
   AddNewPageEvent({
     required this.bookPage,
+    required this.title,
+    required this.body,
   });
 
   final BookPage bookPage;
+  final String title;
+  final String body;
 
   @override
   List<Object?> get props => [
         bookPage,
         Random().nextInt(10000),
+        title,
+        body,
       ];
 }
 
@@ -113,14 +119,20 @@ class AddNewChapterEvent extends BookEvents {
 class PageEditedEvent extends BookEvents {
   PageEditedEvent({
     required this.bookPage,
+    required this.body,
+    required this.title,
   });
 
   final BookPage bookPage;
+  final String title;
+  final String body;
 
   @override
   List<Object?> get props => [
         bookPage,
         Random().nextInt(10000),
+        title,
+        body,
       ];
 }
 
@@ -150,10 +162,19 @@ class SelectChapterEvent extends BookEvents {
 }
 
 class DeletePageEvent extends BookEvents {
-  DeletePageEvent();
+  DeletePageEvent({
+    required this.body,
+    required this.title,
+  });
+
+  final String title;
+  final String body;
 
   @override
-  List<Object?> get props => [];
+  List<Object?> get props => [
+        title,
+        body,
+      ];
 }
 
 class SwipeLeftEvent extends BookEvents {

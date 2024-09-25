@@ -93,7 +93,7 @@ flutter:
   assets:
     - assets/splashIcon.png
     - assets/launcherIcon.jpg
-    - assets/book-d21ec-fca4074d5b10.json
+    - assets/book-d21ec-c64560991d06.json
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware

@@ -81,16 +81,15 @@ class BookBloc extends Bloc<BookEvents, BookState> {
       emit(LoadedBookPageState());
 
       Map<String, dynamic> additionalData = {
-        'action': 'pageChanged',
+        'action': pageChangedAction,
         'bookId': book.id,
         'index': currentPageIndex.toString()
       };
 
       final result = await FCM.instance.sendPushMessage(
-        topic: 'books',
-        title: 'New page for reading',
-        body:
-            'A new page has been added by ${book.author} inside ${book.title} book',
+        topic: messageTopic,
+        title: event.title,
+        body: event.body,
         additionalData: additionalData,
       );
 
@@ -189,16 +188,15 @@ class BookBloc extends Bloc<BookEvents, BookState> {
       emit(LoadedBookPageState());
 
       Map<String, dynamic> additionalData = {
-        'action': pageAddedAction,
+        'action': pageChangedAction,
         'bookId': book.id,
         'index': currentPageIndex.toString()
       };
 
       final result = await FCM.instance.sendPushMessage(
         topic: messageTopic,
-        title: 'New page has been edited',
-        body:
-            'A new page has been edited by ${book.author} with a page number ${event.bookPage.pageNumber} inside ${book.title} book',
+        title: event.title,
+        body: event.body,
         additionalData: additionalData,
       );
       if (result) {
@@ -250,15 +248,14 @@ class BookBloc extends Bloc<BookEvents, BookState> {
       emit(LoadedBookPageState());
 
       Map<String, dynamic> additionalData = {
-        'action': 'pageChanged',
+        'action': pageChangedAction,
         'bookId': book.id,
       };
 
       final result = await FCM.instance.sendPushMessage(
-        topic: 'books',
-        title: 'New page has been edited',
-        body:
-            'A  page has been deleted by ${book.author} inside ${book.title} book',
+        topic: messageTopic,
+        title: event.title,
+        body: event.body,
         additionalData: additionalData,
       );
       if (result) {

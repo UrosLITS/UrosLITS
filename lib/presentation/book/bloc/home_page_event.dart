@@ -49,13 +49,6 @@ class AddBookImageEvent extends HomePageEvent {
   List<Object?> get props => [file, Random().nextInt(10000)];
 }
 
-class DownloadBooksEvent extends HomePageEvent {
-  DownloadBooksEvent();
-
-  @override
-  List<Object?> get props => [];
-}
-
 class GetBookDataEvent extends HomePageEvent {
   GetBookDataEvent({required this.book});
 
@@ -81,4 +74,11 @@ class NotificationListenerEvent extends HomePageEvent {
   List<Object?> get props => [payload];
 }
 
+class GetBookListEvent extends HomePageEvent {
+  GetBookListEvent({required this.querySnapshot});
 
+  final QuerySnapshot<Map<String, dynamic>> querySnapshot;
+
+  @override
+  List<Object?> get props => [querySnapshot];
+}

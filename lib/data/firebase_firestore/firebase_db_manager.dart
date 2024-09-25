@@ -253,4 +253,8 @@ class FirebaseDbManager {
 
     return Future.value(bookData);
   }
+
+  Stream<QuerySnapshot<Map<String, dynamic>>> downloadBooksStream() async* {
+    yield* db.collection("books").snapshots();
+  }
 }

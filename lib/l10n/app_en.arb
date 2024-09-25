@@ -61,5 +61,47 @@
   "missing_special_char": "Password must contain at least one special character",
   "not_long_enough_pass": "Password must contain at least 8 characters",
   "error": "Can not  reach the server",
-  "error_auth": "Incorrect email"
+  "error_auth": "Incorrect email",
+  "message_body_edit": "A new page has been edited by {author} with a page number {page_number} inside {title} book",
+  "@message_body": {
+    "placeholders": {
+      "author": {
+        "type": "String"
+      },
+      "title": {
+        "type": "String"
+      },
+      "page_number": {
+        "type": "int"
+      }
+    }
+  },
+  "message_title_edit": "New page has been added",
+  "message_body_add": "A new page has been added by {author} with a page number {page_number} inside {title} book",
+  "@message_body_add": {
+    "placeholders": {
+      "author": {
+        "type": "String"
+      },
+      "title": {
+        "type": "String"
+      },
+      "page_number": {
+        "type": "int"
+      }
+    }
+  },
+  "message_title_add": "New page has been added",
+  "message_body_delete": "Page has been deleted by {author}  inside {title} book",
+  "@message_body_delete": {
+    "placeholders": {
+      "author": {
+        "type": "String"
+      },
+      "title": {
+        "type": "String"
+      }
+    }
+  },
+  "message_title_delete": "Page has been deleted"
 }

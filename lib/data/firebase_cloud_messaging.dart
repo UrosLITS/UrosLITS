@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:book/core/constants.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
@@ -40,14 +41,14 @@ class FCM {
       required String body,
       String? bookId}) async {
     final jsonCredentials =
-        await rootBundle.loadString('assets/book-d21ec-fca4074d5b10.json');
+        await rootBundle.loadString('assets/book-d21ec-c64560991d06.json');
     final creds = ServiceAccountCredentials.fromJson(jsonCredentials);
 
     final client = await clientViaServiceAccount(
       creds,
       ['https://www.googleapis.com/auth/cloud-platform'],
     ).timeout(Duration(seconds: 3), onTimeout: () {
-      throw Exception("Cant reach server");
+      throw Exception(timeoutErrorMessage);
     });
 
     final notificationData = {
@@ -72,7 +73,7 @@ class FCM {
       body: jsonEncode(notificationData),
     )
         .timeout(Duration(seconds: 3), onTimeout: () {
-      throw Exception("Cant reach server");
+      throw Exception(timeoutErrorMessage);
     });
 
     client.close();

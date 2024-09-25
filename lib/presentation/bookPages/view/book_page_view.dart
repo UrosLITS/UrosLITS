@@ -104,9 +104,15 @@ class _BookPageView extends State<BookPageView> {
                                 },
                               );
                               if (result != null) {
-                                context
-                                    .read<BookBloc>()
-                                    .add(PageEditedEvent(bookPage: result));
+                                context.read<BookBloc>().add(PageEditedEvent(
+                                    bookPage: result,
+                                    body: AppLocalizations.of(context)!
+                                        .message_body_edit(
+                                            widget.book.author,
+                                            widget.book.title,
+                                            bookPage.pageNumber),
+                                    title: AppLocalizations.of(context)!
+                                        .message_title_edit));
                               } else {
                                 context.read<BookBloc>().add(
                                     InitBookEvent(widget.book, currentIndex));
@@ -134,7 +140,15 @@ class _BookPageView extends State<BookPageView> {
                                   });
 
                               if (result == true) {
-                                context.read<BookBloc>().add(DeletePageEvent());
+                                context.read<BookBloc>().add(DeletePageEvent(
+                                      body: AppLocalizations.of(context)!
+                                          .message_body_delete(
+                                        widget.book.author,
+                                        widget.book.title,
+                                      ),
+                                      title: AppLocalizations.of(context)!
+                                          .message_title_delete,
+                                    ));
                               } else {
                                 context.read<BookBloc>().add(
                                     InitBookEvent(widget.book, currentIndex));
@@ -294,6 +308,14 @@ class _BookPageView extends State<BookPageView> {
                           if (result != null) {
                             context.read<BookBloc>().add(AddNewPageEvent(
                                   bookPage: result,
+                                  title: AppLocalizations.of(context)!
+                                      .message_title_add,
+                                  body: AppLocalizations.of(context)!
+                                      .message_body_add(
+                                    widget.book.author,
+                                    widget.book.title,
+                                    result.pageNumber,
+                                  ),
                                 ));
                           } else {
                             context
