@@ -1,9 +1,18 @@
+import 'dart:convert';
+
 import 'package:book/app_routes/app_routes.dart';
+import 'package:book/core/constants.dart';
+import 'package:book/data/firebase_firestore/firebase_db_manager.dart';
+import 'package:book/data/local_notifications.dart';
+import 'package:book/models/app_user.dart';
+import 'package:book/models/app_user_singleton.dart';
 import 'package:book/models/book/book.dart';
 import 'package:book/presentation/book/bloc/home_page_bloc.dart';
 import 'package:book/presentation/common/common.dart';
 import 'package:book/presentation/common/custom_dialog.dart';
 import 'package:book/styles/app_styles.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -19,12 +28,22 @@ class HomePageView extends StatefulWidget {
 class _HomeBookPageView extends State<HomePageView> {
   late final _controller;
   late List<Book> bookList = [];
+  late AppUser appUser;
 
   @override
   void initState() {
-    bookList = [];
+    appUser = AppUserSingleton.instance.appUser!;
+    FirebaseMessaging.instance.subscribeToTopic(messageTopic);
 
-    context.read<HomePageBloc>().add(DownloadBooksEvent());
+    LocalNotificationsService.instance.initializeLocalNotification();
+    LocalNotificationsService.instance.onNotificationClick.stream
+        .listen(onNotificationListener);
+
+    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+      if (message.notification != null) {
+        LocalNotificationsService.instance.showLocalNotification(message);
+      }
+    });
 
     _controller = PageController(viewportFraction: 0.9, initialPage: 0);
 
@@ -34,86 +53,106 @@ class _HomeBookPageView extends State<HomePageView> {
   @override
   void dispose() {
     _controller.dispose();
+    FirebaseMessaging.instance.unsubscribeFromTopic(messageTopic);
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<HomePageBloc, HomePageState>(
-      listener: listenForStateChanges,
+      listener: (context, state) {
+        if (state is LoadingState) {
+          DialogUtils.showLoadingScreen(context);
+        } else if (state is LoadedState) {
+          Navigator.pop(context);
+        } else if (state is ErrorHomeState) {
+          CustomSnackBar.showSnackBar(
+              color: Colors.red,
+              content: AppLocalizations.of(context)!.error,
+              context: context);
+        } else if (state is DataRetrieved) {
+          Navigator.pushNamed(context, kBookPageRoute, arguments: state.book);
+        } else if (state is SignOutState) {
+          Navigator.pushReplacementNamed(context, kLoginRoute);
+        } else if (state is BookListRetrievedState) {
+          bookList = state.bookList;
+        }
+      },
       builder: (BuildContext context, Object? state) {
-        return Scaffold(
-          appBar: AppBar(
-            leading: IconButton(
-              onPressed: () async {
-                final result = await showDialog(
-                  context: context,
-                  builder: (BuildContext context) {
-                    return CustomDialog(
-                        content: AppLocalizations.of(context)!.log_out);
-                  },
-                );
-                if (result == true) {
-                  context.read<HomePageBloc>().add(SignOutEvent());
-                }
-              },
-              icon: Icon(Icons.exit_to_app),
-            ),
-            centerTitle: true,
-            automaticallyImplyLeading: false,
-            title: Text(AppLocalizations.of(context)!.pick_any_book),
-          ),
-          body: SizedBox(
-            height: 500,
-            child: PageView.builder(
-              pageSnapping: true,
-              controller: _controller,
-              itemCount: bookList.length,
-              itemBuilder: (context, index) =>
-                  _buildBookItem(bookList.elementAt(index)),
-            ),
-          ),
-          floatingActionButton: Visibility(
-            visible: true,
-            child: FloatingActionButton(
-              onPressed: () async {
-                final Book? result = await Navigator.pushNamed<dynamic>(
-                    context, kAddNewBookRoute);
-
-                if (result != null) {
+        return WillPopScope(
+            child: StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
+              stream: context.read<HomePageBloc>().getBooksStream(),
+              builder: (BuildContext context,
+                  AsyncSnapshot<QuerySnapshot<Map<String, dynamic>>> snapshot) {
+                if (snapshot.hasData) {
                   context
                       .read<HomePageBloc>()
-                      .add(NewBookAddedEvent(book: result));
+                      .add(GetBookListEvent(querySnapshot: snapshot.data!));
+                  return buildBody();
+                } else {
+                  return Center(
+                    child: CircularProgressIndicator(),
+                  );
                 }
               },
-              child: Icon(CupertinoIcons.add),
             ),
-          ),
-        );
+            onWillPop: () => logOut(context));
       },
     );
   }
 
-  void listenForStateChanges(context, state) {
-    if (state is LoadingState) {
-      DialogUtils.showLoadingScreen(context);
-    } else if (state is LoadedState) {
-      Navigator.pop(context);
-    } else if (state is SuccessfulBookAddedState) {
-      context.read<HomePageBloc>().add(DownloadBooksEvent());
-    } else if (state is BooksDownloadedState) {
-      bookList.addAll(state.bookList);
-    } else if (state is ErrorState) {
-      CustomSnackBar.showSnackBar(
-          color: Colors.red,
-          content: AppLocalizations.of(context)!.error,
-          context: context);
-    } else if (state is DataRetrieved) {
-      Navigator.pushNamed(context, kBookPageRoute, arguments: state.book);
-    } else if (state is SignOutState) {
-      Navigator.pushReplacementNamed(context, kLoginRoute);
-    }
+  Widget buildBody() {
+    return Scaffold(
+      appBar: AppBar(
+        leading: IconButton(
+          onPressed: () async {
+            Navigator.maybePop(context);
+
+            final result = await showDialog(
+              context: context,
+              builder: (BuildContext context) {
+                return CustomDialog(
+                    content: AppLocalizations.of(context)!.log_out);
+              },
+            );
+            if (result == true) {
+              context.read<HomePageBloc>().add(SignOutEvent());
+            }
+          },
+          icon: Icon(Icons.exit_to_app),
+        ),
+        centerTitle: true,
+        automaticallyImplyLeading: false,
+        title: Text(AppLocalizations.of(context)!.pick_any_book),
+      ),
+      body: SizedBox(
+        height: 500,
+        child: PageView.builder(
+          pageSnapping: true,
+          controller: _controller,
+          itemCount: bookList.length,
+          itemBuilder: (context, index) =>
+              _buildBookItem(bookList.elementAt(index)),
+        ),
+      ),
+      floatingActionButton: Visibility(
+        visible: appUser.isAdmin,
+        child: FloatingActionButton(
+          onPressed: () async {
+            final Book? result =
+                await Navigator.pushNamed<dynamic>(context, kAddNewBookRoute);
+
+            if (result != null) {
+              context.read<HomePageBloc>().add(NewBookAddedEvent(book: result));
+            }
+          },
+          child: Icon(CupertinoIcons.add),
+        ),
+      ),
+    );
   }
+
+  void listenForStateChanges(context, state) {}
 
   Widget _buildBookItem(Book book) {
     return Card(
@@ -130,7 +169,8 @@ class _HomeBookPageView extends State<HomePageView> {
           return null;
         },
         onTap: () async {
-          context.read<HomePageBloc>().add(GetBookDataEvent(book: book));
+          Navigator.pushNamed(context, kBookPageRoute,
+              arguments: <String, dynamic>{'book': book});
         },
         child: Stack(
           children: [
@@ -187,5 +227,51 @@ class _HomeBookPageView extends State<HomePageView> {
         ),
       ),
     );
+  }
+
+  void onNotificationListener(String? payload) async {
+    if (payload != null) {
+      int currentIndex = 0;
+      final data = jsonDecode(payload);
+      if (data['action'] == 'pageChanged') {
+        final pageIndex = data['index'];
+        currentIndex = int.parse(pageIndex);
+
+        Book bookInfo =
+            await FirebaseDbManager.instance.downloadBookInfo(data['bookId']);
+
+        Book bookResult = new Book(
+          author: bookInfo.author,
+          title: bookInfo.title,
+          id: bookInfo.id,
+          imageUrl: bookInfo.imageUrl,
+        );
+        Navigator.pushNamedAndRemoveUntil(
+            context,
+            kBookPageRoute,
+            arguments: <String, dynamic>{
+              'book': bookResult,
+              'index': currentIndex,
+            },
+            (route) => route.isFirst);
+      } else if (data['action'] == 'bookAdded') {
+        Navigator.popUntil(context, (route) => route.isFirst);
+      }
+    }
+  }
+
+  Future<bool> logOut(BuildContext context) async {
+    final result = await showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return CustomDialog(content: AppLocalizations.of(context)!.log_out);
+      },
+    );
+    if (result == true) {
+      context.read<HomePageBloc>().add(SignOutEvent());
+    } else {
+      return result;
+    }
+    return result;
   }
 }

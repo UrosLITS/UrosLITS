@@ -60,5 +60,47 @@
   "missing_special_char": "Sifra mora da sadrzi makar jedan specijalni karakter",
   "not_long_enough_pass": "Sifra mora da sadrzi makar  karaktera",
   "error": "Izgubljena konekcija sa serverom",
-  "error_auth": "Neispravan email"
+  "error_auth": "Neispravan email",
+  "message_body_edit": "Nova stranica je izmenjena od strane  {author} sa brojem  {page_number} unutar {title} knjige",
+  "@message_body": {
+    "placeholders": {
+      "author": {
+        "type": "String"
+      },
+      "title": {
+        "type": "String"
+      },
+      "page_number": {
+        "type": "int"
+      }
+    }
+  },
+  "message_title_edit": "Nova stranica je izmenjena",
+  "message_body_add": "Nova stranica je dodata od strane  {author} sa brojem  {page_number} unutar {title} knjige",
+  "@message_body_add": {
+    "placeholders": {
+      "author": {
+        "type": "String"
+      },
+      "title": {
+        "type": "String"
+      },
+      "page_number": {
+        "type": "int"
+      }
+    }
+  },
+  "message_title_add": "Nova stranica je dodata ",
+  "message_body_delete": "Stranica je obrisana od strane  {author}  unutar {title} knjige",
+  "@message_body_delete": {
+    "placeholders": {
+      "author": {
+        "type": "String"
+      },
+      "title": {
+        "type": "String"
+      }
+    }
+  },
+  "message_title_delete": "Stranica je obrisana "
 }

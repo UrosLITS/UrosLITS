@@ -1,10 +1,14 @@
+import 'dart:async';
 import 'dart:io';
+import 'dart:math';
 
 import 'package:book/data/firebase_auth/firebase_auth_singleton.dart';
+import 'package:book/data/firebase_cloud_messaging.dart';
 import 'package:book/data/firebase_firestore/firebase_db_manager.dart';
 import 'package:book/models/app_user_singleton.dart';
 import 'package:book/models/book/book.dart';
 import 'package:book/utils/file_utils.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:equatable/equatable.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -18,9 +22,13 @@ class HomePageBloc extends Bloc<HomePageEvent, HomePageState> {
     on<NewBookAddedEvent>(_onNewBookAdded);
     on<AddBookImageEvent>(_onAddBookImage);
     on<DeleteBookImageEvent>(_onDeleteBookImage);
-    on<DownloadBooksEvent>(_onDownloadBooks);
     on<GetBookDataEvent>(_onDataRetrieved);
     on<SignOutEvent>(_onSignOut);
+    on<GetBookListEvent>(_onGetBookList);
+  }
+
+  Stream<QuerySnapshot<Map<String, dynamic>>> getBooksStream() {
+    return FirebaseDbManager.instance.downloadBooksStream();
   }
 
   Future<void> _onSignOut(
@@ -48,12 +56,19 @@ class HomePageBloc extends Bloc<HomePageEvent, HomePageState> {
           id: '');
 
       await FirebaseDbManager.instance.addBookToServer(result!);
-
       emit(LoadedState());
-      emit(SuccessfulBookAddedState(book: result));
+
+      final messageResult = await FCM.instance.sendPushMessage(
+        topic: 'books',
+        title: 'New  book has been added',
+        body: 'A new book has been published by ${result.author}',
+      );
+      if (messageResult) {
+        emit(PopBackBookState(book: result));
+      }
     } on Exception catch (e) {
       emit(LoadedState());
-      emit(ErrorState(error: e));
+      emit(ErrorHomeState(error: e));
     }
   }
 
@@ -80,17 +95,6 @@ class HomePageBloc extends Bloc<HomePageEvent, HomePageState> {
     emit(SuccessfulBookAddedState(book: event.book));
   }
 
-  Future<void> _onDownloadBooks(
-      DownloadBooksEvent event, Emitter<HomePageState> emit) async {
-    try {
-      final result = await FirebaseDbManager.instance.downloadBooks();
-      emit(BooksDownloadedState(bookList: result));
-    } on Exception catch (e) {
-      emit(LoadedState());
-      emit(ErrorState(error: e));
-    }
-  }
-
   Future<void> _onDataRetrieved(
       GetBookDataEvent event, Emitter<HomePageState> emit) async {
     emit(LoadingState());
@@ -104,7 +108,18 @@ class HomePageBloc extends Bloc<HomePageEvent, HomePageState> {
       emit(DataRetrieved(book: event.book));
     } on Exception catch (e) {
       emit(LoadedState());
-      emit(ErrorState(error: e));
+      emit(ErrorHomeState(error: e));
     }
+  }
+
+  Future<void> _onGetBookList(
+      GetBookListEvent event, Emitter<HomePageState> emit) async {
+    final List<Book> books = [];
+
+    for (final item in event.querySnapshot.docs) {
+      books.add(Book.fromJson(item.data(), item.id));
+    }
+
+    emit(BookListRetrievedState(bookList: books));
   }
 }

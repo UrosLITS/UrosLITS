@@ -19,7 +19,11 @@ class DisplayBookPageState extends BookState {
   final BookData bookData;
 
   @override
-  List<Object?> get props => [pageIndex];
+  List<Object?> get props => [
+        pageIndex,
+        bookData,
+        Random().nextInt(10000),
+      ];
 }
 
 class ErrorState extends DisplayBookPageState {
@@ -30,9 +34,6 @@ class ErrorState extends DisplayBookPageState {
   });
 
   final Exception error;
-
-  @override
-  List<Object?> get props => [error];
 }
 
 class AddNewPageState extends BookState {

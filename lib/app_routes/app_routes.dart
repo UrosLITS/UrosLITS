@@ -8,8 +8,8 @@ import 'package:book/presentation/login/view/login_page_view.dart';
 import 'package:book/presentation/register/view/register_page_view.dart';
 import 'package:flutter/material.dart';
 
-const String kHomeRoute = '/Home';
-const String kLoginRoute = '/';
+const String kHomeRoute = '/';
+const String kLoginRoute = '/Login';
 const String kRegisterRoute = '/Register';
 const String kAddNewBookRoute = '/AddNewBook';
 const String kBookPageRoute = '/BookPageView';
@@ -27,7 +27,10 @@ class AppRoutes {
       case kAddNewBookRoute:
         return _materialRoute(const AddNewBook());
       case kBookPageRoute:
-        return _materialRoute(BookPageView(book: setting.arguments as Book));
+        return _materialRoute(BookPageView(
+            book: (setting.arguments as Map<String, dynamic>)['book'] as Book,
+            pageIndex:
+                (setting.arguments as Map<String, dynamic>)['index'] as int?));
       case kAddNewPageRoute:
         return _materialRoute(AddEditNewPage(
           bookPage: (setting.arguments as Map<String, dynamic>)['bookPage']

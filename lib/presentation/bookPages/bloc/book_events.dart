@@ -3,23 +3,31 @@ part of 'book_bloc.dart';
 sealed class BookEvents extends Equatable {}
 
 class NextPageEvent extends BookEvents {
-  NextPageEvent();
+  NextPageEvent({required this.currentIndex});
+
+  final int currentIndex;
 
   @override
-  List<Object?> get props => [];
+  List<Object?> get props => [currentIndex, Random().nextInt(10000)];
 }
 
 class PreviousPageEvent extends BookEvents {
-  PreviousPageEvent();
+  PreviousPageEvent({required this.currentIndex});
+
+  final int currentIndex;
 
   @override
-  List<Object?> get props => [];
+  List<Object?> get props => [currentIndex, Random().nextInt(10000)];
 }
 
 class InitBookEvent extends BookEvents {
-  InitBookEvent(this.book);
+  InitBookEvent(
+    this.book,
+    this.currentIndex,
+  );
 
   final Book book;
+  final int currentIndex;
 
   @override
   List<Object?> get props => [
@@ -31,14 +39,20 @@ class InitBookEvent extends BookEvents {
 class AddNewPageEvent extends BookEvents {
   AddNewPageEvent({
     required this.bookPage,
+    required this.title,
+    required this.body,
   });
 
   final BookPage bookPage;
+  final String title;
+  final String body;
 
   @override
   List<Object?> get props => [
         bookPage,
         Random().nextInt(10000),
+        title,
+        body,
       ];
 }
 
@@ -105,14 +119,20 @@ class AddNewChapterEvent extends BookEvents {
 class PageEditedEvent extends BookEvents {
   PageEditedEvent({
     required this.bookPage,
+    required this.body,
+    required this.title,
   });
 
   final BookPage bookPage;
+  final String title;
+  final String body;
 
   @override
   List<Object?> get props => [
         bookPage,
         Random().nextInt(10000),
+        title,
+        body,
       ];
 }
 
@@ -142,8 +162,41 @@ class SelectChapterEvent extends BookEvents {
 }
 
 class DeletePageEvent extends BookEvents {
-  DeletePageEvent();
+  DeletePageEvent({
+    required this.body,
+    required this.title,
+  });
+
+  final String title;
+  final String body;
 
   @override
-  List<Object?> get props => [];
+  List<Object?> get props => [
+        title,
+        body,
+      ];
+}
+
+class SwipeLeftEvent extends BookEvents {
+  SwipeLeftEvent({required this.currentIndex});
+
+  final int currentIndex;
+
+  @override
+  List<Object?> get props => [
+        currentIndex,
+        Random().nextInt(10000),
+      ];
+}
+
+class SwipeRightEvent extends BookEvents {
+  SwipeRightEvent({required this.currentIndex});
+
+  final int currentIndex;
+
+  @override
+  List<Object?> get props => [
+        currentIndex,
+        Random().nextInt(10000),
+      ];
 }

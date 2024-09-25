@@ -14,3 +14,6 @@ const String chaptersCollection = 'chapters';
 const String collectionItems = 'items';
 const String noImage = 'No image';
 const String numberField = 'number';
+const String messageTopic = 'books';
+const String pageChangedAction = 'pageChanged';
+const String bookAddedAction = 'bookAdded';

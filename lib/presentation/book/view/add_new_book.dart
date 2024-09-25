@@ -37,7 +37,7 @@ class _AddNewBookPage extends State<AddNewBook> {
   Widget build(BuildContext context) {
     return BlocConsumer<HomePageBloc, HomePageState>(
       listener: (context, state) {
-        if (state is SuccessfulBookAddedState) {
+        if (state is PopBackBookState) {
           Navigator.of(context).pop(state.book);
         } else if (state is LoadingState) {
           DialogUtils.showLoadingScreen(context);
@@ -48,7 +48,7 @@ class _AddNewBookPage extends State<AddNewBook> {
         } else if (state is SuccessfulImageDeleted) {
           imageName = null;
           imageFile = null;
-        } else if (state is ErrorState) {
+        } else if (state is ErrorHomeState) {
           CustomSnackBar.showSnackBar(
               color: Colors.red,
               content: AppLocalizations.of(context)!.error,
