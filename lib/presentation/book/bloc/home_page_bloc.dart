@@ -76,10 +76,19 @@ class HomePageBloc extends Bloc<HomePageEvent, HomePageState> {
       AddBookImageEvent event, Emitter<HomePageState> emit) async {
     emit(LoadingState());
 
-    final result = await FileUtils.getFileName(event.file);
+    try {
+      final result = await FileUtils.getFileName(event.file);
 
-    emit(LoadedState());
-    emit(SuccessfulImageAddedState(imageName: result));
+      if (result.isNotEmpty) {
+        emit(LoadedState());
+        emit(SuccessfulImageAddedState(imageName: result));
+      } else {
+        emit(LoadedState());
+      }
+    } on Exception catch (e) {
+      emit(LoadedState());
+      emit(ErrorHomeState(error: e));
+    }
   }
 
   Future<void> _onDeleteBookImage(

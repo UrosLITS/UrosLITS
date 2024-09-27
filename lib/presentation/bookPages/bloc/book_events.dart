@@ -23,7 +23,7 @@ class PreviousPageEvent extends BookEvents {
 class InitBookEvent extends BookEvents {
   InitBookEvent(
     this.book,
-   );
+  );
 
   final Book book;
 

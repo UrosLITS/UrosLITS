@@ -107,6 +107,8 @@ class BookBloc extends Bloc<BookEvents, BookState> {
       if (result) {
         emit(DisplayBookPageState(
             bookData: book.bookData!, pageIndex: currentPageIndex));
+      } else {
+        throw Exception();
       }
     } on Exception catch (e) {
       emit(LoadedBookPageState());
@@ -119,12 +121,24 @@ class BookBloc extends Bloc<BookEvents, BookState> {
       AddBookPageImageEvent event, Emitter<BookState> emit) async {
     emit(LoadingBookPageState());
 
-    final result = await FileUtils.getFileName(event.file);
+    try {
+      final result = await FileUtils.getFileName(event.file);
 
-    emit(SuccessfulAddedImage(fileName: result));
-    emit(LoadedBookPageState());
-    emit(DisplayBookPageState(
-        bookData: book.bookData!, pageIndex: currentPageIndex));
+      if (result.isNotEmpty) {
+        emit(SuccessfulAddedImage(fileName: result));
+        emit(LoadedBookPageState());
+        emit(DisplayBookPageState(
+            bookData: book.bookData!, pageIndex: currentPageIndex));
+      } else {
+        emit(LoadedBookPageState());
+        emit(DisplayBookPageState(
+            bookData: book.bookData!, pageIndex: currentPageIndex));
+      }
+    } on Exception catch (e) {
+      emit(LoadedBookPageState());
+      emit(ErrorState(
+          bookData: book.bookData!, error: e, pageIndex: currentPageIndex));
+    }
   }
 
   Future<void> _onAddImageToServer(
@@ -159,9 +173,6 @@ class BookBloc extends Bloc<BookEvents, BookState> {
 
   Future<void> _onPopBackBookPage(
       PopBackBookPageEvent event, Emitter<BookState> emit) async {
-    emit(LoadingBookPageState());
-
-    emit(LoadedBookPageState());
     emit(PopBackBookPageState(bookPage: event.bookPage));
     emit(DisplayBookPageState(
         bookData: book.bookData!, pageIndex: currentPageIndex));
@@ -213,6 +224,8 @@ class BookBloc extends Bloc<BookEvents, BookState> {
       if (result) {
         emit(DisplayBookPageState(
             bookData: book.bookData!, pageIndex: currentPageIndex));
+      } else {
+        throw Exception();
       }
     } on Exception catch (e) {
       emit(LoadedBookPageState());
@@ -272,6 +285,8 @@ class BookBloc extends Bloc<BookEvents, BookState> {
       if (result) {
         emit(DisplayBookPageState(
             bookData: book.bookData!, pageIndex: currentPageIndex));
+      } else {
+        throw Exception();
       }
     } on Exception catch (e) {
       emit(LoadedBookPageState());
