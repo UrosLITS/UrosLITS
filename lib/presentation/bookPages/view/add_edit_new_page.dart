@@ -36,7 +36,6 @@ class AddEditNewPage extends StatefulWidget {
 class _AddEditNewPage extends State<AddEditNewPage> {
   final _formKey = GlobalKey<FormState>();
   File? imageFile;
-  late File image;
   late ImagePicker _imagePicker;
   String? text;
   bool imageSelected = false;
@@ -102,6 +101,9 @@ class _AddEditNewPage extends State<AddEditNewPage> {
       return WillPopScope(
           child: Scaffold(
             appBar: AppBar(
+              title: addPageMode
+                  ? Text(AppLocalizations.of(context)!.add_new_page_title)
+                  : Text(AppLocalizations.of(context)!.edit_page_title),
               centerTitle: true,
               leading: IconButton(
                 onPressed: () {
@@ -152,6 +154,7 @@ class _AddEditNewPage extends State<AddEditNewPage> {
                                 child: IconButton(
                                   onPressed: () async {
                                     final result = await showDialog(
+                                      barrierDismissible: false,
                                       context: context,
                                       builder: (BuildContext context) {
                                         return AddChapterDialog(
@@ -176,6 +179,7 @@ class _AddEditNewPage extends State<AddEditNewPage> {
                             ],
                           ),
                           TextFormField(
+                            enabled: hasChapter,
                             enableInteractiveSelection: true,
                             maxLength: textMaxLength,
                             initialValue: text,
@@ -194,6 +198,7 @@ class _AddEditNewPage extends State<AddEditNewPage> {
                             ),
                             onChanged: (value) {
                               text = value;
+                              setState(() {});
                             },
                             style: TextStyle(
                               fontSize: 16,
@@ -248,29 +253,31 @@ class _AddEditNewPage extends State<AddEditNewPage> {
                       ),
                     ),
                     ElevatedButton(
-                      onPressed: () async {
-                        if (_formKey.currentState!.validate()) {
-                          if (imageFile != null) {
-                            BookPage bookPage = BookPage(
-                                pageNumber: widget.bookPage.pageNumber,
-                                text: text!,
-                                bookChapter: selectedChapter);
-                            context.read<BookBloc>().add(AddImageToServerEvent(
-                                imageFile: imageFile!,
-                                bookID: widget.bookID,
-                                bookPage: bookPage));
-                          } else {
-                            BookPage bookPage = BookPage(
-                                pageNumber: widget.bookPage.pageNumber,
-                                text: text!,
-                                bookChapter: selectedChapter,
-                                bookPageImage: null);
-                            context
-                                .read<BookBloc>()
-                                .add(PopBackBookPageEvent(bookPage: bookPage));
-                          }
-                        }
-                      },
+                      onPressed: hasChanges
+                          ? () async {
+                              if (_formKey.currentState!.validate()) {
+                                if (imageFile != null) {
+                                  BookPage bookPage = BookPage(
+                                      pageNumber: widget.bookPage.pageNumber,
+                                      text: text!,
+                                      bookChapter: selectedChapter);
+                                  context.read<BookBloc>().add(
+                                      AddImageToServerEvent(
+                                          imageFile: imageFile!,
+                                          bookID: widget.bookID,
+                                          bookPage: bookPage));
+                                } else {
+                                  BookPage bookPage = BookPage(
+                                      pageNumber: widget.bookPage.pageNumber,
+                                      text: text!,
+                                      bookChapter: selectedChapter,
+                                      bookPageImage: null);
+                                  context.read<BookBloc>().add(
+                                      PopBackBookPageEvent(bookPage: bookPage));
+                                }
+                              }
+                            }
+                          : null,
                       style: ElevatedButton.styleFrom(
                           backgroundColor: AppColors.brown.withOpacity(0.8)),
                       child: Row(
@@ -316,7 +323,7 @@ class _AddEditNewPage extends State<AddEditNewPage> {
   }
 
   Future<bool> onBackPressed(BuildContext context) async {
-    if (text != widget.bookPage.text) {
+    if (hasChanges) {
       final result = await showDialog(
           context: context,
           barrierDismissible: false,
@@ -334,6 +341,12 @@ class _AddEditNewPage extends State<AddEditNewPage> {
   bool get editPageMode => widget.pageMode == PageMode.editMode;
 
   bool get hasImage => widget.bookPage.bookPageImage != null && editPageMode;
+
+  bool get hasChanges =>
+      (text != widget.bookPage.text || imageFile != null) ||
+      (editPageMode && imageFile == null);
+
+  bool get hasChapter => selectedChapter != null;
 
   List<DropdownMenuItem<BookChapter>> dropDownItems(List<BookChapter> bookCh) {
     final items = bookCh.map((BookChapter chapter) {

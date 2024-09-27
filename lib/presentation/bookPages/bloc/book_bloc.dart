@@ -38,7 +38,8 @@ class BookBloc extends Bloc<BookEvents, BookState> {
 
   Future<void> _onNextPage(NextPageEvent event, Emitter<BookState> emit) async {
     currentPageIndex = event.currentIndex;
-    currentPageIndex++;
+
+    if (currentPageIndex < book.bookData!.pages.length - 1) currentPageIndex++;
     emit(DisplayBookPageState(
         bookData: book.bookData!, pageIndex: currentPageIndex));
   }
@@ -46,17 +47,27 @@ class BookBloc extends Bloc<BookEvents, BookState> {
   Future<void> _onInitBook(InitBookEvent event, Emitter<BookState> emit) async {
     this.book = event.book;
 
-    currentPageIndex = event.currentIndex;
-    final result = await FirebaseDbManager.instance.downloadBookData(book.id);
-    book.bookData = result;
-    emit(DisplayBookPageState(
-        bookData: book.bookData!, pageIndex: currentPageIndex));
+    emit(LoadingBookPageState());
+
+    try {
+      final result = await FirebaseDbManager.instance.downloadBookData(book.id);
+      book.bookData = result;
+      emit(LoadedBookPageState());
+      emit(DisplayBookPageState(
+          bookData: book.bookData!, pageIndex: currentPageIndex));
+    } on Exception catch (e) {
+      emit(LoadedBookPageState());
+      emit(ErrorState(
+          bookData: book.bookData!, error: e, pageIndex: currentPageIndex));
+    }
   }
 
   Future<void> _onPreviousPage(
       PreviousPageEvent event, Emitter<BookState> emit) async {
     currentPageIndex = event.currentIndex;
-    currentPageIndex--;
+    if (currentPageIndex > 0) {
+      currentPageIndex--;
+    }
     emit(DisplayBookPageState(
         bookData: book.bookData!, pageIndex: currentPageIndex));
   }

@@ -8,6 +8,7 @@ import 'package:book/presentation/bookPages/widgets/build_page_body.dart';
 import 'package:book/presentation/bookPages/widgets/chapter_list_view.dart';
 import 'package:book/presentation/common/common.dart';
 import 'package:book/presentation/common/custom_dialog.dart';
+import 'package:book/styles/app_colors.dart';
 import 'package:book/styles/app_styles.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -42,7 +43,7 @@ class _BookPageView extends State<BookPageView> {
     if (widget.pageIndex != null) {
       isMessageReceived = true;
     }
-    context.read<BookBloc>().add(InitBookEvent(widget.book, currentIndex));
+    context.read<BookBloc>().add(InitBookEvent(widget.book));
 
     super.initState();
   }
@@ -66,9 +67,7 @@ class _BookPageView extends State<BookPageView> {
           bookPagesList = state.bookData.pages;
           bookChaptersList = state.bookData.chapters;
         } else if (state is InitialState) {
-          context
-              .read<BookBloc>()
-              .add(InitBookEvent(widget.book, currentIndex));
+          context.read<BookBloc>().add(InitBookEvent(widget.book));
         }
       },
       builder: (BuildContext context, Object? state) {
@@ -114,8 +113,9 @@ class _BookPageView extends State<BookPageView> {
                                     title: AppLocalizations.of(context)!
                                         .message_title_edit));
                               } else {
-                                context.read<BookBloc>().add(
-                                    InitBookEvent(widget.book, currentIndex));
+                                context
+                                    .read<BookBloc>()
+                                    .add(InitBookEvent(widget.book));
                               }
                             },
                             icon: Icon(
@@ -132,6 +132,7 @@ class _BookPageView extends State<BookPageView> {
                           child: IconButton(
                             onPressed: () async {
                               final result = await showDialog(
+                                  barrierDismissible: false,
                                   context: context,
                                   builder: (BuildContext) {
                                     return CustomDialog(
@@ -150,8 +151,9 @@ class _BookPageView extends State<BookPageView> {
                                           .message_title_delete,
                                     ));
                               } else {
-                                context.read<BookBloc>().add(
-                                    InitBookEvent(widget.book, currentIndex));
+                                context
+                                    .read<BookBloc>()
+                                    .add(InitBookEvent(widget.book));
                               }
                             },
                             icon: Icon(
@@ -231,52 +233,83 @@ class _BookPageView extends State<BookPageView> {
                                 ),
                               ),
                               Positioned(
-                                  bottom: 35,
-                                  left: 30,
-                                  child: Text(
-                                      AppLocalizations.of(context)!.go_back))
-                            ],
-                          )
-                        : Container(
-                            margin: EdgeInsets.only(bottom: 24),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Container(
-                                  child: Container(
-                                    margin: EdgeInsets.all(48),
-                                    child: Text(
-                                      maxLines: 5,
-                                      widget.book.title,
-                                      textAlign: TextAlign.center,
-                                      style: TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 24,
-                                      ),
-                                    ),
-                                  ),
-                                  width: double.infinity,
-                                  height: 200,
-                                  decoration: BoxDecoration(
-                                    image: DecorationImage(
-                                      fit: BoxFit.cover,
-                                      image: NetworkImage(widget.book.imageUrl),
-                                    ),
-                                  ),
-                                ),
-                                SizedBox(
-                                  height: 20,
-                                ),
-                                Spacer(),
-                                IconButton(
+                                bottom: 20,
+                                left: 20,
+                                child: TextButton(
                                   onPressed: () {
                                     Navigator.pop(context);
                                     Navigator.maybePop(context);
                                   },
-                                  icon: Icon(Icons.arrow_back),
+                                  child: Text(
+                                    AppLocalizations.of(context)!.go_back,
+                                    style: TextStyle(
+                                        color: AppColors.black,
+                                        decoration: TextDecoration.underline),
+                                  ),
                                 ),
-                              ],
-                            ),
+                              )
+                            ],
+                          )
+                        : Stack(
+                            children: [
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Container(
+                                    child: Container(
+                                      margin: EdgeInsets.all(48),
+                                      child: Text(
+                                        maxLines: 5,
+                                        widget.book.title,
+                                        textAlign: TextAlign.center,
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 24,
+                                        ),
+                                      ),
+                                    ),
+                                    width: double.infinity,
+                                    height: 200,
+                                    decoration: BoxDecoration(
+                                      image: DecorationImage(
+                                        fit: BoxFit.cover,
+                                        image:
+                                            NetworkImage(widget.book.imageUrl),
+                                      ),
+                                    ),
+                                  ),
+                                  SizedBox(
+                                    height: 20,
+                                  ),
+                                ],
+                              ),
+                              Positioned(
+                                bottom: 20,
+                                child: IconButton(
+                                  onPressed: () {
+                                    Navigator.pop(context);
+                                    Navigator.maybePop(context);
+                                  },
+                                  icon: Icon(Icons.arrow_back_ios),
+                                ),
+                              ),
+                              Positioned(
+                                bottom: 20,
+                                left: 20,
+                                child: TextButton(
+                                  onPressed: () {
+                                    Navigator.pop(context);
+                                    Navigator.maybePop(context);
+                                  },
+                                  child: Text(
+                                    AppLocalizations.of(context)!.go_back,
+                                    style: TextStyle(
+                                        color: AppColors.black,
+                                        decoration: TextDecoration.underline),
+                                  ),
+                                ),
+                              )
+                            ],
                           ),
                   ),
                   body: bookPagesList.length > 0
@@ -320,7 +353,7 @@ class _BookPageView extends State<BookPageView> {
                           } else {
                             context
                                 .read<BookBloc>()
-                                .add(InitBookEvent(widget.book, currentIndex));
+                                .add(InitBookEvent(widget.book));
                           }
                         },
                         child: Icon(Icons.add),

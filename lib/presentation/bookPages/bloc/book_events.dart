@@ -23,11 +23,9 @@ class PreviousPageEvent extends BookEvents {
 class InitBookEvent extends BookEvents {
   InitBookEvent(
     this.book,
-    this.currentIndex,
-  );
+   );
 
   final Book book;
-  final int currentIndex;
 
   @override
   List<Object?> get props => [

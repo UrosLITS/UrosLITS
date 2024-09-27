@@ -102,5 +102,7 @@
       }
     }
   },
-  "message_title_delete": "Stranica je obrisana "
+  "message_title_delete": "Stranica je obrisana ",
+  "add_new_page_title": "Dodaj novu stranicu knjizi",
+  "edit_page_title": "Uredi stranicu"
 }

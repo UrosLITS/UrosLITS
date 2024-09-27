@@ -107,17 +107,6 @@ class _HomeBookPageView extends State<HomePageView> {
         leading: IconButton(
           onPressed: () async {
             Navigator.maybePop(context);
-
-            final result = await showDialog(
-              context: context,
-              builder: (BuildContext context) {
-                return CustomDialog(
-                    content: AppLocalizations.of(context)!.log_out);
-              },
-            );
-            if (result == true) {
-              context.read<HomePageBloc>().add(SignOutEvent());
-            }
           },
           icon: Icon(Icons.exit_to_app),
         ),
@@ -206,17 +195,21 @@ class _HomeBookPageView extends State<HomePageView> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: [
-                        Padding(
-                          padding: EdgeInsets.only(right: 16),
-                          child: Text(
-                            AppLocalizations.of(context)!.author +
-                                ": " +
-                                book.author,
-                            style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                color: Colors.white),
+                        Flexible(
+                          child: Padding(
+                            padding: EdgeInsets.only(right: 16),
+                            child: Text(
+                              overflow: TextOverflow.ellipsis,
+                              maxLines: 1,
+                              AppLocalizations.of(context)!.author +
+                                  ": " +
+                                  book.author,
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.white),
+                            ),
                           ),
-                        ),
+                        )
                       ],
                     ),
                   ],
@@ -262,6 +255,7 @@ class _HomeBookPageView extends State<HomePageView> {
 
   Future<bool> logOut(BuildContext context) async {
     final result = await showDialog(
+      barrierDismissible: false,
       context: context,
       builder: (BuildContext context) {
         return CustomDialog(content: AppLocalizations.of(context)!.log_out);
