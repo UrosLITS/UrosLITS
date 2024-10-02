@@ -1,10 +1,15 @@
+import 'package:book/models/book/book_chapter.dart';
 import 'package:book/styles/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class AddChapterDialog extends StatelessWidget {
-  AddChapterDialog({required this.newChapterTitle});
+  AddChapterDialog({
+    required this.newChapterTitle,
+    required this.bookChapterList,
+  });
 
+  final List<BookChapter> bookChapterList;
   final _formKey2 = GlobalKey<FormState>();
   String? newChapterTitle;
 
@@ -60,7 +65,10 @@ class AddChapterDialog extends StatelessWidget {
                     height: 50,
                     child: ElevatedButton(
                       onPressed: () {
-                        Navigator.of(context).pop(newChapterTitle);
+                        BookChapter newChapter = BookChapter(
+                            chNumber: bookChapterList.length + 1,
+                            chTitle: newChapterTitle);
+                        Navigator.of(context).pop(newChapter);
                       },
                       style: ElevatedButton.styleFrom(
                           backgroundColor: AppColors.brown.withOpacity(0.8)),

@@ -5,12 +5,11 @@ sealed class BookState extends Equatable {
   List<Object?> get props => [];
 }
 
-class InitialState extends BookState {
-  InitialState();
-}
+class InitialState extends BookState {}
 
-class DisplayBookPageState extends BookState {
+class DisplayBookPageState extends LoadedBookPageState {
   DisplayBookPageState({
+    super.doNotPopDialog,
     required this.bookData,
     required this.pageIndex,
   });
@@ -49,12 +48,12 @@ class AddImageState extends BookState {
   final File? file;
 }
 
-class LoadingBookPageState extends BookState {
-  LoadingBookPageState();
-}
+class LoadingBookPageState extends BookState {}
 
 class LoadedBookPageState extends BookState {
-  LoadedBookPageState();
+  LoadedBookPageState({this.doNotPopDialog = false});
+
+  final bool doNotPopDialog;
 }
 
 class SuccessfulAddedImage extends BookState {
@@ -109,13 +108,9 @@ class PagesAddedToServerState extends BookState {
   List<Object?> get props => [bookPagesList];
 }
 
-class NavigateToPageState extends BookState {
-  NavigateToPageState();
-}
+class NavigateToPageState extends BookState {}
 
-class RemoveImageState extends BookState {
-  RemoveImageState();
-}
+class RemoveImageState extends BookState {}
 
 class SelectedChapterState extends BookState {
   SelectedChapterState({required this.bookChapter});

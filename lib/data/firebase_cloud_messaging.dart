@@ -12,6 +12,7 @@ class FCM {
   late bool isFlutterLocalNotificationsInitialized;
   late FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin;
   late AndroidNotificationChannel channel;
+  late ServiceAccountCredentials accountCredentials;
 
   FCM._internal() {
     flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
@@ -21,6 +22,7 @@ class FCM {
       'name',
       importance: Importance.max,
     );
+    _initAccountCredentials();
   }
 
   factory FCM() {
@@ -40,14 +42,10 @@ class FCM {
       required String title,
       required String body,
       String? bookId}) async {
-    final jsonCredentials =
-        await rootBundle.loadString('assets/book-d21ec-c64560991d06.json');
-    final creds = ServiceAccountCredentials.fromJson(jsonCredentials);
-
     final client = await clientViaServiceAccount(
-      creds,
+      accountCredentials,
       ['https://www.googleapis.com/auth/cloud-platform'],
-    ).timeout(Duration(seconds: 3), onTimeout: () {
+    ).timeout(Duration(seconds: timeoutDuration), onTimeout: () {
       throw Exception(timeoutErrorMessage);
     });
 
@@ -62,7 +60,7 @@ class FCM {
       },
     };
 
-    const String senderId = '576996108646';
+    const String senderId = messagingSenderId;
     final response = await client
         .post(
       Uri.parse(
@@ -78,7 +76,7 @@ class FCM {
 
     client.close();
     if (response.statusCode == 200) {
-      return true; // Success!
+      return true;
     }
 
     print('Notification Sending Error Response status: ${response.statusCode}');
@@ -112,5 +110,11 @@ class FCM {
         ),
       );
     }
+  }
+
+  Future<void> _initAccountCredentials() async {
+    final jsonCredentials =
+        await rootBundle.loadString('assets/book-d21ec-c64560991d06.json');
+    accountCredentials = ServiceAccountCredentials.fromJson(jsonCredentials);
   }
 }

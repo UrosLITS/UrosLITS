@@ -29,7 +29,7 @@ class FirebaseAuthSingleton {
   Future<void> login(String email, String password) async {
     await _auth
         .signInWithEmailAndPassword(email: email, password: password)
-        .timeout(Duration(seconds: 3), onTimeout: () {
+        .timeout(Duration(seconds: timeoutDuration), onTimeout: () {
       throw Exception(timeoutErrorMessage);
     });
   }
@@ -43,15 +43,16 @@ class FirebaseAuthSingleton {
   }
 
   Future<AppUser?> downloadCurrentUser() async {
-    final result =
-        await checkUserLogin().timeout(Duration(seconds: 3), onTimeout: () {
+    final result = await checkUserLogin()
+        .timeout(Duration(seconds: timeoutDuration), onTimeout: () {
       throw Exception(timeoutErrorMessage);
     });
 
     if (result != null) {
       final userRef = _db.collection(usersCollection).doc(result);
-      final snapshotRef =
-          await userRef.get().timeout(Duration(seconds: 3), onTimeout: () {
+      final snapshotRef = await userRef
+          .get()
+          .timeout(Duration(seconds: timeoutDuration), onTimeout: () {
         throw Exception(timeoutErrorMessage);
       });
 
@@ -71,7 +72,7 @@ class FirebaseAuthSingleton {
     await _auth
         .createUserWithEmailAndPassword(
             email: user.email, password: user.password)
-        .timeout(Duration(seconds: 3), onTimeout: () {
+        .timeout(Duration(seconds: timeoutDuration), onTimeout: () {
       throw Exception(timeoutErrorMessage);
     });
     final User? checkUser = _auth.currentUser;
@@ -79,7 +80,7 @@ class FirebaseAuthSingleton {
       uID = checkUser.uid;
     }
     final userRef = _db.collection(usersCollection).doc(uID);
-    await userRef.set(user.toJson()).timeout(Duration(seconds: 3),
+    await userRef.set(user.toJson()).timeout(Duration(seconds: timeoutDuration),
         onTimeout: () {
       throw Exception(timeoutErrorMessage);
     });

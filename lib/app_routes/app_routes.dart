@@ -41,8 +41,6 @@ class AppRoutes {
               as PageMode,
           bookChapterList: (setting.arguments
               as Map<String, dynamic>)['chapterList'] as List<BookChapter>,
-          bookPageList: (setting.arguments as Map<String, dynamic>)['pagesList']
-              as List<BookPage>,
         ));
     }
 
