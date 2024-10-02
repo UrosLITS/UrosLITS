@@ -345,9 +345,13 @@ class _AddEditNewPage extends State<AddEditNewPage> {
 
   bool get hasImage => widget.bookPage.bookPageImage != null && editPageMode;
 
-  bool get hasChanges =>
-      (text != widget.bookPage.text || imageFile != null) ||
-      (editPageMode && imageFile == null);
+  bool get hasChanges {
+    final bool textChanged = text != widget.bookPage.text;
+    final bool imageChanged = imageFile != null ||
+        (widget.bookPage.bookPageImage != null && !imageSelected);
+
+    return textChanged || imageChanged;
+  }
 
   bool get hasChapter => selectedChapter != null;
 

@@ -42,6 +42,7 @@ class _ChapterListView extends State<ChapterListView> {
   ExpansionTile buildChapter(BuildContext context,
       {required BookChapter bookChapter, required List<BookPage> chPages}) {
     return ExpansionTile(
+        key: ValueKey(bookChapter),
         shape: Border(
             top: BorderSide(
               color: Colors.transparent,
@@ -50,7 +51,6 @@ class _ChapterListView extends State<ChapterListView> {
               width: 1,
               color: Colors.black,
             )),
-        key: ValueKey(expandedChNumber),
         initiallyExpanded: expandedChNumber == bookChapter.chNumber,
         onExpansionChanged: (isExpanded) {
           if (isExpanded) {

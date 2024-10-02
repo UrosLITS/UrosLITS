@@ -78,6 +78,7 @@ class FirebaseAuthSingleton {
     final User? checkUser = _auth.currentUser;
     if (checkUser != null) {
       uID = checkUser.uid;
+      await FirebaseAuthSingleton.instance.auth.signOut();
     }
     final userRef = _db.collection(usersCollection).doc(uID);
     await userRef.set(user.toJson()).timeout(Duration(seconds: timeoutDuration),
