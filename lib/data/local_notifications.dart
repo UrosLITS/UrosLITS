@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:book/core/constants.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:rxdart/rxdart.dart';
@@ -62,8 +63,8 @@ class LocalNotificationsService {
 
   Future<NotificationDetails> _notificationDetails() async {
     final AndroidNotificationDetails androidNotificationDetails =
-        AndroidNotificationDetails('channelID', 'channelName',
-            channelDescription: 'description',
+        AndroidNotificationDetails(channelId, chanelName,
+            channelDescription: description,
             importance: Importance.max,
             priority: Priority.max,
             playSound: true);

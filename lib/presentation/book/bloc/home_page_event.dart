@@ -34,8 +34,6 @@ class NewBookAddedEvent extends HomePageEvent {
 }
 
 class DeleteBookImageEvent extends HomePageEvent {
-  DeleteBookImageEvent();
-
   @override
   List<Object?> get props => [];
 }
@@ -46,7 +44,10 @@ class AddBookImageEvent extends HomePageEvent {
   final File file;
 
   @override
-  List<Object?> get props => [file, Random().nextInt(10000)];
+  List<Object?> get props => [
+        file,
+        Random().nextInt(10000),
+      ];
 }
 
 class GetBookDataEvent extends HomePageEvent {
@@ -55,12 +56,13 @@ class GetBookDataEvent extends HomePageEvent {
   final Book book;
 
   @override
-  List<Object?> get props => [book, Random().nextInt(10000)];
+  List<Object?> get props => [
+        book,
+        Random().nextInt(10000),
+      ];
 }
 
 class SignOutEvent extends HomePageEvent {
-  SignOutEvent();
-
   @override
   List<Object?> get props => [];
 }

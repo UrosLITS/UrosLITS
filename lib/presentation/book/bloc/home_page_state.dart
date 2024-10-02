@@ -5,13 +5,9 @@ sealed class HomePageState extends Equatable {
   List<Object?> get props => [];
 }
 
-class LoadingState extends HomePageState {
-  LoadingState();
-}
+class LoadingState extends HomePageState {}
 
-class LoadedState extends HomePageState {
-  LoadedState();
-}
+class LoadedState extends HomePageState {}
 
 class SuccessfulBookAddedState extends HomePageState {
   SuccessfulBookAddedState({required this.book});
@@ -87,9 +83,7 @@ class DataRetrieved extends HomePageState {
       ];
 }
 
-class SignOutState extends HomePageState {
-  SignOutState();
-}
+class SignOutState extends HomePageState {}
 
 class BookListRetrievedState extends HomePageState {
   BookListRetrievedState({required this.bookList});

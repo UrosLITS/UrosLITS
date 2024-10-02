@@ -18,21 +18,20 @@ part 'home_page_state.dart';
 
 class HomePageBloc extends Bloc<HomePageEvent, HomePageState> {
   HomePageBloc() : super((InitialBookState())) {
-    on<AddNewBookEvent>(_onBookAdded);
-    on<NewBookAddedEvent>(_onNewBookAdded);
-    on<AddBookImageEvent>(_onAddBookImage);
-    on<DeleteBookImageEvent>(_onDeleteBookImage);
-    on<GetBookDataEvent>(_onDataRetrieved);
-    on<SignOutEvent>(_onSignOut);
-    on<GetBookListEvent>(_onGetBookList);
+    on<AddNewBookEvent>((event, emit) => _onBookAdded(event, emit));
+    on<NewBookAddedEvent>((event, emit) => _onNewBookAdded(event, emit));
+    on<AddBookImageEvent>((event, emit) => _onAddBookImage(event, emit));
+    on<DeleteBookImageEvent>((event, emit) => _onDeleteBookImage(emit));
+    on<GetBookDataEvent>((event, emit) => _onDataRetrieved(event, emit));
+    on<SignOutEvent>((event, emit) => _onSignOut(emit));
+    on<GetBookListEvent>((event, emit) => _onGetBookList(event, emit));
   }
 
   Stream<QuerySnapshot<Map<String, dynamic>>> getBooksStream() {
     return FirebaseDbManager.instance.downloadBooksStream();
   }
 
-  Future<void> _onSignOut(
-      SignOutEvent event, Emitter<HomePageState> emit) async {
+  Future<void> _onSignOut(Emitter<HomePageState> emit) async {
     try {
       await FirebaseAuthSingleton.instance.auth.signOut();
       AppUserSingleton.instance.clearUser();
@@ -91,8 +90,7 @@ class HomePageBloc extends Bloc<HomePageEvent, HomePageState> {
     }
   }
 
-  Future<void> _onDeleteBookImage(
-      DeleteBookImageEvent event, Emitter<HomePageState> emit) async {
+  Future<void> _onDeleteBookImage(Emitter<HomePageState> emit) async {
     emit(LoadingState());
 
     emit(LoadedState());

@@ -8,7 +8,10 @@ class NextPageEvent extends BookEvents {
   final int currentIndex;
 
   @override
-  List<Object?> get props => [currentIndex, Random().nextInt(10000)];
+  List<Object?> get props => [
+        currentIndex,
+        Random().nextInt(10000),
+      ];
 }
 
 class PreviousPageEvent extends BookEvents {
@@ -17,7 +20,10 @@ class PreviousPageEvent extends BookEvents {
   final int currentIndex;
 
   @override
-  List<Object?> get props => [currentIndex, Random().nextInt(10000)];
+  List<Object?> get props => [
+        currentIndex,
+        Random().nextInt(10000),
+      ];
 }
 
 class InitBookEvent extends BookEvents {
@@ -69,27 +75,22 @@ class AddBookPageImageEvent extends BookEvents {
 class AddImageToServerEvent extends BookEvents {
   AddImageToServerEvent({
     required this.imageFile,
-    required this.bookID,
     required this.bookPage,
   });
 
   final File imageFile;
-  final String bookID;
   final BookPage bookPage;
 
   @override
   List<Object?> get props => [
         imageFile,
-        bookID,
         bookPage,
         Random().nextInt(10000),
       ];
 }
 
 class PopBackBookPageEvent extends BookEvents {
-  PopBackBookPageEvent({
-    required this.bookPage,
-  });
+  PopBackBookPageEvent({required this.bookPage});
 
   final BookPage bookPage;
 
@@ -101,9 +102,7 @@ class PopBackBookPageEvent extends BookEvents {
 }
 
 class AddNewChapterEvent extends BookEvents {
-  AddNewChapterEvent({
-    required this.bookChapter,
-  });
+  AddNewChapterEvent({required this.bookChapter});
 
   final BookChapter? bookChapter;
 
@@ -144,8 +143,6 @@ class NavigateToPageEvent extends BookEvents {
 }
 
 class RemoveImageEvent extends BookEvents {
-  RemoveImageEvent();
-
   @override
   List<Object?> get props => [];
 }

@@ -28,12 +28,12 @@ class _ChapterListView extends State<ChapterListView> {
       itemBuilder: (BuildContext context, int index) {
         return buildChapter(context,
             bookChapter: widget.bookchaptersList[index],
-            chPages: exctractPagesForCh(widget.bookchaptersList[index]));
+            chPages: extractPagesForCh(widget.bookchaptersList[index]));
       },
     );
   }
 
-  List<BookPage> exctractPagesForCh(BookChapter bookChapter) {
+  List<BookPage> extractPagesForCh(BookChapter bookChapter) {
     return widget.bookpages
         .where((page) => page.bookChapter?.chNumber == bookChapter.chNumber)
         .toList();
@@ -42,6 +42,7 @@ class _ChapterListView extends State<ChapterListView> {
   ExpansionTile buildChapter(BuildContext context,
       {required BookChapter bookChapter, required List<BookPage> chPages}) {
     return ExpansionTile(
+        key: ValueKey(bookChapter),
         shape: Border(
             top: BorderSide(
               color: Colors.transparent,
@@ -50,7 +51,6 @@ class _ChapterListView extends State<ChapterListView> {
               width: 1,
               color: Colors.black,
             )),
-        key: UniqueKey(),
         initiallyExpanded: expandedChNumber == bookChapter.chNumber,
         onExpansionChanged: (isExpanded) {
           if (isExpanded) {

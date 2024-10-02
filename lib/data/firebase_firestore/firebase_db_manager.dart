@@ -32,12 +32,14 @@ class FirebaseDbManager {
     final fileRef = storageRef.child('${timeStamp.toString()}');
     File file = File(imageFile!.path);
 
-    await fileRef.putFile(file).timeout(Duration(seconds: 3), onTimeout: () {
+    await fileRef.putFile(file).timeout(Duration(seconds: timeoutDuration),
+        onTimeout: () {
       throw Exception(timeoutErrorMessage);
     });
 
-    final url = await fileRef.getDownloadURL().timeout(Duration(seconds: 3),
-        onTimeout: () {
+    final url = await fileRef
+        .getDownloadURL()
+        .timeout(Duration(seconds: timeoutDuration), onTimeout: () {
       throw Exception(timeoutErrorMessage);
     });
     return Future.value(url);
@@ -47,7 +49,7 @@ class FirebaseDbManager {
     final bookRef = db.collection(booksCollection).doc();
 
     await bookRef.set(book.toJson()).timeout(
-      Duration(seconds: 3),
+      Duration(seconds: timeoutDuration),
       onTimeout: () {
         throw Exception(timeoutErrorMessage);
       },
@@ -57,8 +59,8 @@ class FirebaseDbManager {
   Future<Book> downloadBookInfo(String bookID) async {
     final ref = db.collection(booksCollection).doc(bookID);
 
-    final snapShot =
-        await ref.get().timeout(Duration(seconds: 3), onTimeout: () {
+    final snapShot = await ref.get().timeout(Duration(seconds: timeoutDuration),
+        onTimeout: () {
       throw Exception(timeoutErrorMessage);
     });
     final result = Book.fromJson(snapShot.data()!, bookID);
@@ -70,7 +72,7 @@ class FirebaseDbManager {
     final querySnapshots = await db
         .collection(booksCollection)
         .get()
-        .timeout(Duration(seconds: 3), onTimeout: () {
+        .timeout(Duration(seconds: timeoutDuration), onTimeout: () {
       throw Exception(timeoutErrorMessage);
     });
 
@@ -88,8 +90,9 @@ class FirebaseDbManager {
 
     final booksRef = db.collection(pagesCollection).doc(bookID);
 
-    final snapShoot =
-        await booksRef.get().timeout(Duration(seconds: 3), onTimeout: () {
+    final snapShoot = await booksRef
+        .get()
+        .timeout(Duration(seconds: timeoutDuration), onTimeout: () {
       throw Exception(timeoutErrorMessage);
     });
     final data = snapShoot.data();
@@ -103,8 +106,9 @@ class FirebaseDbManager {
     }
 
     final chapterRefs = db.collection(chaptersCollection).doc(bookID);
-    final snapShoots =
-        await chapterRefs.get().timeout(Duration(seconds: 3), onTimeout: () {
+    final snapShoots = await chapterRefs
+        .get()
+        .timeout(Duration(seconds: timeoutDuration), onTimeout: () {
       throw Exception(timeoutErrorMessage);
     });
     final chaptersData = snapShoots.data();
@@ -130,12 +134,14 @@ class FirebaseDbManager {
     final storagePath = fileRef.fullPath;
     bookPage.bookPageImage?.storagePath = storagePath;
     File file = File(imageFile.path);
-    await fileRef.putFile(file).timeout(Duration(seconds: 3), onTimeout: () {
+    await fileRef.putFile(file).timeout(Duration(seconds: timeoutDuration),
+        onTimeout: () {
       throw Exception(timeoutErrorMessage);
     });
 
-    final url = await fileRef.getDownloadURL().timeout(Duration(seconds: 3),
-        onTimeout: () {
+    final url = await fileRef
+        .getDownloadURL()
+        .timeout(Duration(seconds: timeoutDuration), onTimeout: () {
       throw Exception(timeoutErrorMessage);
     });
     bookPage.bookPageImage?.url = url;
@@ -147,7 +153,7 @@ class FirebaseDbManager {
     final booksRef = db.collection(pagesCollection).doc(id);
     await booksRef.set({
       collectionItems: bookPagesList.map((page) => page.toJson()).toList()
-    }).timeout(Duration(seconds: 3), onTimeout: () {
+    }).timeout(Duration(seconds: timeoutDuration), onTimeout: () {
       throw Exception(timeoutErrorMessage);
     });
 
@@ -161,9 +167,10 @@ class FirebaseDbManager {
     await chapterRef.set({
       collectionItems:
           bookChaptersList.map((chapter) => chapter.toJson()).toList()
-    }).timeout(Duration(seconds: 3), onTimeout: () {
+    }).timeout(Duration(seconds: timeoutDuration), onTimeout: () {
       throw Exception(timeoutErrorMessage);
     });
+
     return bookChaptersList;
   }
 
@@ -173,7 +180,7 @@ class FirebaseDbManager {
 
     await booksRef.update({
       collectionItems: bookPagesList.map((chapter) => chapter.toJson()).toList()
-    }).timeout(Duration(seconds: 3), onTimeout: () {
+    }).timeout(Duration(seconds: timeoutDuration), onTimeout: () {
       throw Exception(timeoutErrorMessage);
     });
     return bookPagesList;
@@ -183,8 +190,9 @@ class FirebaseDbManager {
     final pageNumberToDel = bookPage.pageNumber;
     final docRef = db.collection(pagesCollection).doc(id);
 
-    final snapShoot =
-        await docRef.get().timeout(Duration(seconds: 3), onTimeout: () {
+    final snapShoot = await docRef
+        .get()
+        .timeout(Duration(seconds: timeoutDuration), onTimeout: () {
       throw Exception(timeoutErrorMessage);
     });
 
@@ -202,13 +210,14 @@ class FirebaseDbManager {
 
     if (bookPage.bookPageImage != null) {
       final imageRef = storageRef.child(bookPage.bookPageImage!.storagePath!);
-      await imageRef.delete().timeout(Duration(seconds: 3), onTimeout: () {
+      await imageRef.delete().timeout(Duration(seconds: timeoutDuration),
+          onTimeout: () {
         throw Exception(timeoutErrorMessage);
       });
     }
 
-    await docRef.update({collectionItems: items}).timeout(Duration(seconds: 3),
-        onTimeout: () {
+    await docRef.update({collectionItems: items}).timeout(
+        Duration(seconds: timeoutDuration), onTimeout: () {
       throw Exception(timeoutErrorMessage);
     });
     return Future.value(true);
@@ -220,8 +229,9 @@ class FirebaseDbManager {
 
     final booksRef = db.collection(pagesCollection).doc(id);
 
-    final snapShoot =
-        await booksRef.get().timeout(Duration(seconds: 3), onTimeout: () {
+    final snapShoot = await booksRef
+        .get()
+        .timeout(Duration(seconds: timeoutDuration), onTimeout: () {
       throw Exception(timeoutErrorMessage);
     });
     final data = snapShoot.data();
@@ -235,8 +245,9 @@ class FirebaseDbManager {
     }
 
     final chapterRefs = db.collection(chaptersCollection).doc(id);
-    final snapShoots =
-        await chapterRefs.get().timeout(Duration(seconds: 3), onTimeout: () {
+    final snapShoots = await chapterRefs
+        .get()
+        .timeout(Duration(seconds: timeoutDuration), onTimeout: () {
       throw Exception(timeoutErrorMessage);
     });
     final Data = snapShoots.data();
