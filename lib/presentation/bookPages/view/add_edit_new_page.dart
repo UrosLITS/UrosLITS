@@ -65,48 +65,47 @@ class _AddEditNewPage extends State<AddEditNewPage> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocConsumer<BookBloc, BookState>(listener: (context, state) {
-      if (state is SuccessfulAddedImage) {
-        imageName = state.fileName;
-        imageSelected = true;
-      } else if (state is InitBookEvent) {
-        imageName = noImage;
-      } else if (state is UploadedImageToServerState) {
-        if (state.isUploaded == true) {
-          context
-              .read<BookBloc>()
-              .add(PopBackBookPageEvent(bookPage: state.bookPage));
-        }
-      } else if (state is PopBackBookPageState) {
-        Navigator.of(context).pop(state.bookPage);
-      } else if (state is LoadBookChapterListState) {
-        selectedChapter = widget.bookChapterList.lastOrNull;
+    return BlocConsumer<BookBloc, BookState>(
+      listener: (context, state) {
+        if (state is SuccessfulAddedImage) {
+          imageName = state.fileName;
+          imageSelected = true;
+        } else if (state is InitBookEvent) {
+          imageName = noImage;
+        } else if (state is PopBackBookPageState) {
+          Navigator.of(context).pop(state.bookPage);
+        } else if (state is LoadBookChapterListState) {
+          selectedChapter = widget.bookChapterList.lastOrNull;
 
-        widget.bookChapterList = state.bookChapterList;
-      } else if (state is RemoveImageState) {
-        imageFile = null;
-        imageSelected = false;
-        imageName = noImage;
-      } else if (state is SelectedChapterState) {
-        selectedChapter = state.bookChapter;
-      }
-    }, builder: (BuildContext context, Object? state) {
-      if (state is DisplayBookPageState) {
-        return buildPageBody(context);
-      } else {
+          widget.bookChapterList = state.bookChapterList;
+        } else if (state is RemoveImageState) {
+          imageFile = null;
+          imageSelected = false;
+          imageName = noImage;
+        } else if (state is SelectedChapterState) {
+          selectedChapter = state.bookChapter;
+        }
+      },
+      builder: (BuildContext context, Object? state) {
         return Stack(
           children: [
             buildPageBody(context),
-            Center(
-              child: CircularProgressIndicator(),
-            ),
+            if (state is LoadingBookPageState)
+              Positioned.fill(
+                child: Container(
+                  color: Colors.black.withOpacity(0.1),
+                  child: Center(
+                    child: CircularProgressIndicator(),
+                  ),
+                ),
+              )
           ],
         );
-      }
-    });
+      },
+    );
   }
 
-  WillPopScope buildPageBody(BuildContext context) {
+  Widget buildPageBody(BuildContext context) {
     return WillPopScope(
         child: Scaffold(
           appBar: AppBar(
@@ -151,10 +150,12 @@ class _AddEditNewPage extends State<AddEditNewPage> {
                                 onChanged: editPageMode
                                     ? null
                                     : (value) {
-                                        context.read<BookBloc>().add(
-                                            SelectChapterEvent(
-                                                selectedChapter:
-                                                    value as BookChapter));
+                                        context
+                                            .read<BookBloc>()
+                                            .add(SelectChapterEvent(
+                                              selectedChapter:
+                                                  value as BookChapter,
+                                            ));
                                       },
                               ),
                             ),
@@ -167,8 +168,8 @@ class _AddEditNewPage extends State<AddEditNewPage> {
                                     context: context,
                                     builder: (BuildContext context) {
                                       return AddChapterDialog(
-                                        newChapterTitle: newChapterTitle,
-                                        bookChapterList: widget.bookChapterList,
+                                        chapterNumber:
+                                            widget.bookChapterList.length + 1,
                                       );
                                     },
                                   );
@@ -261,24 +262,13 @@ class _AddEditNewPage extends State<AddEditNewPage> {
                     onPressed: hasChanges
                         ? () async {
                             if (_formKey.currentState!.validate()) {
-                              if (imageFile != null) {
-                                BookPage bookPage = BookPage(
-                                    pageNumber: widget.bookPage.pageNumber,
-                                    text: text!,
-                                    bookChapter: selectedChapter);
-                                context.read<BookBloc>().add(
-                                    AddImageToServerEvent(
-                                        imageFile: imageFile!,
-                                        bookPage: bookPage));
-                              } else {
-                                BookPage bookPage = BookPage(
-                                    pageNumber: widget.bookPage.pageNumber,
-                                    text: text!,
-                                    bookChapter: selectedChapter,
-                                    bookPageImage: null);
-                                context.read<BookBloc>().add(
-                                    PopBackBookPageEvent(bookPage: bookPage));
-                              }
+                              widget.bookPage.text = text!;
+                              widget.bookPage.bookChapter = selectedChapter;
+
+                              context.read<BookBloc>().add(PopBackBookPageEvent(
+                                    bookPage: widget.bookPage,
+                                    imageFile: imageFile,
+                                  ));
                             }
                           }
                         : null,

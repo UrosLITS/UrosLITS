@@ -43,6 +43,7 @@ class InitBookEvent extends BookEvents {
 class AddNewPageEvent extends BookEvents {
   AddNewPageEvent({
     required this.bookPage,
+    this.imageFile,
     required this.title,
     required this.body,
   });
@@ -50,6 +51,7 @@ class AddNewPageEvent extends BookEvents {
   final BookPage bookPage;
   final String title;
   final String body;
+  final File? imageFile;
 
   @override
   List<Object?> get props => [
@@ -90,9 +92,13 @@ class AddImageToServerEvent extends BookEvents {
 }
 
 class PopBackBookPageEvent extends BookEvents {
-  PopBackBookPageEvent({required this.bookPage});
+  PopBackBookPageEvent({
+    required this.bookPage,
+    this.imageFile,
+  });
 
   final BookPage bookPage;
+  final File? imageFile;
 
   @override
   List<Object?> get props => [
@@ -114,15 +120,16 @@ class AddNewChapterEvent extends BookEvents {
 }
 
 class PageEditedEvent extends BookEvents {
-  PageEditedEvent({
-    required this.bookPage,
-    required this.body,
-    required this.title,
-  });
+  PageEditedEvent(
+      {required this.bookPage,
+      required this.body,
+      required this.title,
+      this.imageFile});
 
   final BookPage bookPage;
   final String title;
   final String body;
+  final File? imageFile;
 
   @override
   List<Object?> get props => [
