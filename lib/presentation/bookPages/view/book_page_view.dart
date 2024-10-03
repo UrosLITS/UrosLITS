@@ -71,23 +71,25 @@ class _BookPageView extends State<BookPageView> {
         }
       },
       builder: (BuildContext context, Object? state) {
-        if (state is DisplayBookPageState) {
-          return buildPageScaffold(context);
-        } else {
-          return Stack(children: [
+        return Stack(
+          children: [
             buildPageScaffold(context),
-            Center(
-              child: CircularProgressIndicator(
-                backgroundColor: Colors.green,
+            if (state is LoadingBookPageState)
+              Positioned.fill(
+                child: Container(
+                  color: Colors.black.withOpacity(0.1),
+                  child: Center(
+                    child: CircularProgressIndicator(),
+                  ),
+                ),
               ),
-            )
-          ]);
-        }
+          ],
+        );
       },
     );
   }
 
-  WillPopScope buildPageScaffold(BuildContext context) {
+  Widget buildPageScaffold(BuildContext context) {
     return WillPopScope(
         child: Scaffold(
             appBar: AppBar(
@@ -119,6 +121,7 @@ class _BookPageView extends State<BookPageView> {
                         if (result != null) {
                           context.read<BookBloc>().add(PageEditedEvent(
                               bookPage: result,
+                              imageFile: result.bookPageImage?.imageFile,
                               body: AppLocalizations.of(context)!
                                   .message_body_edit(widget.book.author,
                                       widget.book.title, bookPage.pageNumber),
@@ -348,6 +351,7 @@ class _BookPageView extends State<BookPageView> {
                     if (result != null) {
                       context.read<BookBloc>().add(AddNewPageEvent(
                             bookPage: result,
+                            imageFile: result.bookPageImage?.imageFile,
                             title:
                                 AppLocalizations.of(context)!.message_title_add,
                             body:

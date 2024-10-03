@@ -7,9 +7,8 @@ sealed class BookState extends Equatable {
 
 class InitialState extends BookState {}
 
-class DisplayBookPageState extends LoadedBookPageState {
+class DisplayBookPageState extends BookState {
   DisplayBookPageState({
-    super.doNotPopDialog,
     required this.bookData,
     required this.pageIndex,
   });
@@ -50,29 +49,10 @@ class AddImageState extends BookState {
 
 class LoadingBookPageState extends BookState {}
 
-class LoadedBookPageState extends BookState {
-  LoadedBookPageState({this.doNotPopDialog = false});
-
-  final bool doNotPopDialog;
-}
-
 class SuccessfulAddedImage extends BookState {
   SuccessfulAddedImage({required this.fileName});
 
   final String fileName;
-}
-
-class UploadedImageToServerState extends BookState {
-  UploadedImageToServerState({
-    required this.isUploaded,
-    required this.bookPage,
-  });
-
-  final bool isUploaded;
-  final BookPage bookPage;
-
-  @override
-  List<Object?> get props => [isUploaded, bookPage];
 }
 
 class PopBackBookPageState extends BookState {
