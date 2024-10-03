@@ -55,22 +55,6 @@ class SuccessfulAddedImage extends BookState {
   final String fileName;
 }
 
-class UploadedImageToServerState extends BookState {
-  UploadedImageToServerState({
-    required this.isUploaded,
-    required this.bookPage,
-  });
-
-  final bool isUploaded;
-  final BookPage bookPage;
-
-  @override
-  List<Object?> get props => [
-        isUploaded,
-        bookPage,
-      ];
-}
-
 class PopBackBookPageState extends BookState {
   PopBackBookPageState({
     required this.bookPage,

@@ -137,11 +137,6 @@ class BookBloc extends Bloc<BookEvents, BookState> {
 
       if (result.isNotEmpty) {
         emit(SuccessfulAddedImage(fileName: result));
-        emit(DisplayBookPageState(
-            bookData: book.bookData!, pageIndex: currentPageIndex));
-      } else {
-        emit(DisplayBookPageState(
-            bookData: book.bookData!, pageIndex: currentPageIndex));
       }
     } on Exception catch (e) {
       emit(ErrorState(
@@ -164,13 +159,11 @@ class BookBloc extends Bloc<BookEvents, BookState> {
   Future<void> _onPopBackBookPage(
       PopBackBookPageEvent event, Emitter<BookState> emit) async {
     emit(LoadingBookPageState());
-    emit(DisplayBookPageState(
-        bookData: book.bookData!, pageIndex: currentPageIndex));
     File image;
     ui.Image? decodedImage;
 
     if (event.imageFile != null) {
-      image = File(event.imageFile!.path);
+      image = event.imageFile!;
       decodedImage = await decodeImageFromList(image.readAsBytesSync());
       BookPageImage bookPageImage = BookPageImage(
         width: decodedImage.width,
