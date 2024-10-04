@@ -1,5 +1,6 @@
 import 'package:book/core/constants.dart';
 import 'package:book/models/app_user.dart';
+import 'package:book/utils/exception_utils.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
@@ -29,8 +30,8 @@ class FirebaseAuthSingleton {
   Future<void> login(String email, String password) async {
     await _auth
         .signInWithEmailAndPassword(email: email, password: password)
-        .timeout(Duration(seconds: 3), onTimeout: () {
-      throw Exception(timeoutErrorMessage);
+        .timeout(Duration(seconds: timeoutDuration), onTimeout: () {
+      throw ServerConnectionException();
     });
   }
 
@@ -43,16 +44,17 @@ class FirebaseAuthSingleton {
   }
 
   Future<AppUser?> downloadCurrentUser() async {
-    final result =
-        await checkUserLogin().timeout(Duration(seconds: 3), onTimeout: () {
-      throw Exception(timeoutErrorMessage);
+    final result = await checkUserLogin()
+        .timeout(Duration(seconds: timeoutDuration), onTimeout: () {
+      throw ServerConnectionException();
     });
 
     if (result != null) {
       final userRef = _db.collection(usersCollection).doc(result);
-      final snapshotRef =
-          await userRef.get().timeout(Duration(seconds: 3), onTimeout: () {
-        throw Exception(timeoutErrorMessage);
+      final snapshotRef = await userRef
+          .get()
+          .timeout(Duration(seconds: timeoutDuration), onTimeout: () {
+        throw ServerConnectionException();
       });
 
       if (snapshotRef.data() != null) {
@@ -71,17 +73,18 @@ class FirebaseAuthSingleton {
     await _auth
         .createUserWithEmailAndPassword(
             email: user.email, password: user.password)
-        .timeout(Duration(seconds: 3), onTimeout: () {
-      throw Exception(timeoutErrorMessage);
+        .timeout(Duration(seconds: timeoutDuration), onTimeout: () {
+      throw ServerConnectionException();
     });
     final User? checkUser = _auth.currentUser;
     if (checkUser != null) {
       uID = checkUser.uid;
+      await FirebaseAuthSingleton.instance.auth.signOut();
     }
     final userRef = _db.collection(usersCollection).doc(uID);
-    await userRef.set(user.toJson()).timeout(Duration(seconds: 3),
+    await userRef.set(user.toJson()).timeout(Duration(seconds: timeoutDuration),
         onTimeout: () {
-      throw Exception(timeoutErrorMessage);
+      throw ServerConnectionException();
     });
   }
 }

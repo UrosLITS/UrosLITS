@@ -6,6 +6,7 @@ import 'package:book/core/constants.dart';
 import 'package:book/data/firebase_cloud_messaging.dart';
 import 'package:book/data/firebase_firestore/firebase_db_manager.dart';
 import 'package:book/models/book/book_imports.dart';
+import 'package:book/utils/exception_utils.dart';
 import 'package:book/utils/file_utils.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/cupertino.dart';
@@ -16,21 +17,21 @@ part 'book_state.dart';
 
 class BookBloc extends Bloc<BookEvents, BookState> {
   BookBloc() : super((InitialState())) {
-    on<NextPageEvent>(_onNextPage);
-    on<PreviousPageEvent>(_onPreviousPage);
-    on<InitBookEvent>(_onInitBook);
-    on<AddNewPageEvent>(_onAddNewPage);
-    on<AddBookPageImageEvent>(_onAddBookPageImage);
-    on<AddImageToServerEvent>(_onAddImageToServer);
-    on<PopBackBookPageEvent>(_onPopBackBookPage);
-    on<AddNewChapterEvent>(_onAddNewChapter);
-    on<PageEditedEvent>(_onPageEditedEvent);
-    on<NavigateToPageEvent>(_onNavigateToPage);
-    on<RemoveImageEvent>(_onRemoveImageEvent);
-    on<SelectChapterEvent>(_onSelectChapterEvent);
-    on<DeletePageEvent>(_onDeletePageEvent);
-    on<SwipeLeftEvent>(_onSwipeLeftEvent);
-    on<SwipeRightEvent>(_onSwipeRightEvent);
+    on<NextPageEvent>((event, emit) => _onNextPage(event, emit));
+    on<PreviousPageEvent>((event, emit) => _onPreviousPage(event, emit));
+    on<InitBookEvent>((event, emit) => _onInitBook(event, emit));
+    on<AddNewPageEvent>((event, emit) => _onAddNewPage(event, emit));
+    on<AddBookPageImageEvent>(
+        (event, emit) => _onAddBookPageImage(event, emit));
+    on<PopBackBookPageEvent>((event, emit) => _onPopBackBookPage(event, emit));
+    on<AddNewChapterEvent>((event, emit) => _onAddNewChapter(event, emit));
+    on<PageEditedEvent>((event, emit) => _onPageEditedEvent(event, emit));
+    on<NavigateToPageEvent>((event, emit) => _onNavigateToPage(event, emit));
+    on<RemoveImageEvent>((event, emit) => _onRemoveImageEvent(emit));
+    on<SelectChapterEvent>((event, emit) => _onSelectChapterEvent(event, emit));
+    on<DeletePageEvent>((event, emit) => _onDeletePageEvent(event, emit));
+    on<SwipeLeftEvent>((event, emit) => _onSwipeLeftEvent(event, emit));
+    on<SwipeRightEvent>((event, emit) => _onSwipeRightEvent(event, emit));
   }
 
   late Book book;
@@ -38,7 +39,8 @@ class BookBloc extends Bloc<BookEvents, BookState> {
 
   Future<void> _onNextPage(NextPageEvent event, Emitter<BookState> emit) async {
     currentPageIndex = event.currentIndex;
-    currentPageIndex++;
+
+    if (currentPageIndex < book.bookData!.pages.length - 1) currentPageIndex++;
     emit(DisplayBookPageState(
         bookData: book.bookData!, pageIndex: currentPageIndex));
   }
@@ -46,39 +48,57 @@ class BookBloc extends Bloc<BookEvents, BookState> {
   Future<void> _onInitBook(InitBookEvent event, Emitter<BookState> emit) async {
     this.book = event.book;
 
-    currentPageIndex = event.currentIndex;
-    final result = await FirebaseDbManager.instance.downloadBookData(book.id);
-    book.bookData = result;
-    emit(DisplayBookPageState(
-        bookData: book.bookData!, pageIndex: currentPageIndex));
+    emit(LoadingBookPageState());
+
+    try {
+      final result = await FirebaseDbManager.instance.downloadBookData(book.id);
+      book.bookData = result;
+      emit(DisplayBookPageState(
+          bookData: book.bookData!, pageIndex: currentPageIndex));
+    } on Exception catch (e) {
+      emit(ErrorState(
+          bookData: book.bookData!, error: e, pageIndex: currentPageIndex));
+    }
   }
 
   Future<void> _onPreviousPage(
       PreviousPageEvent event, Emitter<BookState> emit) async {
     currentPageIndex = event.currentIndex;
-    currentPageIndex--;
+    if (currentPageIndex > 0) {
+      currentPageIndex--;
+    }
     emit(DisplayBookPageState(
         bookData: book.bookData!, pageIndex: currentPageIndex));
   }
 
   Future<void> _onAddNewPage(
       AddNewPageEvent event, Emitter<BookState> emit) async {
-    emit(LoadingBookPageState());
-    for (int i = 0; i < book.bookData!.pages.length; i++) {
-      if (book.bookData!.pages[i].bookChapter!.chNumber >
-          event.bookPage.bookChapter!.chNumber) {
-        book.bookData!.pages[i].pageNumber++;
-        event.bookPage.pageNumber--;
-      }
-    }
-    book.bookData!.pages.add(event.bookPage);
-    book.bookData!.pages.sort((a, b) => a.pageNumber.compareTo(b.pageNumber));
-
     try {
+      emit(LoadingBookPageState());
+
+      if (event.bookPage.bookPageImage?.imageFile != null) {
+        final addImageEvent = AddImageToServerEvent(
+            imageFile: event.imageFile!, bookPage: event.bookPage);
+        final uploaded = await _onAddImageToServer(addImageEvent, emit);
+        if (!uploaded) {
+          throw ServerConnectionException();
+        }
+      }
+
+      final bookPage = event.bookPage;
+      for (int i = 0; i < book.bookData!.pages.length; i++) {
+        if (book.bookData!.pages[i].bookChapter!.chNumber >
+            bookPage.bookChapter!.chNumber) {
+          book.bookData!.pages[i].pageNumber++;
+          bookPage.pageNumber--;
+        }
+      }
+      book.bookData!.pages.insert(bookPage.pageNumber - 1, bookPage);
+      book.bookData!.pages.sort((a, b) => a.pageNumber.compareTo(b.pageNumber));
+
       await FirebaseDbManager.instance
           .addPagesToServer(book.bookData!.pages, book.id);
-      currentPageIndex = book.bookData!.pages.indexOf(event.bookPage);
-      emit(LoadedBookPageState());
+      currentPageIndex = book.bookData!.pages.indexOf(bookPage);
 
       Map<String, dynamic> additionalData = {
         'action': pageChangedAction,
@@ -96,11 +116,15 @@ class BookBloc extends Bloc<BookEvents, BookState> {
       if (result) {
         emit(DisplayBookPageState(
             bookData: book.bookData!, pageIndex: currentPageIndex));
+      } else {
+        throw ServerConnectionException();
       }
     } on Exception catch (e) {
-      emit(LoadedBookPageState());
       emit(ErrorState(
           bookData: book.bookData!, error: e, pageIndex: currentPageIndex));
+    } finally {
+      emit(DisplayBookPageState(
+          bookData: book.bookData!, pageIndex: currentPageIndex));
     }
   }
 
@@ -108,52 +132,50 @@ class BookBloc extends Bloc<BookEvents, BookState> {
       AddBookPageImageEvent event, Emitter<BookState> emit) async {
     emit(LoadingBookPageState());
 
-    final result = await FileUtils.getFileName(event.file);
-
-    emit(SuccessfulAddedImage(fileName: result));
-    emit(LoadedBookPageState());
-    emit(DisplayBookPageState(
-        bookData: book.bookData!, pageIndex: currentPageIndex));
-  }
-
-  Future<void> _onAddImageToServer(
-      AddImageToServerEvent event, Emitter<BookState> emit) async {
-    emit(LoadingBookPageState());
-
     try {
-      ui.Image? decodedImage;
-      File image = File(event.imageFile.path);
+      final result = await FileUtils.getFileName(event.file);
 
-      decodedImage = await decodeImageFromList(image.readAsBytesSync());
-      BookPageImage bookPageImage = BookPageImage(
-        width: decodedImage.width,
-        height: decodedImage.height,
-        filePath: event.imageFile.path,
-      );
-      event.bookPage.bookPageImage = bookPageImage;
-
-      final result = await FirebaseDbManager.instance
-          .addImageToServer(event.bookPage, event.imageFile, event.bookID);
-
-      emit(UploadedImageToServerState(
-          isUploaded: result, bookPage: event.bookPage));
-      emit(LoadedBookPageState());
+      if (result.isNotEmpty) {
+        emit(SuccessfulAddedImage(fileName: result));
+      }
     } on Exception catch (e) {
-      emit(LoadedBookPageState());
-
       emit(ErrorState(
           bookData: book.bookData!, error: e, pageIndex: currentPageIndex));
+    }
+  }
+
+  Future<bool> _onAddImageToServer(
+      AddImageToServerEvent event, Emitter<BookState> emit) async {
+    final result = await FirebaseDbManager.instance
+        .addImageToServer(event.bookPage, event.imageFile, book.id);
+
+    if (result) {
+      return result;
+    } else {
+      throw ServerConnectionException();
     }
   }
 
   Future<void> _onPopBackBookPage(
       PopBackBookPageEvent event, Emitter<BookState> emit) async {
     emit(LoadingBookPageState());
+    File image;
+    ui.Image? decodedImage;
 
-    emit(LoadedBookPageState());
+    if (event.imageFile != null) {
+      image = event.imageFile!;
+      decodedImage = await decodeImageFromList(image.readAsBytesSync());
+      BookPageImage bookPageImage = BookPageImage(
+        width: decodedImage.width,
+        height: decodedImage.height,
+        filePath: event.imageFile!.path,
+        imageFile: event.imageFile,
+      );
+      event.bookPage.bookPageImage = bookPageImage;
+    } else {
+      event.bookPage.bookPageImage = null;
+    }
     emit(PopBackBookPageState(bookPage: event.bookPage));
-    emit(DisplayBookPageState(
-        bookData: book.bookData!, pageIndex: currentPageIndex));
   }
 
   Future<void> _onAddNewChapter(
@@ -170,7 +192,6 @@ class BookBloc extends Bloc<BookEvents, BookState> {
       emit(ErrorState(
           bookData: book.bookData!, error: e, pageIndex: currentPageIndex));
     } finally {
-      emit(LoadedBookPageState());
       emit(DisplayBookPageState(
           bookData: book.bookData!, pageIndex: currentPageIndex));
     }
@@ -178,14 +199,25 @@ class BookBloc extends Bloc<BookEvents, BookState> {
 
   Future<void> _onPageEditedEvent(
       PageEditedEvent event, Emitter<BookState> emit) async {
-    emit(LoadingBookPageState());
-
-    book.bookData?.pages[currentPageIndex] = event.bookPage;
     try {
+      emit(LoadingBookPageState());
+
+      book.bookData?.pages[currentPageIndex] = event.bookPage;
+      if (event.imageFile != null) {
+        final addImageEvent = AddImageToServerEvent(
+            imageFile: event.imageFile!, bookPage: event.bookPage);
+
+        final uploaded = await _onAddImageToServer(addImageEvent, emit);
+        if (!uploaded) {
+          throw ServerConnectionException();
+        }
+      } else {
+        event.bookPage.bookPageImage = null;
+      }
+
       await FirebaseDbManager.instance
           .updatePage(book.bookData!.pages, book.id);
       currentPageIndex = book.bookData!.pages.indexOf(event.bookPage);
-      emit(LoadedBookPageState());
 
       Map<String, dynamic> additionalData = {
         'action': pageChangedAction,
@@ -202,11 +234,15 @@ class BookBloc extends Bloc<BookEvents, BookState> {
       if (result) {
         emit(DisplayBookPageState(
             bookData: book.bookData!, pageIndex: currentPageIndex));
+      } else {
+        throw ServerConnectionException();
       }
     } on Exception catch (e) {
-      emit(LoadedBookPageState());
       emit(ErrorState(
           bookData: book.bookData!, error: e, pageIndex: currentPageIndex));
+    } finally {
+      emit(DisplayBookPageState(
+          bookData: book.bookData!, pageIndex: currentPageIndex));
     }
   }
 
@@ -219,9 +255,10 @@ class BookBloc extends Bloc<BookEvents, BookState> {
     }
   }
 
-  Future<void> _onRemoveImageEvent(
-      RemoveImageEvent event, Emitter<BookState> emit) async {
+  Future<void> _onRemoveImageEvent(Emitter<BookState> emit) async {
     emit(RemoveImageState());
+    emit(DisplayBookPageState(
+        bookData: book.bookData!, pageIndex: currentPageIndex));
   }
 
   Future<void> _onSelectChapterEvent(
@@ -245,7 +282,6 @@ class BookBloc extends Bloc<BookEvents, BookState> {
           currentPageIndex == book.bookData!.pages.length) {
         currentPageIndex--;
       }
-      emit(LoadedBookPageState());
 
       Map<String, dynamic> additionalData = {
         'action': pageChangedAction,
@@ -261,9 +297,10 @@ class BookBloc extends Bloc<BookEvents, BookState> {
       if (result) {
         emit(DisplayBookPageState(
             bookData: book.bookData!, pageIndex: currentPageIndex));
+      } else {
+        throw ServerConnectionException();
       }
     } on Exception catch (e) {
-      emit(LoadedBookPageState());
       emit(ErrorState(
           bookData: book.bookData!, error: e, pageIndex: currentPageIndex));
     }

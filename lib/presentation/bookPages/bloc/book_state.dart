@@ -5,9 +5,7 @@ sealed class BookState extends Equatable {
   List<Object?> get props => [];
 }
 
-class InitialState extends BookState {
-  InitialState();
-}
+class InitialState extends BookState {}
 
 class DisplayBookPageState extends BookState {
   DisplayBookPageState({
@@ -49,31 +47,12 @@ class AddImageState extends BookState {
   final File? file;
 }
 
-class LoadingBookPageState extends BookState {
-  LoadingBookPageState();
-}
-
-class LoadedBookPageState extends BookState {
-  LoadedBookPageState();
-}
+class LoadingBookPageState extends BookState {}
 
 class SuccessfulAddedImage extends BookState {
   SuccessfulAddedImage({required this.fileName});
 
   final String fileName;
-}
-
-class UploadedImageToServerState extends BookState {
-  UploadedImageToServerState({
-    required this.isUploaded,
-    required this.bookPage,
-  });
-
-  final bool isUploaded;
-  final BookPage bookPage;
-
-  @override
-  List<Object?> get props => [isUploaded, bookPage];
 }
 
 class PopBackBookPageState extends BookState {
@@ -109,13 +88,9 @@ class PagesAddedToServerState extends BookState {
   List<Object?> get props => [bookPagesList];
 }
 
-class NavigateToPageState extends BookState {
-  NavigateToPageState();
-}
+class NavigateToPageState extends BookState {}
 
-class RemoveImageState extends BookState {
-  RemoveImageState();
-}
+class RemoveImageState extends BookState {}
 
 class SelectedChapterState extends BookState {
   SelectedChapterState({required this.bookChapter});

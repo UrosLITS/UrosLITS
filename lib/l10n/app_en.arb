@@ -61,7 +61,7 @@
   "missing_special_char": "Password must contain at least one special character",
   "not_long_enough_pass": "Password must contain at least 8 characters",
   "error": "Can not  reach the server",
-  "error_auth": "Incorrect email",
+  "error_auth": "Incorrect email or  password",
   "message_body_edit": "A new page has been edited by {author} with a page number {page_number} inside {title} book",
   "@message_body": {
     "placeholders": {
@@ -103,5 +103,7 @@
       }
     }
   },
-  "message_title_delete": "Page has been deleted"
+  "message_title_delete": "Page has been deleted",
+  "add_new_page_title": "Add new page to the book",
+  "edit_page_title": "Edit a page"
 }

@@ -8,6 +8,7 @@ import 'package:book/presentation/bookPages/widgets/build_page_body.dart';
 import 'package:book/presentation/bookPages/widgets/chapter_list_view.dart';
 import 'package:book/presentation/common/common.dart';
 import 'package:book/presentation/common/custom_dialog.dart';
+import 'package:book/styles/app_colors.dart';
 import 'package:book/styles/app_styles.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -42,7 +43,7 @@ class _BookPageView extends State<BookPageView> {
     if (widget.pageIndex != null) {
       isMessageReceived = true;
     }
-    context.read<BookBloc>().add(InitBookEvent(widget.book, currentIndex));
+    context.read<BookBloc>().add(InitBookEvent(widget.book));
 
     super.initState();
   }
@@ -66,280 +67,313 @@ class _BookPageView extends State<BookPageView> {
           bookPagesList = state.bookData.pages;
           bookChaptersList = state.bookData.chapters;
         } else if (state is InitialState) {
-          context
-              .read<BookBloc>()
-              .add(InitBookEvent(widget.book, currentIndex));
+          context.read<BookBloc>().add(InitBookEvent(widget.book));
         }
       },
       builder: (BuildContext context, Object? state) {
-        if (state is DisplayBookPageState) {
-          return WillPopScope(
-              child: Scaffold(
-                  appBar: AppBar(
-                    centerTitle: true,
-                    backgroundColor: Colors.brown.withOpacity(0.8),
-                    actions: [
-                      Container(
-                        margin: EdgeInsets.only(bottom: 10),
-                        child: Visibility(
-                          visible: bookPagesList.length > 0 && appUser.isAdmin,
-                          child: IconButton(
-                            onPressed: () async {
-                              BookPage bookPage = BookPage(
-                                  pageNumber:
-                                      bookPagesList[currentIndex].pageNumber,
-                                  text: bookPagesList[currentIndex].text,
-                                  bookPageImage: bookPagesList[currentIndex]
-                                      .bookPageImage);
-                              BookPage? result =
-                                  await Navigator.pushNamed<dynamic>(
-                                context,
-                                kAddNewPageRoute,
-                                arguments: <String, dynamic>{
-                                  'bookPage': bookPage,
-                                  'pagesList': bookPagesList,
-                                  'bookID': widget.book.id,
-                                  'pageMode': PageMode.editMode,
-                                  'chapterList': bookChaptersList
-                                },
-                              );
-                              if (result != null) {
-                                context.read<BookBloc>().add(PageEditedEvent(
-                                    bookPage: result,
-                                    body: AppLocalizations.of(context)!
-                                        .message_body_edit(
-                                            widget.book.author,
-                                            widget.book.title,
-                                            bookPage.pageNumber),
-                                    title: AppLocalizations.of(context)!
-                                        .message_title_edit));
-                              } else {
-                                context.read<BookBloc>().add(
-                                    InitBookEvent(widget.book, currentIndex));
-                              }
-                            },
-                            icon: Icon(
-                              Icons.edit,
-                              size: 35,
-                            ),
-                          ),
-                        ),
-                      ),
-                      Visibility(
-                        visible: bookPagesList.length > 0 && appUser.isAdmin,
-                        child: Align(
-                          alignment: AlignmentDirectional.topEnd,
-                          child: IconButton(
-                            onPressed: () async {
-                              final result = await showDialog(
-                                  context: context,
-                                  builder: (BuildContext) {
-                                    return CustomDialog(
-                                        content: AppLocalizations.of(context)!
-                                            .delete_page);
-                                  });
-
-                              if (result == true) {
-                                context.read<BookBloc>().add(DeletePageEvent(
-                                      body: AppLocalizations.of(context)!
-                                          .message_body_delete(
-                                        widget.book.author,
-                                        widget.book.title,
-                                      ),
-                                      title: AppLocalizations.of(context)!
-                                          .message_title_delete,
-                                    ));
-                              } else {
-                                context.read<BookBloc>().add(
-                                    InitBookEvent(widget.book, currentIndex));
-                              }
-                            },
-                            icon: Icon(
-                              Icons.delete,
-                              color: Colors.red,
-                              size: 35,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
-                    title: bookPagesList.isEmpty
-                        ? Text(widget.book.title)
-                        : Text(
-                            bookPagesList[currentIndex].bookChapter!.chTitle!),
+        return Stack(
+          children: [
+            buildPageScaffold(context),
+            if (state is LoadingBookPageState)
+              Positioned.fill(
+                child: Container(
+                  color: Colors.black.withOpacity(0.1),
+                  child: Center(
+                    child: CircularProgressIndicator(),
                   ),
-                  drawer: Drawer(
-                    child: bookChaptersList.isNotEmpty
-                        ? Stack(
-                            children: [
-                              Column(
-                                children: [
-                                  Container(
-                                    child: Container(
-                                      margin: EdgeInsets.all(48),
-                                      child: Text(
-                                        widget.book.title,
-                                        maxLines: 5,
-                                        textAlign: TextAlign.center,
-                                        style: AppTextStyles.titleDrawer(),
-                                      ),
-                                    ),
-                                    height: 200,
-                                    width: double.infinity,
-                                    decoration: BoxDecoration(
-                                        image: DecorationImage(
-                                            fit: BoxFit.cover,
-                                            image: NetworkImage(
-                                                widget.book.imageUrl))),
-                                  ),
-                                  Flexible(
-                                    child: ChapterListView(
-                                      bookpages: bookPagesList,
-                                      bookchaptersList: bookChaptersList,
-                                      onPagePressed: (pageNumber) {
-                                        int pageIndex =
-                                            bookPagesList.indexWhere((page) =>
-                                                page.pageNumber == pageNumber);
-                                        context.read<BookBloc>().add(
-                                            NavigateToPageEvent(
-                                                pageIndex: pageIndex));
-                                        Navigator.of(context).pop();
-                                      },
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              Positioned(
-                                left: 5,
-                                top: 170,
-                                child: Text(
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
-                                  widget.book.author,
-                                  style: TextStyle(
-                                      color: Colors.white, fontSize: 18),
-                                ),
-                              ),
-                              Positioned(
-                                bottom: 20,
-                                child: IconButton(
-                                  onPressed: () {
-                                    Navigator.pop(context);
-                                    Navigator.maybePop(context);
-                                  },
-                                  icon: Icon(Icons.arrow_back_ios),
-                                ),
-                              ),
-                              Positioned(
-                                  bottom: 35,
-                                  left: 30,
-                                  child: Text(
-                                      AppLocalizations.of(context)!.go_back))
-                            ],
-                          )
-                        : Container(
-                            margin: EdgeInsets.only(bottom: 24),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Container(
-                                  child: Container(
-                                    margin: EdgeInsets.all(48),
-                                    child: Text(
-                                      maxLines: 5,
-                                      widget.book.title,
-                                      textAlign: TextAlign.center,
-                                      style: TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 24,
-                                      ),
-                                    ),
-                                  ),
-                                  width: double.infinity,
-                                  height: 200,
-                                  decoration: BoxDecoration(
-                                    image: DecorationImage(
-                                      fit: BoxFit.cover,
-                                      image: NetworkImage(widget.book.imageUrl),
-                                    ),
-                                  ),
-                                ),
-                                SizedBox(
-                                  height: 20,
-                                ),
-                                Spacer(),
-                                IconButton(
-                                  onPressed: () {
-                                    Navigator.pop(context);
-                                    Navigator.maybePop(context);
-                                  },
-                                  icon: Icon(Icons.arrow_back),
-                                ),
-                              ],
-                            ),
-                          ),
-                  ),
-                  body: bookPagesList.length > 0
-                      ? _buildPageBody(bookPagesList[currentIndex])
-                      : Center(
-                          child: Text(AppLocalizations.of(context)!.add_pages),
-                        ),
-                  floatingActionButton: Visibility(
-                    visible: appUser.isAdmin,
-                    child: Padding(
-                      padding: EdgeInsets.only(bottom: 60),
-                      // Adjust padding as needed
-                      child: FloatingActionButton(
-                        onPressed: () async {
-                          BookPage bookPage =
-                              BookPage(pageNumber: bookPagesList.length + 1);
-
-                          BookPage? result = await Navigator.pushNamed<dynamic>(
-                            context,
-                            kAddNewPageRoute,
-                            arguments: <String, dynamic>{
-                              'bookPage': bookPage,
-                              'bookID': widget.book.id,
-                              'pageMode': PageMode.addNewPage,
-                              'chapterList': bookChaptersList,
-                              'pagesList': bookPagesList
-                            },
-                          );
-                          if (result != null) {
-                            context.read<BookBloc>().add(AddNewPageEvent(
-                                  bookPage: result,
-                                  title: AppLocalizations.of(context)!
-                                      .message_title_add,
-                                  body: AppLocalizations.of(context)!
-                                      .message_body_add(
-                                    widget.book.author,
-                                    widget.book.title,
-                                    result.pageNumber,
-                                  ),
-                                ));
-                          } else {
-                            context
-                                .read<BookBloc>()
-                                .add(InitBookEvent(widget.book, currentIndex));
-                          }
-                        },
-                        child: Icon(Icons.add),
-                      ),
-                    ),
-                  ),
-                  floatingActionButtonLocation:
-                      FloatingActionButtonLocation.endFloat,
-                  bottomSheet:
-                      bookPagesList.length > 0 ? _buildFooter() : null),
-              onWillPop: () async {
-                return await onBackPressed(context);
-              });
-        }
-        return Center(
-          child: CircularProgressIndicator(),
+                ),
+              ),
+          ],
         );
       },
     );
+  }
+
+  Widget buildPageScaffold(BuildContext context) {
+    return WillPopScope(
+        child: Scaffold(
+            appBar: AppBar(
+              centerTitle: true,
+              backgroundColor: Colors.brown.withOpacity(0.8),
+              actions: [
+                Container(
+                  margin: EdgeInsets.only(bottom: 10),
+                  child: Visibility(
+                    visible: bookPagesList.length > 0 && appUser.isAdmin,
+                    child: IconButton(
+                      onPressed: () async {
+                        BookPage bookPage = BookPage(
+                            pageNumber: bookPagesList[currentIndex].pageNumber,
+                            text: bookPagesList[currentIndex].text,
+                            bookPageImage:
+                                bookPagesList[currentIndex].bookPageImage);
+                        BookPage? result = await Navigator.pushNamed<dynamic>(
+                          context,
+                          kAddNewPageRoute,
+                          arguments: <String, dynamic>{
+                            'bookPage': bookPage,
+                            'pagesList': bookPagesList,
+                            'bookID': widget.book.id,
+                            'pageMode': PageMode.editMode,
+                            'chapterList': bookChaptersList
+                          },
+                        );
+                        if (result != null) {
+                          context.read<BookBloc>().add(PageEditedEvent(
+                              bookPage: result,
+                              imageFile: result.bookPageImage?.imageFile,
+                              body: AppLocalizations.of(context)!
+                                  .message_body_edit(widget.book.author,
+                                      widget.book.title, bookPage.pageNumber),
+                              title: AppLocalizations.of(context)!
+                                  .message_title_edit));
+                        } else {
+                          context
+                              .read<BookBloc>()
+                              .add(InitBookEvent(widget.book));
+                        }
+                      },
+                      icon: Icon(
+                        Icons.edit,
+                        size: 35,
+                      ),
+                    ),
+                  ),
+                ),
+                Visibility(
+                  visible: bookPagesList.length > 0 && appUser.isAdmin,
+                  child: Align(
+                    alignment: AlignmentDirectional.topEnd,
+                    child: IconButton(
+                      onPressed: () async {
+                        final result = await showDialog(
+                            barrierDismissible: false,
+                            context: context,
+                            builder: (BuildContext) {
+                              return CustomDialog(
+                                  content: AppLocalizations.of(context)!
+                                      .delete_page);
+                            });
+
+                        if (result == true) {
+                          context.read<BookBloc>().add(DeletePageEvent(
+                                body: AppLocalizations.of(context)!
+                                    .message_body_delete(
+                                  widget.book.author,
+                                  widget.book.title,
+                                ),
+                                title: AppLocalizations.of(context)!
+                                    .message_title_delete,
+                              ));
+                        } else {
+                          context
+                              .read<BookBloc>()
+                              .add(InitBookEvent(widget.book));
+                        }
+                      },
+                      icon: Icon(
+                        Icons.delete,
+                        color: Colors.red,
+                        size: 35,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+              title: bookPagesList.isEmpty
+                  ? Text(widget.book.title)
+                  : Text(bookPagesList[currentIndex].bookChapter!.chTitle!),
+            ),
+            drawer: Drawer(
+              child: bookChaptersList.isNotEmpty
+                  ? Stack(
+                      children: [
+                        Column(
+                          children: [
+                            Container(
+                              child: Container(
+                                margin: EdgeInsets.all(48),
+                                child: Text(
+                                  widget.book.title,
+                                  maxLines: 5,
+                                  textAlign: TextAlign.center,
+                                  style: AppTextStyles.titleDrawer(),
+                                ),
+                              ),
+                              height: 200,
+                              width: double.infinity,
+                              decoration: BoxDecoration(
+                                  image: DecorationImage(
+                                      fit: BoxFit.cover,
+                                      image:
+                                          NetworkImage(widget.book.imageUrl))),
+                            ),
+                            Flexible(
+                              child: ChapterListView(
+                                bookpages: bookPagesList,
+                                bookchaptersList: bookChaptersList,
+                                onPagePressed: (pageNumber) {
+                                  int pageIndex = bookPagesList.indexWhere(
+                                      (page) => page.pageNumber == pageNumber);
+                                  context.read<BookBloc>().add(
+                                      NavigateToPageEvent(
+                                          pageIndex: pageIndex));
+                                  Navigator.of(context).pop();
+                                },
+                              ),
+                            ),
+                          ],
+                        ),
+                        Positioned(
+                          left: 5,
+                          top: 170,
+                          child: Text(
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            widget.book.author,
+                            style: TextStyle(color: Colors.white, fontSize: 18),
+                          ),
+                        ),
+                        Positioned(
+                          bottom: 20,
+                          child: IconButton(
+                            onPressed: () {
+                              Navigator.pop(context);
+                              Navigator.maybePop(context);
+                            },
+                            icon: Icon(Icons.arrow_back_ios),
+                          ),
+                        ),
+                        Positioned(
+                          bottom: 20,
+                          left: 20,
+                          child: TextButton(
+                            onPressed: () {
+                              Navigator.pop(context);
+                              Navigator.maybePop(context);
+                            },
+                            child: Text(
+                              AppLocalizations.of(context)!.go_back,
+                              style: TextStyle(
+                                  color: AppColors.black,
+                                  decoration: TextDecoration.underline),
+                            ),
+                          ),
+                        )
+                      ],
+                    )
+                  : Stack(
+                      children: [
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Container(
+                              child: Container(
+                                margin: EdgeInsets.all(48),
+                                child: Text(
+                                  maxLines: 5,
+                                  widget.book.title,
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 24,
+                                  ),
+                                ),
+                              ),
+                              width: double.infinity,
+                              height: 200,
+                              decoration: BoxDecoration(
+                                image: DecorationImage(
+                                  fit: BoxFit.cover,
+                                  image: NetworkImage(widget.book.imageUrl),
+                                ),
+                              ),
+                            ),
+                            SizedBox(
+                              height: 20,
+                            ),
+                          ],
+                        ),
+                        Positioned(
+                          bottom: 20,
+                          child: IconButton(
+                            onPressed: () {
+                              Navigator.pop(context);
+                              Navigator.maybePop(context);
+                            },
+                            icon: Icon(Icons.arrow_back_ios),
+                          ),
+                        ),
+                        Positioned(
+                          bottom: 20,
+                          left: 20,
+                          child: TextButton(
+                            onPressed: () {
+                              Navigator.pop(context);
+                              Navigator.maybePop(context);
+                            },
+                            child: Text(
+                              AppLocalizations.of(context)!.go_back,
+                              style: TextStyle(
+                                  color: AppColors.black,
+                                  decoration: TextDecoration.underline),
+                            ),
+                          ),
+                        )
+                      ],
+                    ),
+            ),
+            body: bookPagesList.length > 0
+                ? _buildPageBody(bookPagesList[currentIndex])
+                : Center(
+                    child: Text(AppLocalizations.of(context)!.add_pages),
+                  ),
+            floatingActionButton: Visibility(
+              visible: appUser.isAdmin,
+              child: Padding(
+                padding: EdgeInsets.only(bottom: 60),
+                // Adjust padding as needed
+                child: FloatingActionButton(
+                  onPressed: () async {
+                    BookPage bookPage =
+                        BookPage(pageNumber: bookPagesList.length + 1);
+
+                    BookPage? result = await Navigator.pushNamed<dynamic>(
+                      context,
+                      kAddNewPageRoute,
+                      arguments: <String, dynamic>{
+                        'bookPage': bookPage,
+                        'bookID': widget.book.id,
+                        'pageMode': PageMode.addNewPage,
+                        'chapterList': bookChaptersList,
+                      },
+                    );
+                    if (result != null) {
+                      context.read<BookBloc>().add(AddNewPageEvent(
+                            bookPage: result,
+                            imageFile: result.bookPageImage?.imageFile,
+                            title:
+                                AppLocalizations.of(context)!.message_title_add,
+                            body:
+                                AppLocalizations.of(context)!.message_body_add(
+                              widget.book.author,
+                              widget.book.title,
+                              result.pageNumber,
+                            ),
+                          ));
+                    } else {
+                      context.read<BookBloc>().add(InitBookEvent(widget.book));
+                    }
+                  },
+                  child: Icon(Icons.add),
+                ),
+              ),
+            ),
+            floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
+            bottomSheet: bookPagesList.length > 0 ? _buildFooter() : null),
+        onWillPop: () async {
+          return await onBackPressed(context);
+        });
   }
 
   Future<bool> onBackPressed(BuildContext context) async {
@@ -443,12 +477,11 @@ class _BookPageView extends State<BookPageView> {
             } else if (details.primaryVelocity == 0) {
               return;
             } else {
-              final snackbar1 = SnackBar(
-                  content: Text(
-                      AppLocalizations.of(context)!.no_more_pages_for_swipe));
-              ScaffoldMessenger.of(context).removeCurrentSnackBar();
-              ScaffoldMessenger.of(context).showSnackBar(snackbar1);
-              return;
+              return CustomSnackBar.showSnackBar(
+                  color: Colors.red,
+                  content:
+                      AppLocalizations.of(context)!.no_more_pages_for_swipe,
+                  context: context);
             }
           },
           child: Column(

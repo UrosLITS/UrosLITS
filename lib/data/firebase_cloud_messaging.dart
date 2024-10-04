@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:book/core/constants.dart';
+import 'package:book/utils/exception_utils.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
@@ -12,6 +13,7 @@ class FCM {
   late bool isFlutterLocalNotificationsInitialized;
   late FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin;
   late AndroidNotificationChannel channel;
+  late ServiceAccountCredentials accountCredentials;
 
   FCM._internal() {
     flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
@@ -21,6 +23,7 @@ class FCM {
       'name',
       importance: Importance.max,
     );
+    _initAccountCredentials();
   }
 
   factory FCM() {
@@ -40,15 +43,11 @@ class FCM {
       required String title,
       required String body,
       String? bookId}) async {
-    final jsonCredentials =
-        await rootBundle.loadString('assets/book-d21ec-c64560991d06.json');
-    final creds = ServiceAccountCredentials.fromJson(jsonCredentials);
-
     final client = await clientViaServiceAccount(
-      creds,
+      accountCredentials,
       ['https://www.googleapis.com/auth/cloud-platform'],
-    ).timeout(Duration(seconds: 3), onTimeout: () {
-      throw Exception(timeoutErrorMessage);
+    ).timeout(Duration(seconds: timeoutDuration), onTimeout: () {
+      throw ServerConnectionException();
     });
 
     final notificationData = {
@@ -62,7 +61,7 @@ class FCM {
       },
     };
 
-    const String senderId = '576996108646';
+    const String senderId = messagingSenderId;
     final response = await client
         .post(
       Uri.parse(
@@ -72,17 +71,15 @@ class FCM {
       },
       body: jsonEncode(notificationData),
     )
-        .timeout(Duration(seconds: 3), onTimeout: () {
-      throw Exception(timeoutErrorMessage);
+        .timeout(Duration(seconds: timeoutDuration), onTimeout: () {
+      throw ServerConnectionException();
     });
 
     client.close();
     if (response.statusCode == 200) {
-      return true; // Success!
+      return true;
     }
 
-    print('Notification Sending Error Response status: ${response.statusCode}');
-    print('Notification Response body: ${response.body}');
     return false;
   }
 
@@ -112,5 +109,10 @@ class FCM {
         ),
       );
     }
+  }
+
+  Future<void> _initAccountCredentials() async {
+    final jsonCredentials = await rootBundle.loadString(messagingAssetsJson);
+    accountCredentials = ServiceAccountCredentials.fromJson(jsonCredentials);
   }
 }
