@@ -162,20 +162,25 @@ class BookBloc extends Bloc<BookEvents, BookState> {
     File image;
     ui.Image? decodedImage;
 
-    if (event.imageFile != null) {
-      image = event.imageFile!;
-      decodedImage = await decodeImageFromList(image.readAsBytesSync());
-      BookPageImage bookPageImage = BookPageImage(
-        width: decodedImage.width,
-        height: decodedImage.height,
-        filePath: event.imageFile!.path,
-        imageFile: event.imageFile,
-      );
-      event.bookPage.bookPageImage = bookPageImage;
-    } else {
-      event.bookPage.bookPageImage = null;
+    try {
+      if (event.imageFile != null) {
+        image = event.imageFile!;
+        decodedImage = await decodeImageFromList(image.readAsBytesSync());
+        BookPageImage bookPageImage = BookPageImage(
+          width: decodedImage.width,
+          height: decodedImage.height,
+          filePath: event.imageFile!.path,
+          imageFile: event.imageFile,
+        );
+        event.bookPage.bookPageImage = bookPageImage;
+      } else {
+        event.bookPage.bookPageImage = null;
+      }
+      emit(PopBackBookPageState(bookPage: event.bookPage));
+    } on Exception catch (e) {
+      emit(ErrorState(
+          bookData: book.bookData!, error: e, pageIndex: currentPageIndex));
     }
-    emit(PopBackBookPageState(bookPage: event.bookPage));
   }
 
   Future<void> _onAddNewChapter(

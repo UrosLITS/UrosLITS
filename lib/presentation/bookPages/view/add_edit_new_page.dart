@@ -40,23 +40,25 @@ class _AddEditNewPage extends State<AddEditNewPage> {
   BookChapter? selectedChapter;
   String? newChapterTitle;
   int currentIndex = 0;
+  late BookPage bookPage;
 
   @override
   void initState() {
+    bookPage = BookPage.copy(widget.bookPage);
     _imagePicker = ImagePicker();
     if (editPageMode) {
       if (hasImage) {
         imageSelected = true;
-        imageName = widget.bookPage.bookPageImage?.getFileName();
+        imageName = bookPage.bookPageImage?.getFileName();
       } else {
         imageName = noImage;
       }
-      text = widget.bookPage.text;
-      selectedChapter = widget.bookPage.bookChapter;
+      text = bookPage.text;
+      selectedChapter = bookPage.bookChapter;
       selectedChapter = widget.bookChapterList.lastOrNull;
     } else {
       imageName = noImage;
-      text = widget.bookPage.text;
+      text = bookPage.text;
       selectedChapter = widget.bookChapterList.lastOrNull;
     }
 
@@ -228,7 +230,7 @@ class _AddEditNewPage extends State<AddEditNewPage> {
                                 child: hasImage
                                     ? Image.network(
                                         fit: BoxFit.cover,
-                                        widget.bookPage.bookPageImage!.url!,
+                                        bookPage.bookPageImage!.url!,
                                       )
                                     : imageFile != null
                                         ? Image.file(imageFile!)
@@ -262,11 +264,11 @@ class _AddEditNewPage extends State<AddEditNewPage> {
                     onPressed: hasChanges
                         ? () async {
                             if (_formKey.currentState!.validate()) {
-                              widget.bookPage.text = text!;
-                              widget.bookPage.bookChapter = selectedChapter;
+                              bookPage.text = text!;
+                              bookPage.bookChapter = selectedChapter;
 
                               context.read<BookBloc>().add(PopBackBookPageEvent(
-                                    bookPage: widget.bookPage,
+                                    bookPage: bookPage,
                                     imageFile: imageFile,
                                   ));
                             }
@@ -333,12 +335,12 @@ class _AddEditNewPage extends State<AddEditNewPage> {
 
   bool get editPageMode => widget.pageMode == PageMode.editMode;
 
-  bool get hasImage => widget.bookPage.bookPageImage != null && editPageMode;
+  bool get hasImage => bookPage.bookPageImage != null && editPageMode;
 
   bool get hasChanges {
-    final bool textChanged = text != widget.bookPage.text;
-    final bool imageChanged = imageFile != null ||
-        (widget.bookPage.bookPageImage != null && !imageSelected);
+    final bool textChanged = text != bookPage.text;
+    final bool imageChanged =
+        imageFile != null || (bookPage.bookPageImage != null && !imageSelected);
 
     return textChanged || imageChanged;
   }

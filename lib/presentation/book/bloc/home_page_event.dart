@@ -7,10 +7,14 @@ class AddNewBookEvent extends HomePageEvent {
     required this.title,
     required this.author,
     required this.imageFile,
+    required this.messageTitle,
+    required this.body,
   });
 
   final String author;
   final String title;
+  final String messageTitle;
+  final String body;
   final File imageFile;
 
   @override

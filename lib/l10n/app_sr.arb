@@ -54,6 +54,15 @@
   "stop_reading_dialog": "Da li ste sigurni da zelite da prekinete pisanje knjige",
   "invalid_url": "Neispravan url",
   "go_back": "Idi nazad",
+  "new_book_title": "Nova knjiga je dodata",
+  "new_book_body": "Nova knjiga je objavljena od strane  {author}",
+  "@new_book_body": {
+    "placeholders": {
+      "author": {
+        "type": "String"
+      }
+    }
+  },
   "no_upper_case": "Sifra mora da sadrzi makar jedno veliko slovo",
   "no_lowe_case": "Sifra mora da sadrzi makar jedno malo slovo",
   "missing_number": "Sifra mora da sadrzi makar jedan broj",
