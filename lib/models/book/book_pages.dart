@@ -14,6 +14,15 @@ class BookPage {
     this.pickBook,
   });
 
+  factory BookPage.copy(BookPage bookPage) {
+    return BookPage(
+        text: bookPage.text,
+        bookChapter: bookPage.bookChapter,
+        bookPageImage: bookPage.bookPageImage,
+        pickBook: bookPage.pickBook,
+        pageNumber: bookPage.pageNumber);
+  }
+
   @JsonKey(name: "number")
   late int pageNumber;
   String text;

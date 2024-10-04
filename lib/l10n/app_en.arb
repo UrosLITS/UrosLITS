@@ -55,6 +55,15 @@
   "stop_reading_dialog": "Are you sure you want to stop reading book?",
   "invalid_url": "Invalid url",
   "go_back": "Go back",
+  "new_book_title": "A new book has been added",
+  "new_book_body": "A new book has been published by {author}",
+  "@new_book_body": {
+    "placeholders": {
+      "author": {
+        "type": "String"
+      }
+    }
+  },
   "no_upper_case": "Password must contain at least one uppercase letter",
   "no_lowe_case": "Password must contain at least one lowercase letter",
   "missing_number": "Password must contain at least one numeric character",

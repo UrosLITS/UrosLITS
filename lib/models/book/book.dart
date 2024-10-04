@@ -21,6 +21,7 @@ class Book extends Equatable {
   String id;
   BookData? bookData;
 
+
   factory Book.fromJson(Map<String, dynamic> json, String id) =>
       _$BookFromJson(json, id);
 

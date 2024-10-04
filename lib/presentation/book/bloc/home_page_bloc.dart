@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:io';
 import 'dart:math';
 
+import 'package:book/core/constants.dart';
 import 'package:book/data/firebase_auth/firebase_auth_singleton.dart';
 import 'package:book/data/firebase_cloud_messaging.dart';
 import 'package:book/data/firebase_firestore/firebase_db_manager.dart';
@@ -48,7 +49,7 @@ class HomePageBloc extends Bloc<HomePageEvent, HomePageState> {
     try {
       final urlResult = await FirebaseDbManager.instance
           .uploadBookImage(event.imageFile, event.title);
-      final Book? result = new Book(
+      final Book? result = Book(
           author: event.author,
           title: event.title,
           imageUrl: urlResult,
@@ -58,9 +59,9 @@ class HomePageBloc extends Bloc<HomePageEvent, HomePageState> {
       emit(LoadedState());
 
       final messageResult = await FCM.instance.sendPushMessage(
-        topic: 'books',
-        title: 'New  book has been added',
-        body: 'A new book has been published by ${result.author}',
+        topic: messageTopic,
+        title: event.messageTitle,
+        body: event.body,
       );
       if (messageResult) {
         emit(PopBackBookState(book: result));

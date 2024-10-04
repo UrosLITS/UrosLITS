@@ -147,13 +147,14 @@ class _BookPageView extends State<BookPageView> {
                     child: IconButton(
                       onPressed: () async {
                         final result = await showDialog(
-                            barrierDismissible: false,
-                            context: context,
-                            builder: (BuildContext) {
-                              return CustomDialog(
-                                  content: AppLocalizations.of(context)!
-                                      .delete_page);
-                            });
+                          barrierDismissible: false,
+                          context: context,
+                          builder: (BuildContext) {
+                            return CustomDialog(
+                                content:
+                                    AppLocalizations.of(context)!.delete_page);
+                          },
+                        );
 
                         if (result == true) {
                           context.read<BookBloc>().add(DeletePageEvent(
