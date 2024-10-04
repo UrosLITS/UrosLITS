@@ -11,7 +11,7 @@ class LandscapeImage extends StatelessWidget {
     required this.currentIndex,
   });
 
-  final List<BookPages> bookPagesList;
+  final List<BookPage> bookPagesList;
   final int currentIndex;
   final BookPageImage bookPageImage;
 
@@ -59,7 +59,7 @@ class PortraitImage extends StatelessWidget {
   });
 
   final BookPageImage bookPageImage;
-  final List<BookPages> bookPagesList;
+  final List<BookPage> bookPagesList;
   final int currentIndex;
 
   @override
@@ -69,14 +69,17 @@ class PortraitImage extends StatelessWidget {
         children: [
           SizedBox(height: 10),
           Floatable(
-              clearMinSpacing: MediaQuery.of(context).size.height / 2,
-              padding: EdgeInsets.only(right: 8),
-              float: FCFloat.start,
-              maxWidthPercentage: 0.5,
-              clear: FCClear.both,
-              child: bookPageImage.url != null
-                  ? Image.network(bookPageImage.url!)
-                  : Image.file(File(bookPageImage.filePath!))),
+            clearMinSpacing: MediaQuery.of(context).size.height / 2,
+            padding: EdgeInsets.only(right: 8),
+            float: FCFloat.start,
+            maxWidthPercentage: 0.5,
+            clear: FCClear.both,
+            child: bookPageImage.url != null
+                ? Image.network(bookPageImage.url!)
+                : Image.file(
+                    File(bookPageImage.filePath!),
+                  ),
+          ),
           WrappableText(
             textAlign: TextAlign.justify,
             text: TextSpan(
@@ -90,7 +93,7 @@ class PortraitImage extends StatelessWidget {
 }
 
 class NoImage extends StatelessWidget {
-  final List<BookPages> bookPagesList;
+  final List<BookPage> bookPagesList;
   final int currentIndex;
 
   NoImage({

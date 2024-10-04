@@ -55,11 +55,64 @@
   "stop_reading_dialog": "Are you sure you want to stop reading book?",
   "invalid_url": "Invalid url",
   "go_back": "Go back",
+  "new_book_title": "A new book has been added",
+  "new_book_body": "A new book has been published by {author}",
+  "@new_book_body": {
+    "placeholders": {
+      "author": {
+        "type": "String"
+      }
+    }
+  },
   "no_upper_case": "Password must contain at least one uppercase letter",
   "no_lowe_case": "Password must contain at least one lowercase letter",
   "missing_number": "Password must contain at least one numeric character",
   "missing_special_char": "Password must contain at least one special character",
   "not_long_enough_pass": "Password must contain at least 8 characters",
   "error": "Can not  reach the server",
-  "error_auth": "Incorrect email"
+  "error_auth": "Incorrect email or  password",
+  "message_body_edit": "A new page has been edited by {author} with a page number {page_number} inside {title} book",
+  "@message_body": {
+    "placeholders": {
+      "author": {
+        "type": "String"
+      },
+      "title": {
+        "type": "String"
+      },
+      "page_number": {
+        "type": "int"
+      }
+    }
+  },
+  "message_title_edit": "New page has been added",
+  "message_body_add": "A new page has been added by {author} with a page number {page_number} inside {title} book",
+  "@message_body_add": {
+    "placeholders": {
+      "author": {
+        "type": "String"
+      },
+      "title": {
+        "type": "String"
+      },
+      "page_number": {
+        "type": "int"
+      }
+    }
+  },
+  "message_title_add": "New page has been added",
+  "message_body_delete": "Page has been deleted by {author}  inside {title} book",
+  "@message_body_delete": {
+    "placeholders": {
+      "author": {
+        "type": "String"
+      },
+      "title": {
+        "type": "String"
+      }
+    }
+  },
+  "message_title_delete": "Page has been deleted",
+  "add_new_page_title": "Add new page to the book",
+  "edit_page_title": "Edit a page"
 }

@@ -4,15 +4,24 @@ import 'package:json_annotation/json_annotation.dart';
 part 'book_pages.g.dart';
 
 @JsonSerializable()
-class BookPages {
-  BookPages({
+class BookPage {
+  BookPage({
     this.text = '',
     required this.pageNumber,
     this.bookPageImage,
-    required this.bookChapter,
+    this.bookChapter,
     this.dateTime,
     this.pickBook,
   });
+
+  factory BookPage.copy(BookPage bookPage) {
+    return BookPage(
+        text: bookPage.text,
+        bookChapter: bookPage.bookChapter,
+        bookPageImage: bookPage.bookPageImage,
+        pickBook: bookPage.pickBook,
+        pageNumber: bookPage.pageNumber);
+  }
 
   @JsonKey(name: "number")
   late int pageNumber;
@@ -21,7 +30,7 @@ class BookPages {
   @JsonKey(name: "image")
   BookPageImage? bookPageImage;
   @JsonKey(name: "chapter")
-  BookChapters? bookChapter;
+  BookChapter? bookChapter;
   DateTime? dateTime;
   Book? pickBook;
 
@@ -35,7 +44,7 @@ class BookPages {
         dateTime,
       ];
 
-  factory BookPages.fromJson(Map<String, dynamic> json) =>
+  factory BookPage.fromJson(Map<String, dynamic> json) =>
       _$BookPageFromJson(json);
 
   Map<String, dynamic> toJson() => _$BookPageToJson(this);

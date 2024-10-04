@@ -7,10 +7,14 @@ class AddNewBookEvent extends HomePageEvent {
     required this.title,
     required this.author,
     required this.imageFile,
+    required this.messageTitle,
+    required this.body,
   });
 
   final String author;
   final String title;
+  final String messageTitle;
+  final String body;
   final File imageFile;
 
   @override
@@ -27,12 +31,13 @@ class NewBookAddedEvent extends HomePageEvent {
   final Book book;
 
   @override
-  List<Object?> get props => [book];
+  List<Object?> get props => [
+        book,
+        Random().nextInt(10000),
+      ];
 }
 
 class DeleteBookImageEvent extends HomePageEvent {
-  DeleteBookImageEvent();
-
   @override
   List<Object?> get props => [];
 }
@@ -43,14 +48,10 @@ class AddBookImageEvent extends HomePageEvent {
   final File file;
 
   @override
-  List<Object?> get props => [file];
-}
-
-class DownloadBooksEvent extends HomePageEvent {
-  DownloadBooksEvent();
-
-  @override
-  List<Object?> get props => [];
+  List<Object?> get props => [
+        file,
+        Random().nextInt(10000),
+      ];
 }
 
 class GetBookDataEvent extends HomePageEvent {
@@ -59,12 +60,31 @@ class GetBookDataEvent extends HomePageEvent {
   final Book book;
 
   @override
-  List<Object?> get props => [book];
+  List<Object?> get props => [
+        book,
+        Random().nextInt(10000),
+      ];
 }
 
 class SignOutEvent extends HomePageEvent {
-  SignOutEvent();
-
   @override
   List<Object?> get props => [];
+}
+
+class NotificationListenerEvent extends HomePageEvent {
+  NotificationListenerEvent({required this.payload});
+
+  final String payload;
+
+  @override
+  List<Object?> get props => [payload];
+}
+
+class GetBookListEvent extends HomePageEvent {
+  GetBookListEvent({required this.querySnapshot});
+
+  final QuerySnapshot<Map<String, dynamic>> querySnapshot;
+
+  @override
+  List<Object?> get props => [querySnapshot];
 }

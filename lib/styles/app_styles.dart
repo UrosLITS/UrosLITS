@@ -22,7 +22,7 @@ class AppTextStyles {
       double opacity = defaultOpacity}) {
     return TextStyle(
       color: color.withOpacity(opacity),
-      fontSize: 36,
+      fontSize: 30,
     );
   }
 

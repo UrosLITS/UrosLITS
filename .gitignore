@@ -30,6 +30,7 @@ migrate_working_dir/
 .pub-cache/
 .pub/
 /build/
+book-d21ec-c64560991d06.json
 
 # Symbolication related
 app.*.symbols

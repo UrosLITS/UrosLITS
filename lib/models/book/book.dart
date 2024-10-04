@@ -11,6 +11,7 @@ class Book extends Equatable {
     required this.title,
     required this.imageUrl,
     required this.id,
+    this.bookData,
   });
 
   String title;
@@ -19,6 +20,7 @@ class Book extends Equatable {
   String imageUrl;
   String id;
   BookData? bookData;
+
 
   factory Book.fromJson(Map<String, dynamic> json, String id) =>
       _$BookFromJson(json, id);

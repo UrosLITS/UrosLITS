@@ -12,8 +12,8 @@ class BookData extends Equatable {
     required this.pages,
   });
 
-  List<BookChapters> chapters;
-  List<BookPages> pages;
+  List<BookChapter> chapters;
+  List<BookPage> pages;
 
   @override
   List<Object?> get props => [
