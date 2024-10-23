@@ -12,7 +12,20 @@
           "package_name": "com.example.book"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "576996108646-s21ltvttapethd2p1cpatpt22behekjs.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.book",
+            "certificate_hash": "44c0d57035d1f71301f08caa2c6662329734ceb6"
+          }
+        },
+        {
+          "client_id": "576996108646-f6erl8cjeg6h7cp4plban59bhv44mts1.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyBfktA_3dMNAwfjkm3H9LBebSYTvSBe3HA"
@@ -20,7 +33,19 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "576996108646-5j6tqjd06gc54s0tj34m3bkjnejm2di2.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "576996108646-d4gch7ds48igle7gvhi224qhgfmqfslg.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.book"
+              }
+            }
+          ]
         }
       }
     },
@@ -31,7 +56,12 @@
           "package_name": "com.example.myApp2"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "576996108646-f6erl8cjeg6h7cp4plban59bhv44mts1.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyBfktA_3dMNAwfjkm3H9LBebSYTvSBe3HA"
@@ -39,7 +69,19 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "576996108646-5j6tqjd06gc54s0tj34m3bkjnejm2di2.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "576996108646-d4gch7ds48igle7gvhi224qhgfmqfslg.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.book"
+              }
+            }
+          ]
         }
       }
     }
