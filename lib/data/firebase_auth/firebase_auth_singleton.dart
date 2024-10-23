@@ -108,14 +108,12 @@ class FirebaseAuthSingleton {
   }
 
   Future<UserCredential?> signInWithGoogle() async {
-    final GoogleSignIn _googleSignIn;
-    if (Platform.isAndroid) {
-      _googleSignIn = await GoogleSignIn(scopes: ['email']);
-    } else {
-      _googleSignIn = await GoogleSignIn(
-          clientId:
-              '576996108646-d4gch7ds48igle7gvhi224qhgfmqfslg.apps.googleusercontent.com',
-          scopes: ['email']);
+    late GoogleSignIn _googleSignIn;
+
+    if (Platform.isIOS) {
+      _googleSignIn = await GoogleSignIn(clientId: clientID, scopes: [email]);
+    } else if (Platform.isAndroid) {
+      _googleSignIn = await GoogleSignIn(scopes: [email]);
     }
 
     await _googleSignIn.signOut().timeout(Duration(seconds: timeoutDuration),
@@ -142,8 +140,8 @@ class FirebaseAuthSingleton {
 
     final result = await _auth.signInWithCredential(credential);
 
-    if (credential.providerId == 'google.com') {
-      await _auth.currentUser?.unlink('google.com');
+    if (credential.providerId == google) {
+      await _auth.currentUser?.unlink(google);
     }
 
     await _auth.currentUser?.linkWithCredential(credential);
@@ -177,7 +175,7 @@ class FirebaseAuthSingleton {
     User? user = _auth.currentUser;
 
     if (user!.emailVerified) {
-      print('Email is verified');
+      print(emailVerified);
     } else {
       await _auth.currentUser?.sendEmailVerification();
     }
