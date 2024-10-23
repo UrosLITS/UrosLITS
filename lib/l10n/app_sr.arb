@@ -113,5 +113,12 @@
   },
   "message_title_delete": "Stranica je obrisana ",
   "add_new_page_title": "Dodaj novu stranicu knjizi",
-  "edit_page_title": "Uredi stranicu"
+  "edit_page_title": "Uredi stranicu",
+  "create_account_title": "Napravite nalog",
+  "verify_email": "Vec imate nalog sa ovom e adresom da li zelite da odete i  da je verifikujete",
+  "account_exist": "Nalog vec postoji molimo vas ulogujte se sa postojecom e adresom",
+  "cant_open_email": "Gmail nije u mogucnosti da se otvori"
+
+
+
 }

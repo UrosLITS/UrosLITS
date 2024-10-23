@@ -1,8 +1,12 @@
+import 'dart:io';
+
 import 'package:book/core/constants.dart';
 import 'package:book/models/app_user.dart';
 import 'package:book/utils/exception_utils.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
 class FirebaseAuthSingleton {
   static FirebaseAuthSingleton? _instance;
@@ -79,12 +83,103 @@ class FirebaseAuthSingleton {
     final User? checkUser = _auth.currentUser;
     if (checkUser != null) {
       uID = checkUser.uid;
-      await FirebaseAuthSingleton.instance.auth.signOut();
     }
     final userRef = _db.collection(usersCollection).doc(uID);
     await userRef.set(user.toJson()).timeout(Duration(seconds: timeoutDuration),
         onTimeout: () {
       throw ServerConnectionException();
     });
+    await _auth.signOut();
+  }
+
+  Future<UserCredential?> signInWithFacebook() async {
+    final LoginResult loginResult = await FacebookAuth.instance.login(
+      loginTracking: LoginTracking.enabled,
+    );
+
+    if (loginResult.accessToken == null) {
+      return null;
+    }
+
+    final OAuthCredential facebookAuthCredential =
+        FacebookAuthProvider.credential(loginResult.accessToken!.tokenString);
+
+    return await _auth.signInWithCredential(facebookAuthCredential);
+  }
+
+  Future<UserCredential?> signInWithGoogle() async {
+    final GoogleSignIn _googleSignIn;
+    if (Platform.isAndroid) {
+      _googleSignIn = await GoogleSignIn(scopes: ['email']);
+    } else {
+      _googleSignIn = await GoogleSignIn(
+          clientId:
+              '576996108646-d4gch7ds48igle7gvhi224qhgfmqfslg.apps.googleusercontent.com',
+          scopes: ['email']);
+    }
+
+    await _googleSignIn.signOut().timeout(Duration(seconds: timeoutDuration),
+        onTimeout: () {
+      throw ServerConnectionException();
+    });
+
+    final GoogleSignInAccount? gUser = await _googleSignIn
+        .signIn()
+        .timeout(Duration(seconds: timeoutDuration), onTimeout: () {
+      throw ServerConnectionException();
+    });
+
+    if (gUser == null) {
+      return null;
+    }
+
+    final GoogleSignInAuthentication gAuth = await gUser.authentication;
+
+    final OAuthCredential credential = GoogleAuthProvider.credential(
+      accessToken: gAuth.accessToken,
+      idToken: gAuth.idToken,
+    );
+
+    final result = await _auth.signInWithCredential(credential);
+
+    if (credential.providerId == 'google.com') {
+      await _auth.currentUser?.unlink('google.com');
+    }
+
+    await _auth.currentUser?.linkWithCredential(credential);
+
+    return result;
+  }
+
+  Future<void> addUserToDatabase(AppUser appUser) async {
+    String? uID;
+    final User? currentUser = _auth.currentUser;
+    if (currentUser != null) {
+      uID = currentUser.uid;
+
+      final credential = EmailAuthProvider.credential(
+          email: appUser.email, password: appUser.password);
+      await _auth.currentUser?.linkWithCredential(credential);
+    }
+    final userRef = _db.collection(usersCollection).doc(uID);
+    await userRef
+        .set(appUser.toJson())
+        .timeout(Duration(seconds: timeoutDuration), onTimeout: () {
+      throw ServerConnectionException();
+    });
+    await _auth.signOut().timeout(Duration(seconds: timeoutDuration),
+        onTimeout: () {
+      throw ServerConnectionException();
+    });
+  }
+
+  Future<void> checkEmailVerified() async {
+    User? user = _auth.currentUser;
+
+    if (user!.emailVerified) {
+      print('Email is verified');
+    } else {
+      await _auth.currentUser?.sendEmailVerification();
+    }
   }
 }

@@ -27,15 +27,18 @@ class PreviousPageEvent extends BookEvents {
 }
 
 class InitBookEvent extends BookEvents {
-  InitBookEvent(
-    this.book,
-  );
+  InitBookEvent({
+    required this.book,
+    this.currentIndex,
+  });
 
   final Book book;
+  final int? currentIndex;
 
   @override
   List<Object?> get props => [
         book,
+        currentIndex,
         Random().nextInt(10000),
       ];
 }
@@ -199,6 +202,18 @@ class SwipeRightEvent extends BookEvents {
   @override
   List<Object?> get props => [
         currentIndex,
+        Random().nextInt(10000),
+      ];
+}
+
+class DisplayCurrentPageEvent extends BookEvents {
+  DisplayCurrentPageEvent({required this.pageIndex});
+
+  final pageIndex;
+
+  @override
+  List<Object?> get props => [
+        pageIndex,
         Random().nextInt(10000),
       ];
 }

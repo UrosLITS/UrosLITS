@@ -1,4 +1,5 @@
 import 'package:book/app_routes/app_routes.dart';
+import 'package:book/data/firebase_auth/firebase_auth_singleton.dart';
 import 'package:book/models/app_user_singleton.dart';
 import 'package:book/models/book/book.dart';
 import 'package:book/presentation/book/bloc/home_page_bloc.dart';
@@ -120,8 +121,8 @@ class MyApp extends StatelessWidget {
           GlobalMaterialLocalizations.delegate,
           GlobalCupertinoLocalizations.delegate
         ],
-        initialRoute:
-            AppUserSingleton().appUser != null ? kHomeRoute : kLoginRoute,
+
+
       ),
     );
   }

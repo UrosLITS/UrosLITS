@@ -114,5 +114,9 @@
   },
   "message_title_delete": "Page has been deleted",
   "add_new_page_title": "Add new page to the book",
-  "edit_page_title": "Edit a page"
+  "edit_page_title": "Edit a page",
+  "create_account_title": "Create an account ",
+  "verify_email": "You email is not verified.Do you want  to  go and verify it?",
+  "account_exist": "Account already exists with different credentials please sign in with that account",
+  "cant_open_email": "Cant open gmail app"
 }

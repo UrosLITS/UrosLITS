@@ -38,12 +38,14 @@ class _BookPageView extends State<BookPageView> {
 
   @override
   void initState() {
-    appUser = AppUserSingleton.instance.appUser!;
+    appUser = AppUserSingleton.instance.getAppUser!;
 
     if (widget.pageIndex != null) {
       isMessageReceived = true;
     }
-    context.read<BookBloc>().add(InitBookEvent(widget.book));
+    context
+        .read<BookBloc>()
+        .add(InitBookEvent(book: widget.book, currentIndex: widget.pageIndex));
 
     super.initState();
   }
@@ -67,7 +69,7 @@ class _BookPageView extends State<BookPageView> {
           bookPagesList = state.bookData.pages;
           bookChaptersList = state.bookData.chapters;
         } else if (state is InitialState) {
-          context.read<BookBloc>().add(InitBookEvent(widget.book));
+          context.read<BookBloc>().add(InitBookEvent(book: widget.book));
         }
       },
       builder: (BuildContext context, Object? state) {
@@ -130,7 +132,7 @@ class _BookPageView extends State<BookPageView> {
                         } else {
                           context
                               .read<BookBloc>()
-                              .add(InitBookEvent(widget.book));
+                              .add(DisplayCurrentPageEvent(pageIndex: currentIndex));
                         }
                       },
                       icon: Icon(
@@ -169,7 +171,7 @@ class _BookPageView extends State<BookPageView> {
                         } else {
                           context
                               .read<BookBloc>()
-                              .add(InitBookEvent(widget.book));
+                              .add(DisplayCurrentPageEvent(pageIndex: currentIndex));
                         }
                       },
                       icon: Icon(
@@ -363,7 +365,9 @@ class _BookPageView extends State<BookPageView> {
                             ),
                           ));
                     } else {
-                      context.read<BookBloc>().add(InitBookEvent(widget.book));
+                      context
+                          .read<BookBloc>()
+                          .add(DisplayCurrentPageEvent(pageIndex: currentIndex));
                     }
                   },
                   child: Icon(Icons.add),

@@ -11,6 +11,7 @@ class CustomTextForm extends StatefulWidget {
       required this.maxLength,
       this.suffixIcon,
       this.obscureText = false,
+      this.initialValue,
       required this.onChanged})
       : super(key: key);
 
@@ -20,6 +21,7 @@ class CustomTextForm extends StatefulWidget {
   final String? Function(String?)? validator;
   final int maxLength;
   final Widget? suffixIcon;
+  final String? initialValue;
   final ValueChanged onChanged;
 
   final bool obscureText;
@@ -32,6 +34,7 @@ class _CustomTextFormState extends State<CustomTextForm> {
   @override
   Widget build(BuildContext context) {
     return TextFormField(
+      initialValue: widget.initialValue,
       maxLength: widget.maxLength,
       obscureText: widget.obscureText,
       validator: widget.validator,

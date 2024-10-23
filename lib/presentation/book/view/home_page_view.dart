@@ -32,7 +32,7 @@ class _HomeBookPageView extends State<HomePageView> {
 
   @override
   void initState() {
-    appUser = AppUserSingleton.instance.appUser!;
+    appUser = AppUserSingleton.instance.getAppUser!;
     FirebaseMessaging.instance.subscribeToTopic(messageTopic);
 
     LocalNotificationsService.instance.initializeLocalNotification();

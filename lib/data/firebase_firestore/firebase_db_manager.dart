@@ -1,9 +1,11 @@
 import 'dart:io';
 
 import 'package:book/core/constants.dart';
+import 'package:book/models/app_user.dart';
 import 'package:book/models/book/book_imports.dart';
 import 'package:book/utils/exception_utils.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 
 class FirebaseDbManager {
@@ -264,6 +266,33 @@ class FirebaseDbManager {
     BookData bookData = BookData(chapters: chapters, pages: bookPages);
 
     return Future.value(bookData);
+  }
+
+  Future<AppUser?> loginUserWithGoogle(UserCredential userCredential) async {
+    final userDoc = await FirebaseFirestore.instance
+        .collection(usersCollection)
+        .doc(userCredential.user?.uid)
+        .get();
+
+    if (userDoc.exists) {
+      final user = AppUser.fromJson(userDoc.data()!);
+      return Future.value(user);
+    } else {
+      return null;
+    }
+  }
+  Future<AppUser?> loginWithFacebook(UserCredential userCredential) async {
+    final userDoc = await FirebaseFirestore.instance
+        .collection(usersCollection)
+        .doc(userCredential.user?.uid)
+        .get();
+
+    if (userDoc.exists) {
+      final user = AppUser.fromJson(userDoc.data()!);
+      return Future.value(user);
+    } else {
+      return null;
+    }
   }
 
   Stream<QuerySnapshot<Map<String, dynamic>>> downloadBooksStream() async* {
