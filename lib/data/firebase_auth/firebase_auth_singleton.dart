@@ -174,9 +174,7 @@ class FirebaseAuthSingleton {
   Future<void> checkEmailVerified() async {
     User? user = _auth.currentUser;
 
-    if (user!.emailVerified) {
-      print(emailVerified);
-    } else {
+    if (!user!.emailVerified) {
       await _auth.currentUser?.sendEmailVerification();
     }
   }

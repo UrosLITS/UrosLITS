@@ -207,11 +207,14 @@ class _SetPasswordPage extends State<CreateProviderAccount> {
     });
   }
 
+  bool get hasChanges =>
+      name != null ||
+      lastName != null ||
+      password != null ||
+      confirmPassword != null;
+
   Future<bool> onBackPressed(BuildContext context) async {
-    if (name != null ||
-        lastName != null ||
-        password != null ||
-        confirmPassword != null) {
+    if (hasChanges) {
       final result = await showDialog(
         context: context,
         barrierDismissible: false,
