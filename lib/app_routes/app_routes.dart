@@ -1,4 +1,5 @@
 import 'package:book/enums/page_mode.dart';
+import 'package:book/models/app_user_singleton.dart';
 import 'package:book/models/book/book_imports.dart';
 import 'package:book/presentation/book/view/add_new_book.dart';
 import 'package:book/presentation/book/view/home_page_view.dart';
@@ -19,7 +20,11 @@ class AppRoutes {
   static Route<dynamic>? onGenerateRoutes(RouteSettings setting) {
     switch (setting.name) {
       case kHomeRoute:
-        return _materialRoute(const HomePageView());
+        if (AppUserSingleton.instance.appUser != null) {
+          return _materialRoute(const HomePageView());
+        } else {
+          return _materialRoute(const LoginPage());
+        }
       case kLoginRoute:
         return _materialRoute(const LoginPage());
       case kRegisterRoute:

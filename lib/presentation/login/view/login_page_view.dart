@@ -1,16 +1,19 @@
 import 'package:book/app_routes/app_routes.dart';
 import 'package:book/core/constants.dart';
 import 'package:book/presentation/common/book_app_bar.dart';
+import 'package:book/presentation/common/custom_dialog.dart';
 import 'package:book/presentation/common/custom_snackbar.dart';
 import 'package:book/presentation/common/custom_text_form.dart';
 import 'package:book/presentation/common/dialog_utils.dart';
 import 'package:book/presentation/login/bloc/login_bloc.dart';
 import 'package:book/presentation/login/bloc/login_event.dart';
 import 'package:book/presentation/login/bloc/login_state.dart';
+import 'package:book/presentation/register/view/create_provider_account.dart';
 import 'package:book/styles/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:open_mail_app/open_mail_app.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -51,6 +54,51 @@ class _LoginPageState extends State<LoginPage> {
           DialogUtils.showLoadingScreen(context);
         } else if (state is LoadedState) {
           Navigator.pop(context);
+        } else if (state is GoogleSignInState) {
+          context.read<LoginBloc>().add(
+              CreateUserWithGoogleAcc(userCredential: state.userCredential));
+        } else if (state is CreateUserWithGoogleState) {
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (BuildContext context) => CreateProviderAccount(
+                      userCredential: state.userCredential)));
+        } else if (state is FacebookSignInState) {
+          context.read<LoginBloc>().add(
+              CreateUserWithFacebookAcc(userCredential: state.userCredential));
+        } else if (state is CreateUserWithFacebookState) {
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (BuildContext context) => CreateProviderAccount(
+                      userCredential: state.userCredential)));
+        } else if (state is SignInWithExistingProvider) {
+          CustomSnackBar.showSnackBar(
+              color: Colors.orange,
+              content: AppLocalizations.of(context)!.account_exist,
+              context: context);
+        } else if (state is VerifyEmailState) {
+          final result = await showDialog(
+              context: context,
+              builder: (BuildContext context) {
+                return CustomDialog(
+                    content: AppLocalizations.of(context)!.verify_email);
+              });
+          if (result) {
+            context.read<LoginBloc>().add(OpenEmailAppEvent());
+          }
+        } else if (state is CanOpenEmailAppState) {
+          showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return MailAppPickerDialog(mailApps: state.mailAppResult.options);
+            },
+          );
+        } else if (state is CanNotOpenEmailAppState) {
+          CustomSnackBar.showSnackBar(
+              color: AppColors.red,
+              content: AppLocalizations.of(context)!.cant_open_email,
+              context: context);
         }
       },
       builder: (BuildContext context, Object? state) {
@@ -142,6 +190,35 @@ class _LoginPageState extends State<LoginPage> {
                     child: Text(
                       AppLocalizations.of(context)!.sign_up,
                       style: TextStyle(color: AppColors.red),
+                    ),
+                  ),
+                ],
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  SizedBox(
+                    height: 100,
+                    child: IconButton(
+                      onPressed: () async {
+                        context.read<LoginBloc>().add(GoogleSignIn());
+                      },
+                      icon: Image.asset(
+                        'assets/google.png',
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+                  ),
+                  SizedBox(
+                    height: 70,
+                    child: IconButton(
+                      onPressed: () async {
+                        context.read<LoginBloc>().add(FacebookSignIn());
+                      },
+                      icon: Image.asset(
+                        'assets/facebook.png',
+                        fit: BoxFit.cover,
+                      ),
                     ),
                   ),
                 ],

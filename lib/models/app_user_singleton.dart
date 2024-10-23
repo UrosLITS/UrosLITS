@@ -3,7 +3,7 @@ import 'package:book/models/app_user.dart';
 
 class AppUserSingleton {
   static AppUserSingleton? _instance;
-  AppUser? _appUser;
+  AppUser? appUser;
 
   AppUserSingleton._internal();
 
@@ -18,15 +18,15 @@ class AppUserSingleton {
     AppUser? result =
         await FirebaseAuthSingleton.instance.downloadCurrentUser();
 
-    _appUser = result;
+    appUser = result;
     return result;
   }
 
   void clearUser() {
-    _appUser = null;
+    appUser = null;
   }
 
   static AppUserSingleton get instance => AppUserSingleton();
 
-  AppUser? get appUser => _appUser;
+  AppUser? get getAppUser => appUser;
 }

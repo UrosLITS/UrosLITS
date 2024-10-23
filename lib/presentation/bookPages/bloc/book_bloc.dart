@@ -32,6 +32,8 @@ class BookBloc extends Bloc<BookEvents, BookState> {
     on<DeletePageEvent>((event, emit) => _onDeletePageEvent(event, emit));
     on<SwipeLeftEvent>((event, emit) => _onSwipeLeftEvent(event, emit));
     on<SwipeRightEvent>((event, emit) => _onSwipeRightEvent(event, emit));
+    on<DisplayCurrentPageEvent>(
+        (event, emit) => _onDisplayCurrentPageEvent(event, emit));
   }
 
   late Book book;
@@ -47,6 +49,11 @@ class BookBloc extends Bloc<BookEvents, BookState> {
 
   Future<void> _onInitBook(InitBookEvent event, Emitter<BookState> emit) async {
     this.book = event.book;
+
+    currentPageIndex = 0;
+    if (event.currentIndex != null) {
+      currentPageIndex = event.currentIndex!;
+    }
 
     emit(LoadingBookPageState());
 
@@ -325,5 +332,11 @@ class BookBloc extends Bloc<BookEvents, BookState> {
     currentPageIndex--;
     emit(DisplayBookPageState(
         bookData: book.bookData!, pageIndex: currentPageIndex));
+  }
+
+  Future<void> _onDisplayCurrentPageEvent(
+      DisplayCurrentPageEvent event, Emitter<BookState> emit) async {
+    emit(DisplayBookPageState(
+        bookData: book.bookData!, pageIndex: event.pageIndex));
   }
 }
