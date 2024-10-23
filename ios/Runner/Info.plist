@@ -1,7 +1,53 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
-	<dict>
+    <dict>
+    <!-- Put me in the [my_project]/ios/Runner/Info.plist file -->
+    <!-- Google Sign-in Section -->
+    <key>CFBundleURLTypes</key>
+    <array>
+    	<dict>
+    		<key>CFBundleTypeRole</key>
+    		<string>Editor</string>
+    		<key>CFBundleURLSchemes</key>
+    		<array>
+    			<string>com.googleusercontent.apps.576996108646-d4gch7ds48igle7gvhi224qhgfmqfslg</string>
+    			              <string>fb558574120082056</string>
+
+    		</array>
+    	</dict>
+        </array>
+    <!--  End of the Google Sign-in Section -->
+	    <key>GIDClientID</key>
+        <string>[576996108646-d4gch7ds48igle7gvhi224qhgfmqfslg.apps.googleusercontent.com]</string>
+        <key>FacebookAppID</key>
+        <string>558574120082056</string>
+        <key>FacebookClientToken</key>
+        <string>789a85d4b3a14034d468b7d57af25fb4</string>
+        <key>FacebookDisplayName</key>
+        <string>Reader</string>
+        <key>LSApplicationQueriesSchemes</key>
+        <array>
+          <string>fbapi</string>
+          <string>fb-messenger-share-api</string>
+        </array>
+
+
+        <key>LSApplicationQueriesSchemes</key>
+        <array>
+            <string>googlegmail</string>
+            <string>x-dispatch</string>
+            <string>readdle-spark</string>
+            <string>airmail</string>
+            <string>ms-outlook</string>
+            <string>ymail</string>
+            <string>fastmail</string>
+            <string>superhuman</string>
+            <string>protonmail</string>
+        </array>
+        
+
+
 		<key>CFBundleDevelopmentRegion</key>
 		<string>$(DEVELOPMENT_LANGUAGE)</string>
 		<key>CFBundleDisplayName</key>
@@ -56,5 +102,7 @@
         		<string>We need access to your photo library to allow you to select and upload photos.</string>
         		<key>NSCameraUsageDescription</key>
         		<string>We need acceess to your camera to upload photos</string>
+        <key>NSUserTrackingUsageDescription</key>
+        <string>This identifier will be used to deliver personalized ads to you.</string>
 	</dict>
 </plist>
